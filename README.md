@@ -36,6 +36,14 @@ Berisi file UXML sebagai struktur dasar UI yang kemudian diatur melalui UIManage
 
 ### Script
 
-berisi kode UIManager yang digunakan pada menu Home dan UIManagerPlay yang digunakan pada Gameplay.
+Berisi file UIManager yang digunakan pada menu Home dan UIManagerPlay yang digunakan pada Gameplay.
 
-sebagian besar isi script hanya mengatur UI, Animasi, dan Transisi. UIManager memiliki interaksi dengan LoginManager untuk mengatur fitur Login dan akan memiliki interaksi dengan QuestController pada fitur mendatang. UIManagerPlay memiliki interaksi dengan ChoiceController untuk mengatur input pilihan user dan akan memiliki interaksi dengan NarasiController pada fitur mendatang 
+sebagian besar isi script hanya mengatur UI, Animasi, dan Transisi. 
+
+- UIManager
+
+  Memiliki interaksi dengan LoginManager untuk mengatur fitur Login dan akan memiliki interaksi dengan QuestController pada fitur mendatang.
+  
+- UIManagerPlay
+
+  Memiliki interaksi dengan ChoiceController untuk mengatur input pilihan user dan akan memiliki interaksi dengan NarasiController pada fitur mendatang 
