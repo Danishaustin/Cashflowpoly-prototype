@@ -4,35 +4,35 @@
 
 ### Data
 
-berisi Model Data yang digunakan saat menarik variabel dari JSON ke dalam data variabel C# Unity.
+Menangani Model Data yang digunakan saat menarik variabel dari JSON ke dalam bentuk object dan variabel yang dapat digunakan oleh sistem.
 
 ### Script
 
-berisi DataManager, GameState, dan LoginManager
+Berisi DataManager, GameState, dan LoginManager
 
-- DataManager
+- **DataManager**
 
-  berisi kode untuk mengambil dan mengirim data berformat JSON, serta menyimpannya dalam bentuk Dictionary untuk digunakan oleh script / class lainnya.
+  Mengambil dan mengirim data berformat JSON, serta menyimpannya dalam bentuk Dictionary untuk digunakan oleh script / class lainnya.
 
-- GameState
+- **GameState**
 
-  kode untuk menyimpan data permainan sementara seperti koin, poin kebahagiaan, investasi yang dimiliki serta hari dan giliran saat ini.
+  Menyimpan data permainan dan state sementara seperti koin, poin kebahagiaan, investasi yang dimiliki serta hari dan giliran saat ini.
 
-- LoginManager
+- **LoginManager**
 
-  kode untuk mengatur autentikasi
+  Kode untuk mengatur autentikasi
 
 ## Controller
 
 ### Script
 
-berisi file ChoiceController yang digunakan untuk mengatur input pilihan user. Utamanya berinteraksi dengan DataManager, GameState, dan UIManagerPlay
+Berisi file ChoiceController yang digunakan untuk mengatur input pilihan user. Utamanya berinteraksi dengan DataManager, GameState, dan UIManagerPlay
 
 ## View
 
 ### UI
 
-berisi kode uxml yang digunakan sebagai rancangan UI kemudian diatur melalui UIManager.
+Berisi file UXML sebagai struktur dasar UI yang kemudian diatur melalui UIManager.
 
 ### Script
 
