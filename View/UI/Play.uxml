@@ -1,0 +1,125 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/View/Style/StylePlayUI.uss?fileID=7433441132597879392&amp;guid=ae3a49ccbd7c80c49ae88ee9436431b6&amp;type=3#StylePlayUI" />
+    <ui:VisualElement name="RootContainer" style="flex-grow: 1; flex-direction: row;">
+        <ui:VisualElement name="MainContainer" style="flex-grow: 1; background-image: url(&quot;project://database/Assets/Screenshot_12-3-2026_134237_cdn.dribbble.com.jpeg?fileID=21300000&amp;guid=79c998437e867a442bf6517b48df6507&amp;type=3#Screenshot_12-3-2026_134237_cdn.dribbble.com&quot;);" />
+        <ui:VisualElement name="DayContainer" style="flex-grow: 1; position: absolute; width: 368px; height: 353px; border-top-left-radius: 100%; border-top-right-radius: 100%; border-bottom-right-radius: 100%; border-bottom-left-radius: 100%; background-color: rgb(255, 255, 255); top: -48px; left: -93px; background-image: url(&quot;project://database/Assets/Resources/Sprite/300Mind/2D%20Game%20UI%20Kit/Sprites/UI-pack_Sprite_1.png?fileID=9136243195103690455&amp;guid=7f9865cf6ac20f7468e13d5a5daff8ef&amp;type=3#UI-pack_Sprite_1_8&quot;); flex-direction: column-reverse;">
+            <ui:Label tabindex="-1" text="Day&#10;1" parse-escape-sequences="true" display-tooltip-when-elided="true" name="DayCounter" style="font-size: 100%; height: 100%; white-space: nowrap; -unity-text-align: middle-center; -unity-font: url(&quot;project://database/Assets/Resources/Sprite/300Mind/2D%20Game%20UI%20Kit/Fonts/Ariston%20Comic%20Font.ttf?fileID=12800000&amp;guid=e28e9ad7f0a79f14d8c01971d5416eba&amp;type=3#Ariston Comic Font&quot;); -unity-font-definition: initial; -unity-font-style: bold; border-top-left-radius: 100%; border-top-right-radius: 100%; border-bottom-right-radius: 100%; border-bottom-left-radius: 100%; width: 100%;" />
+        </ui:VisualElement>
+        <ui:VisualElement name="TurnContainer" style="position: absolute; width: 20%; height: 200px; top: -100px; left: 40%; background-color: rgba(255, 255, 255, 0); border-bottom-right-radius: 25%; border-bottom-left-radius: 25%; background-image: url(&quot;project://database/Assets/Resources/Sprite/300Mind/2D%20Game%20UI%20Kit/Sprites/UI-pack_Sprite_1.png?fileID=7613800822721531735&amp;guid=7f9865cf6ac20f7468e13d5a5daff8ef&amp;type=3#UI-pack_Sprite_1_15&quot;); -unity-background-scale-mode: stretch-to-fill; flex-direction: column-reverse; display: none;">
+            <ui:Label tabindex="-1" text="Player 1" parse-escape-sequences="true" display-tooltip-when-elided="true" style="-unity-text-align: upper-center; -unity-font: url(&quot;project://database/Assets/Resources/Sprite/300Mind/2D%20Game%20UI%20Kit/Fonts/Ariston%20Comic%20Font.ttf?fileID=12800000&amp;guid=e28e9ad7f0a79f14d8c01971d5416eba&amp;type=3#Ariston Comic Font&quot;); -unity-font-definition: initial; font-size: 100%;" />
+        </ui:VisualElement>
+        <ui:VisualElement name="PlayerContainer" class="player-container character" />
+        <ui:VisualElement name="TextContainer" style="flex-grow: 1; position: absolute; width: 100%; height: 30%; bottom: 0;">
+            <ui:VisualElement name="TextBox" style="flex-grow: 1; background-color: rgb(255, 255, 255); border-top-left-radius: 10%; border-top-right-radius: 10%; border-bottom-right-radius: 0; border-bottom-left-radius: 0; padding-top: 30px; padding-right: 30px; padding-bottom: 30px; padding-left: 30px;">
+                <ui:Label tabindex="-1" text="Sekarang ngapain ya?" parse-escape-sequences="true" display-tooltip-when-elided="true" name="Dialog" style="-unity-font: url(&quot;project://database/Assets/Resources/Sprite/300Mind/2D%20Game%20UI%20Kit/Fonts/Ariston%20Comic%20Font.ttf?fileID=12800000&amp;guid=e28e9ad7f0a79f14d8c01971d5416eba&amp;type=3#Ariston Comic Font&quot;); -unity-font-definition: initial; font-size: 60%; text-overflow: ellipsis;" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+        <ui:VisualElement name="ChoiceContainer" style="flex-grow: 1; position: absolute; width: 100%; height: 65%; justify-content: center; flex-direction: row;">
+            <ui:VisualElement name="Choice1" class="choice-list">
+                <ui:Button text="Beli Bahan Masakan" parse-escape-sequences="true" display-tooltip-when-elided="true" name="BahanMasakan" class="choice-button" />
+                <ui:Button text="Beli Kebutuhan" parse-escape-sequences="true" display-tooltip-when-elided="true" name="Kebutuhan" class="choice-button" />
+                <ui:Button text="Jual Masakan" parse-escape-sequences="true" display-tooltip-when-elided="true" name="JualMasakan" class="choice-button" />
+                <ui:Button text="Menabung Tujuan Finansial" parse-escape-sequences="true" display-tooltip-when-elided="true" name="TujuanFinansial" class="choice-button" />
+                <ui:Button text="Kerja Lepas" parse-escape-sequences="true" display-tooltip-when-elided="true" name="KerjaLepas" class="choice-button" />
+            </ui:VisualElement>
+            <ui:VisualElement name="ChoiceBM" class="choice-list">
+                <ui:Button text="Nasi" parse-escape-sequences="true" display-tooltip-when-elided="true" name="Nasi" class="choice-button" />
+                <ui:Button text="Telur" parse-escape-sequences="true" display-tooltip-when-elided="true" name="Telur" class="choice-button" />
+                <ui:Button text="Daging" parse-escape-sequences="true" display-tooltip-when-elided="true" name="Daging" class="choice-button" />
+                <ui:Button text="Sayuran" parse-escape-sequences="true" display-tooltip-when-elided="true" name="Sayuran" class="choice-button" />
+                <ui:Button text="Tahu" parse-escape-sequences="true" display-tooltip-when-elided="true" name="Tahu" class="choice-button" />
+            </ui:VisualElement>
+            <ui:VisualElement name="ChoiceK" class="choice-list">
+                <ui:Button text="Buku" parse-escape-sequences="true" display-tooltip-when-elided="true" name="Buku" class="choice-button" />
+                <ui:Button text="Sepatu" parse-escape-sequences="true" display-tooltip-when-elided="true" name="Sepatu" class="choice-button" />
+                <ui:Button text="Makanan" parse-escape-sequences="true" display-tooltip-when-elided="true" name="Makanan" class="choice-button" />
+                <ui:Button text="JamTangan" parse-escape-sequences="true" display-tooltip-when-elided="true" name="JamTangan" class="choice-button" />
+                <ui:Button text="Boneka" parse-escape-sequences="true" display-tooltip-when-elided="true" name="Boneka" class="choice-button" />
+            </ui:VisualElement>
+            <ui:VisualElement name="ChoiceJM" class="choice-list">
+                <ui:Button text="Lontong Balap" parse-escape-sequences="true" display-tooltip-when-elided="true" name="LontongBalap" class="choice-button" />
+                <ui:Button text="Nasi Goreng" parse-escape-sequences="true" display-tooltip-when-elided="true" name="NasiGoreng" class="choice-button" />
+                <ui:Button text="Nasi Campur" parse-escape-sequences="true" display-tooltip-when-elided="true" name="NasiCampur" class="choice-button" />
+                <ui:Button text="Tahu Telor" parse-escape-sequences="true" display-tooltip-when-elided="true" name="TahuTelor" class="choice-button" />
+                <ui:Button text="Tahu Campur" parse-escape-sequences="true" display-tooltip-when-elided="true" name="TahuCampur" class="choice-button" />
+            </ui:VisualElement>
+            <ui:VisualElement name="ChoiceTF" class="choice-list">
+                <ui:VisualElement name="MenabungContainer" style="flex-grow: 1; flex-direction: row; justify-content: center; display: none;">
+                    <ui:Button text="Min" parse-escape-sequences="true" display-tooltip-when-elided="true" name="MinButton" class="choice-button" style="width: 20%;" />
+                    <ui:Button text="&lt;" parse-escape-sequences="true" display-tooltip-when-elided="true" name="DecreaseButton" class="choice-button" style="width: 15%;" />
+                    <ui:Label tabindex="-1" text="0" parse-escape-sequences="true" display-tooltip-when-elided="true" name="SavingAmount" style="width: 30%; -unity-font: resource(&apos;Sprite/300Mind/2D Game UI Kit/Fonts/Ariston Comic Font&apos;); -unity-font-definition: initial; -unity-font-style: bold; font-size: 55px; -unity-text-align: middle-center; background-image: none; background-color: rgb(255, 255, 255); border-top-left-radius: 40px; border-top-right-radius: 40px; border-bottom-right-radius: 40px; border-bottom-left-radius: 40px;" />
+                    <ui:Button text="&gt;" parse-escape-sequences="true" display-tooltip-when-elided="true" name="IncreaseButton" class="choice-button" style="width: 15%;" />
+                    <ui:Button text="Max" parse-escape-sequences="true" display-tooltip-when-elided="true" name="MaxButton" class="choice-button" style="width: 20%;" />
+                </ui:VisualElement>
+                <ui:Button text="Rumah" parse-escape-sequences="true" display-tooltip-when-elided="true" name="Rumah" class="choice-button" />
+                <ui:Button text="Mobil" parse-escape-sequences="true" display-tooltip-when-elided="true" name="Mobil" class="choice-button" />
+                <ui:Button text="Tamasya" parse-escape-sequences="true" display-tooltip-when-elided="true" name="Tamasya" class="choice-button" />
+                <ui:Button text="Kebun Binatang" parse-escape-sequences="true" display-tooltip-when-elided="true" name="KebunBinatang" class="choice-button" />
+                <ui:Button text="Bersama Keluarga" parse-escape-sequences="true" display-tooltip-when-elided="true" name="BersamaKeluarga" class="choice-button" />
+            </ui:VisualElement>
+            <ui:VisualElement name="ChoiceKL" class="choice-list">
+                <ui:Button text="Nasi" parse-escape-sequences="true" display-tooltip-when-elided="true" name="Nasi" class="choice-button" />
+                <ui:Button text="Telur" parse-escape-sequences="true" display-tooltip-when-elided="true" name="Telur" class="choice-button" />
+                <ui:Button text="Daging" parse-escape-sequences="true" display-tooltip-when-elided="true" name="Daging" class="choice-button" />
+                <ui:Button text="Sayuran" parse-escape-sequences="true" display-tooltip-when-elided="true" name="Sayuran" class="choice-button" />
+                <ui:Button text="Tahu &amp; Tempe" parse-escape-sequences="true" display-tooltip-when-elided="true" name="TahuTempe" class="choice-button" />
+            </ui:VisualElement>
+            <ui:VisualElement name="ChoiceMenabung" class="choice-list" style="justify-content: center; align-items: stretch;">
+                <ui:Button text="Membeli Tujuan Finansial" parse-escape-sequences="true" display-tooltip-when-elided="true" name="TFButton" class="choice-button" />
+                <ui:VisualElement name="MenabungContainer" style="flex-grow: 0; flex-direction: row; justify-content: center; height: 20%; display: flex;">
+                    <ui:Button text="Min" parse-escape-sequences="true" display-tooltip-when-elided="true" name="MinButton" class="choice-button" style="width: 20%;" />
+                    <ui:Button text="&lt;" parse-escape-sequences="true" display-tooltip-when-elided="true" name="DecreaseButton" class="choice-button" style="width: 15%;" />
+                    <ui:Label tabindex="-1" text="0" parse-escape-sequences="true" display-tooltip-when-elided="true" name="SavingText" style="width: 30%; -unity-font: resource(&apos;Sprite/300Mind/2D Game UI Kit/Fonts/Ariston Comic Font&apos;); -unity-font-definition: initial; -unity-font-style: bold; font-size: 55px; -unity-text-align: middle-center; background-image: none; background-color: rgb(255, 255, 255); border-top-left-radius: 40px; border-top-right-radius: 40px; border-bottom-right-radius: 40px; border-bottom-left-radius: 40px;" />
+                    <ui:Button text="&gt;" parse-escape-sequences="true" display-tooltip-when-elided="true" name="IncreaseButton" class="choice-button" style="width: 15%;" />
+                    <ui:Button text="Max" parse-escape-sequences="true" display-tooltip-when-elided="true" name="MaxButton" class="choice-button" style="width: 20%;" />
+                </ui:VisualElement>
+                <ui:VisualElement name="ConfirmContainer" style="flex-grow: 0; height: 20%; width: auto; flex-direction: row; justify-content: center;">
+                    <ui:Button text="Confirm" parse-escape-sequences="true" display-tooltip-when-elided="true" name="ConfirmButton" class="choice-button" style="width: 30%;" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+            <ui:VisualElement name="JumatBerkah" class="choice-list" style="flex-grow: 1; justify-content: center; align-items: stretch;">
+                <ui:Label tabindex="-1" text="Peduli Donasi" parse-escape-sequences="true" display-tooltip-when-elided="true" name="LabelJBText" class="text" style="width: 100%;" />
+                <ui:VisualElement name="MenabungContainer" style="flex-grow: 0; flex-direction: row; justify-content: center; height: 20%; display: flex;">
+                    <ui:Button text="Min" parse-escape-sequences="true" display-tooltip-when-elided="true" name="MinButtonJB" class="choice-button" style="width: 20%;" />
+                    <ui:Button text="&lt;" parse-escape-sequences="true" display-tooltip-when-elided="true" name="DecreaseButtonJB" class="choice-button" style="width: 15%;" />
+                    <ui:Label tabindex="-1" text="0" parse-escape-sequences="true" display-tooltip-when-elided="true" name="JumatBerkahText" class="text" />
+                    <ui:Button text="&gt;" parse-escape-sequences="true" display-tooltip-when-elided="true" name="IncreaseButtonJB" class="choice-button" style="width: 15%;" />
+                    <ui:Button text="Max" parse-escape-sequences="true" display-tooltip-when-elided="true" name="MaxButtonJB" class="choice-button" style="width: 20%;" />
+                </ui:VisualElement>
+                <ui:VisualElement name="ConfirmContainer" style="flex-grow: 0; height: 20%; width: auto; flex-direction: row; justify-content: center;">
+                    <ui:Button text="Confirm" parse-escape-sequences="true" display-tooltip-when-elided="true" name="ConfirmButtonJB" class="choice-button" style="width: 30%;" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+            <ui:VisualElement name="ChoiceKJumlah" class="choice-list" style="flex-grow: 1; justify-content: center; align-items: stretch;">
+                <ui:Label tabindex="-1" text="Harga Beli" parse-escape-sequences="true" display-tooltip-when-elided="true" name="LabelKText" class="text" style="width: 100%;" />
+                <ui:VisualElement name="MenabungContainer" style="flex-grow: 0; flex-direction: row; justify-content: center; height: 20%; display: flex;">
+                    <ui:Button text="Min" parse-escape-sequences="true" display-tooltip-when-elided="true" name="MinButtonK" class="choice-button" style="width: 20%;" />
+                    <ui:Button text="&lt;" parse-escape-sequences="true" display-tooltip-when-elided="true" name="DecreaseButtonK" class="choice-button" style="width: 15%;" />
+                    <ui:Label tabindex="-1" text="0" parse-escape-sequences="true" display-tooltip-when-elided="true" name="KHargaBeliText" class="text" />
+                    <ui:Button text="&gt;" parse-escape-sequences="true" display-tooltip-when-elided="true" name="IncreaseButtonK" class="choice-button" style="width: 15%;" />
+                    <ui:Button text="Max" parse-escape-sequences="true" display-tooltip-when-elided="true" name="MaxButtonK" class="choice-button" style="width: 20%;" />
+                </ui:VisualElement>
+                <ui:VisualElement name="ConfirmContainer" style="flex-grow: 0; height: 20%; width: auto; flex-direction: row; justify-content: center;">
+                    <ui:Button text="Confirm" parse-escape-sequences="true" display-tooltip-when-elided="true" name="ConfirmButtonK" class="choice-button" style="width: 30%;" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+            <ui:VisualElement name="PermainanSelesai" class="choice-list" style="flex-grow: 1; justify-content: center; align-items: stretch;">
+                <ui:Label tabindex="-1" text="Permainan Selesai" parse-escape-sequences="true" display-tooltip-when-elided="true" name="SelesaiText" class="text" style="width: 100%;" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+        <ui:VisualElement name="Objective" style="flex-grow: 1; position: absolute; width: 368px; height: 300px; border-top-left-radius: 25%; border-top-right-radius: 25%; border-bottom-right-radius: 25%; border-bottom-left-radius: 25%; top: auto; left: auto; flex-direction: column-reverse; right: -70px;">
+            <ui:VisualElement name="Saving" style="flex-grow: 1; flex-direction: row; align-items: center;">
+                <ui:VisualElement style="flex-grow: 1; background-image: url(&quot;project://database/Assets/Resources/Sprite/300Mind/2D%20Game%20UI%20Kit/Sprites/UI-pack_Sprite_1.png?fileID=2211318171991514223&amp;guid=7f9865cf6ac20f7468e13d5a5daff8ef&amp;type=3#UI-pack_Sprite_1_16&quot;); -unity-background-scale-mode: scale-to-fit; width: 50%; height: 50%;" />
+                <ui:Label tabindex="-1" text="0" parse-escape-sequences="true" display-tooltip-when-elided="true" name="SavingCounter" style="width: 50%; height: 50%; -unity-text-align: middle-left; -unity-font-definition: initial; -unity-font: url(&quot;project://database/Assets/Resources/Sprite/300Mind/2D%20Game%20UI%20Kit/Fonts/Ariston%20Comic%20Font.ttf?fileID=12800000&amp;guid=e28e9ad7f0a79f14d8c01971d5416eba&amp;type=3#Ariston Comic Font&quot;); font-size: 100px;" />
+            </ui:VisualElement>
+            <ui:VisualElement name="Happiness" style="flex-grow: 1; flex-direction: row; align-items: center;">
+                <ui:VisualElement style="flex-grow: 1; background-image: url(&quot;project://database/Assets/cashflowpoly.jpg?fileID=21300000&amp;guid=0e0acc7ada4218d4c927a1329fb22c53&amp;type=3#cashflowpoly&quot;); -unity-background-scale-mode: scale-to-fit; width: 50%; height: 50%;" />
+                <ui:Label tabindex="-1" text="0" parse-escape-sequences="true" display-tooltip-when-elided="true" name="HappinessCounter" style="width: 50%; height: 50%; -unity-text-align: middle-left; -unity-font-definition: initial; -unity-font: url(&quot;project://database/Assets/Resources/Sprite/300Mind/2D%20Game%20UI%20Kit/Fonts/Ariston%20Comic%20Font.ttf?fileID=12800000&amp;guid=e28e9ad7f0a79f14d8c01971d5416eba&amp;type=3#Ariston Comic Font&quot;); font-size: 100px;" />
+            </ui:VisualElement>
+            <ui:VisualElement name="Coins" style="flex-grow: 1; flex-direction: row; align-items: center;">
+                <ui:VisualElement style="flex-grow: 1; background-image: url(&quot;project://database/Assets/Resources/Sprite/300Mind/2D%20Game%20UI%20Kit/Sprites/UI-pack_Sprite_1.png?fileID=2211318171991514223&amp;guid=7f9865cf6ac20f7468e13d5a5daff8ef&amp;type=3#UI-pack_Sprite_1_16&quot;); -unity-background-scale-mode: scale-to-fit; width: 50%; height: 50%;" />
+                <ui:Label tabindex="-1" text="0" parse-escape-sequences="true" display-tooltip-when-elided="true" name="CoinCounter" style="width: 50%; height: 50%; -unity-text-align: middle-left; -unity-font-definition: initial; -unity-font: url(&quot;project://database/Assets/Resources/Sprite/300Mind/2D%20Game%20UI%20Kit/Fonts/Ariston%20Comic%20Font.ttf?fileID=12800000&amp;guid=e28e9ad7f0a79f14d8c01971d5416eba&amp;type=3#Ariston Comic Font&quot;); font-size: 100px;" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

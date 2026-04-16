@@ -1,0 +1,71 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/View/Style/Style.uss?fileID=7433441132597879392&amp;guid=6a04f36ef1b13d040b685f2bcfb82809&amp;type=3#Style" />
+    <ui:VisualElement name="MainContainer" style="flex-grow: 1;">
+        <ui:VisualElement name="HomeContainer" class="main-container" style="background-image: none; background-color: rgb(22, 52, 42); display: flex;">
+            <ui:VisualElement name="Navbar" class="navbar" style="height: 25%;">
+                <ui:Button parse-escape-sequences="true" display-tooltip-when-elided="true" name="ProfileButton" class="profile-button" />
+                <ui:Button text="Quest" parse-escape-sequences="true" display-tooltip-when-elided="true" name="QuestButton" class="home-button quest-button" />
+            </ui:VisualElement>
+            <ui:VisualElement name="Body" style="flex-grow: 1; width: 100%; flex-direction: column; height: 100%; justify-content: flex-start;">
+                <ui:VisualElement name="TitleBody" style="flex-grow: 1; justify-content: flex-start; align-items: center; height: 50%;">
+                    <ui:Label tabindex="-1" text="Label" parse-escape-sequences="true" display-tooltip-when-elided="true" name="Icon" style="background-image: url(&quot;project://database/Assets/cashflowpoly.jpg?fileID=21300000&amp;guid=0e0acc7ada4218d4c927a1329fb22c53&amp;type=3#cashflowpoly&quot;); width: 150px; height: 120px; border-top-left-radius: 25px; border-top-right-radius: 25px; border-bottom-right-radius: 25px; border-bottom-left-radius: 25px;" />
+                    <ui:Label tabindex="-1" text="Cashflowpoly" parse-escape-sequences="true" display-tooltip-when-elided="true" name="Title" class="home-title" />
+                </ui:VisualElement>
+                <ui:VisualElement name="MenuBody" style="flex-grow: 1; align-items: center; justify-content: flex-start; height: 100%; padding-top: 2%;">
+                    <ui:Button text="Play" parse-escape-sequences="true" display-tooltip-when-elided="true" name="PlayButton" class="home-button" />
+                    <ui:Button text="Edit Ruleset" parse-escape-sequences="true" display-tooltip-when-elided="true" name="EditRulesetButton" class="home-button" />
+                    <ui:Button text="Exit" parse-escape-sequences="true" display-tooltip-when-elided="true" name="ExitButton" class="home-button" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+        </ui:VisualElement>
+        <ui:VisualElement name="QuestContainer" class="quest-page">
+            <ui:VisualElement style="flex-grow: 1; height: 100%; width: 100%; background-color: rgb(22, 52, 42); justify-content: flex-start;">
+                <ui:VisualElement name="Navbar" style="flex-grow: 1; padding-top: 2%; padding-right: 10%; padding-left: 10%; height: 25%;">
+                    <ui:Button text="Back" parse-escape-sequences="true" display-tooltip-when-elided="true" name="BackQuestButton" class="home-button quest-button" />
+                </ui:VisualElement>
+                <ui:VisualElement name="Body" style="flex-grow: 1; height: 100%; justify-content: center;">
+                    <ui:Label tabindex="-1" text="No Quest Yet" parse-escape-sequences="true" display-tooltip-when-elided="true" style="justify-content: flex-start; align-items: center; -unity-font: url(&quot;project://database/Assets/Resources/Sprite/300Mind/2D%20Game%20UI%20Kit/Fonts/Ariston%20Comic%20Font.ttf?fileID=12800000&amp;guid=e28e9ad7f0a79f14d8c01971d5416eba&amp;type=3#Ariston Comic Font&quot;); -unity-font-definition: initial; -unity-font-style: bold; font-size: 100px; color: rgb(24, 192, 0); -unity-text-align: upper-center;" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+        </ui:VisualElement>
+        <ui:VisualElement name="LoginContainer" class="login-page">
+            <ui:VisualElement name="UpperContainer" style="flex-grow: 1; width: 500px; height: 100%; flex-direction: column;">
+                <ui:VisualElement name="IconContainer" style="flex-grow: 1; height: 100%; width: 100%; align-items: center; flex-direction: column-reverse;">
+                    <ui:Label tabindex="-1" text="Label" parse-escape-sequences="true" display-tooltip-when-elided="true" name="Icon" style="background-image: url(&quot;project://database/Assets/cashflowpoly.jpg?fileID=21300000&amp;guid=0e0acc7ada4218d4c927a1329fb22c53&amp;type=3#cashflowpoly&quot;); width: 150px; height: 120px; border-top-left-radius: 25px; border-top-right-radius: 25px; border-bottom-right-radius: 25px; border-bottom-left-radius: 25px; position: relative;" />
+                </ui:VisualElement>
+                <ui:VisualElement name="InputContainer" style="height: 100%; width: 100%; background-color: rgb(22, 52, 42); flex-grow: 1; flex-direction: column-reverse;">
+                    <ui:TextField picking-mode="Ignore" name="PasswordInput" password="true" class="input-field" style="font-size: 60%;" />
+                    <ui:Label tabindex="-1" text="Password" parse-escape-sequences="true" display-tooltip-when-elided="true" name="PasswordLabel" class="label-field" style="font-size: 50%;" />
+                    <ui:TextField picking-mode="Ignore" name="UsernameInput" class="input-field" style="font-size: 60%;" />
+                    <ui:Label tabindex="-1" text="Username" parse-escape-sequences="true" display-tooltip-when-elided="true" name="UsernameLabel" class="label-field" style="font-size: 50%;" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+            <ui:VisualElement name="LowerContainer" style="flex-grow: 1; width: 100%; height: 100%; align-items: center; padding-top: 5%;">
+                <ui:Button text="Login" parse-escape-sequences="true" display-tooltip-when-elided="true" name="LoginButton" class="home-button" style="width: 400px;" />
+                <ui:Button text="Register" parse-escape-sequences="true" display-tooltip-when-elided="true" name="RegisterButton" class="home-button" style="width: 400px;" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+        <ui:VisualElement name="PlayContainer" class="play-page">
+            <ui:VisualElement name="Navbar" class="navbar" style="height: 25%; flex-direction: row;">
+                <ui:Button text="Back" parse-escape-sequences="true" display-tooltip-when-elided="true" name="BackPlayButton" class="home-button quest-button" />
+            </ui:VisualElement>
+            <ui:VisualElement name="Body" style="flex-grow: 1; width: 100%; flex-direction: column; height: 100%; justify-content: flex-start;">
+                <ui:VisualElement name="MenuBody" style="flex-grow: 1; align-items: center; justify-content: flex-start; height: 100%; padding-top: 2%;">
+                    <ui:VisualElement name="VisualElement" style="flex-grow: 0; width: 500px; height: 20%;">
+                        <ui:Label tabindex="-1" text="Name" parse-escape-sequences="true" display-tooltip-when-elided="true" class="label-field" style="font-size: 50%;" />
+                        <ui:TextField picking-mode="Ignore" name="NameInput" class="input-field" style="font-size: 35px; height: 60px;" />
+                    </ui:VisualElement>
+                    <ui:Button text="Play" parse-escape-sequences="true" display-tooltip-when-elided="true" name="Play2Button" class="home-button" style="height: 15%;" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+        </ui:VisualElement>
+        <ui:VisualElement name="ProfileContainer" style="flex-grow: 1; position: absolute; width: 100%; height: 100%; flex-direction: row-reverse; display: flex;">
+            <ui:VisualElement name="Scrim" class="scrim" style="translate: 0 0;" />
+            <ui:VisualElement name="ProfilePage" class="profile-page">
+                <ui:VisualElement name="Body" style="flex-grow: 1; justify-content: flex-start; align-items: center; padding-top: 10px; padding-right: 10px; padding-bottom: 10px; padding-left: 10px;">
+                    <ui:Button text="Sign Out" parse-escape-sequences="true" display-tooltip-when-elided="true" name="SignOutButton" class="home-button" style="height: 100px;" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

@@ -1,0 +1,197 @@
+.home-title {
+    margin-top: 20px;
+    margin-right: 20px;
+    margin-bottom: 20px;
+    margin-left: 20px;
+    width: 600px;
+    -unity-font: url("project://database/Assets/Resources/Sprite/300Mind/2D%20Game%20UI%20Kit/Fonts/Ariston%20Comic%20Font.ttf?fileID=12800000&guid=e28e9ad7f0a79f14d8c01971d5416eba&type=3#Ariston Comic Font");
+    -unity-font-definition: initial;
+    -unity-font-style: bold;
+    font-size: 100px;
+    justify-content: flex-start;
+    align-items: stretch;
+    -unity-text-align: upper-center;
+    background-image: url("project://database/Assets/Resources/Sprite/300Mind/2D%20Game%20UI%20Kit/Sprites/UI-pack_Sprite_1.png?fileID=534250303759604497&guid=7f9865cf6ac20f7468e13d5a5daff8ef&type=3#UI-pack_Sprite_1_21");
+    height: 130px;
+    color: rgb(31, 41, 55);
+    text-overflow: clip;
+    max-width: 600px;
+    min-width: 100px;
+}
+
+.home-button {
+    border-top-left-radius: 50px;
+    border-top-right-radius: 50px;
+    border-bottom-right-radius: 50px;
+    border-bottom-left-radius: 50px;
+    font-size: 55px;
+    -unity-font: url("project://database/Assets/Resources/Sprite/300Mind/2D%20Game%20UI%20Kit/Fonts/Ariston%20Comic%20Font.ttf?fileID=12800000&guid=e28e9ad7f0a79f14d8c01971d5416eba&type=3#Ariston Comic Font");
+    -unity-font-style: bold;
+    text-overflow: ellipsis;
+    -unity-font-definition: initial;
+    margin-top: 20px;
+    margin-right: 20px;
+    margin-bottom: 20px;
+    margin-left: 20px;
+    width: 300px;
+    height: 15%;
+    align-items: stretch;
+    background-image: url("project://database/Assets/Resources/Sprite/300Mind/2D%20Game%20UI%20Kit/Sprites/UI-pack_Sprite_2.png?fileID=-8760834427580073799&guid=39e0242329775814891ef673e48ae932&type=3#UI-pack_Sprite_2_16");
+    cursor: initial;
+    -unity-background-image-tint-color: rgb(255, 255, 255);
+    transition-timing-function: ease-out;
+    transition-duration: 0.1s;
+    color: rgb(5, 46, 22);
+}
+
+.home-button:hover {
+    -unity-background-image-tint-color: rgb(249, 199, 199);
+    scale: 1.1 1.1;
+}
+
+.home-button:active {
+    -unity-background-image-tint-color: rgba(255, 255, 255, 0.78);
+}
+
+.profile-button {
+    width: 100px;
+    height: 100px;
+    position: relative;
+    right: auto;
+    top: auto;
+    border-top-left-radius: 25px;
+    border-top-right-radius: 25px;
+    border-bottom-right-radius: 25px;
+    border-bottom-left-radius: 25px;
+}
+
+.quest-button {
+    height: 100px;
+    margin-top: 2px;
+    margin-right: 4px;
+    margin-bottom: 2px;
+    margin-left: 4px;
+}
+
+.main-container {
+    flex-grow: 1;
+    background-color: rgb(139, 92, 255);
+    background-image: url("project://database/Assets/Resources/Sprite/300Mind/2D%20Game%20UI%20Kit/Sprites/UI-pack_Sprite_2.png?fileID=-5900999151167789326&guid=39e0242329775814891ef673e48ae932&type=3#UI-pack_Sprite_2_2");
+    -unity-background-image-tint-color: rgb(255, 255, 255);
+}
+
+.navbar {
+    flex-grow: 1;
+    width: 100%;
+    height: 20%;
+    justify-content: space-between;
+    flex-direction: row-reverse;
+    padding-top: 2%;
+    padding-right: 10%;
+    padding-left: 10%;
+}
+
+.quest-page {
+    flex-grow: 1;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.59);
+    translate: -100% 0;
+    transition-duration: 0.5s;
+    transition-timing-function: ease-out-cubic;
+    display: flex;
+}
+
+.show-quest {
+    translate: 0 0;
+}
+
+.login-page {
+    flex-grow: 1;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-color: rgb(22, 52, 42);
+    translate: 0 100%;
+    transition-duration: 0.5s;
+    transition-timing-function: ease-out-cubic;
+    align-items: center;
+    display: flex;
+}
+
+.input-field {
+    width: 100%;
+    flex-direction: column;
+    height: 20%;
+    -unity-font: url("project://database/Assets/Resources/Sprite/300Mind/2D%20Game%20UI%20Kit/Fonts/Ariston%20Comic%20Font.ttf?fileID=12800000&guid=e28e9ad7f0a79f14d8c01971d5416eba&type=3#Ariston Comic Font");
+    -unity-font-definition: initial;
+    -unity-font-style: bold;
+    font-size: 50%;
+    border-top-left-radius: 25px;
+    border-top-right-radius: 25px;
+    border-bottom-right-radius: 25px;
+    border-bottom-left-radius: 25px;
+}
+
+.label-field {
+    -unity-font: url("project://database/Assets/Resources/Sprite/300Mind/2D%20Game%20UI%20Kit/Fonts/Ariston%20Comic%20Font.ttf?fileID=12800000&guid=e28e9ad7f0a79f14d8c01971d5416eba&type=3#Ariston Comic Font");
+    -unity-font-definition: initial;
+    -unity-font-style: bold;
+    color: rgb(16, 164, 0);
+    font-size: 50%;
+    padding-left: 10px;
+    width: 100%;
+}
+
+.show-login {
+    translate: 0 0;
+}
+
+.play-page {
+    background-image: none;
+    background-color: rgb(22, 52, 42);
+    display: flex;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    translate: 0 -100%;
+    transition-duration: 0.5s;
+    transition-timing-function: ease-out-cubic;
+    opacity: 0;
+}
+
+.show-play {
+    translate: 0 0;
+    opacity: 1;
+}
+
+.scrim {
+    flex-grow: 1;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-color: rgb(0, 0, 0);
+    opacity: 0;
+    transition-timing-function: ease-out;
+    transition-duration: 0.2s;
+}
+
+.show-scrim {
+    opacity: 0.6;
+}
+
+.profile-page {
+    flex-grow: 1;
+    width: 500px;
+    height: 100%;
+    position: absolute;
+    background-color: rgb(22, 52, 42);
+    transition-timing-function: ease-out-cubic;
+    transition-duration: 0.5s;
+    translate: 100% 0;
+}
+
+.show-profile {
+    translate: 0 0;
+}
