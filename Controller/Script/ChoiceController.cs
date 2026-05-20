@@ -85,7 +85,22 @@ public class ChoiceController : MonoBehaviour
         GameState.Instance.AddBahanToList(selectedChoice);
         GameState.Instance.ChangeCoins(amount);
         view.UpdateCoins(GameState.Instance.Coins);
-        view.AddTextToDialog("Membeli " + selectedChoice + " seharga " + (-amount) + " koin\n");
+
+        string resultText = "Membeli " + selectedChoice + " seharga " + (-amount) + " koin\n";
+        int aksiKe = GameState.Instance.bmAksiKe;
+        GameState.Instance.bmAksiKe++;
+        Debug.Log("bmAksiKe: " + GameState.Instance.bmAksiKe);
+
+        if (Narasi("BahanMasakan", aksiKe, () =>
+        {
+            view.AddTextToDialog(resultText);
+            UpdateMove();
+        }))
+        {
+            return;
+        }
+
+        view.AddTextToDialog(resultText);
         UpdateMove();
     }
 
@@ -118,7 +133,22 @@ public class ChoiceController : MonoBehaviour
         GameState.Instance.ChangeHappiness(amountHappiness);
         view.UpdateCoins(GameState.Instance.Coins);
         view.UpdateHappiness(GameState.Instance.Happiness);
-        view.AddTextToDialog("Menjual " + selectedChoice + " seharga " + amountCoins + " koin dengan poin kebahagiaan " + amountHappiness + "\n");
+
+        string resultText = "Menjual " + selectedChoice + " seharga " + amountCoins + " koin dengan poin kebahagiaan " + amountHappiness + "\n";
+        int aksiKe = GameState.Instance.jmAksiKe;
+        GameState.Instance.jmAksiKe++;
+        Debug.Log("jmAksiKe: " + GameState.Instance.jmAksiKe);
+
+        if (Narasi("JualMasakan", aksiKe, () =>
+        {
+            view.AddTextToDialog(resultText);
+            UpdateMove();
+        }))
+        {
+            return;
+        }
+
+        view.AddTextToDialog(resultText);
         UpdateMove();
     }
 
@@ -171,7 +201,22 @@ public class ChoiceController : MonoBehaviour
                 view.UpdateCoins(GameState.Instance.Coins);
                 view.UpdateHappiness(GameState.Instance.Happiness);
                 Debug.Log("Kebutuhan " + tipeKebutuhan + " yang dimiliki: " + string.Join(", ", GameState.Instance.kebutuhanList[tipeKebutuhan]));
-                view.AddTextToDialog("Membeli kebutuhan " + GameState.Instance.kebutuhanSelected + " seharga " + GameState.Instance.SavingText + " koin dengan poin kebahagiaan " + (GameState.Instance.SavingText - 1) + "\n");
+
+                string resultText = "Membeli kebutuhan " + GameState.Instance.kebutuhanSelected + " seharga " + GameState.Instance.SavingText + " koin dengan poin kebahagiaan " + (GameState.Instance.SavingText - 1) + "\n";
+                int aksiKe = GameState.Instance.kAksiKe;
+                GameState.Instance.kAksiKe++;
+                Debug.Log("kAksiKe: " + GameState.Instance.kAksiKe);
+
+                if (Narasi("Kebutuhan", aksiKe, () =>
+                {
+                    view.AddTextToDialog(resultText);
+                    UpdateMove();
+                }))
+                {
+                    return;
+                }
+
+                view.AddTextToDialog(resultText);
                 UpdateMove();
                 break;
             default:
@@ -188,7 +233,22 @@ public class ChoiceController : MonoBehaviour
     {
         GameState.Instance.ChangeCoins(1);
         view.UpdateCoins(GameState.Instance.Coins);
-        view.AddTextToDialog("Bekerja lepas mendapatkan 1 koin\n");
+
+        string resultText = "Bekerja lepas mendapatkan 1 koin\n";
+        int aksiKe = GameState.Instance.klAksiKe;
+        GameState.Instance.klAksiKe++;
+        Debug.Log("klAksiKe: " + GameState.Instance.klAksiKe);
+
+        if (Narasi("KerjaLepas", aksiKe, () =>
+        {
+            view.AddTextToDialog(resultText);
+            UpdateMove();
+        }))
+        {
+            return;
+        }
+
+        view.AddTextToDialog(resultText);
         UpdateMove();
     }
 
@@ -212,8 +272,21 @@ public class ChoiceController : MonoBehaviour
         GameState.Instance.ChangeHappiness(amountHappiness);
         view.UpdateHappiness(GameState.Instance.Happiness);
 
-        view.AddTextToDialog("Membeli tujuan finansial " + selectedChoice + " seharga " + (-amount) + " koin dengan poin kebahagiaan " + amountHappiness + "\n");
+        string resultText = "Membeli tujuan finansial " + selectedChoice + " seharga " + (-amount) + " koin dengan poin kebahagiaan " + amountHappiness + "\n";
+        int aksiKe = GameState.Instance.tfAksiKe;
+        GameState.Instance.tfAksiKe++;
+        Debug.Log("tfAksiKe: " + GameState.Instance.tfAksiKe);
 
+        if (Narasi("TujuanFinansial", aksiKe, () =>
+        {
+            view.AddTextToDialog(resultText);
+            UpdateMove();
+        }))
+        {
+            return;
+        }
+
+        view.AddTextToDialog(resultText);
         UpdateMove();
     }
 
@@ -305,6 +378,8 @@ public class ChoiceController : MonoBehaviour
                 view.UpdateCoins(GameState.Instance.Coins);
                 GameState.Instance.NextDay();
                 view.UpdateDay(GameState.Instance.day);
+                view.UpdatePlayerTurn(GameState.Instance.turn);
+                view.UpdatePlayerStats();
                 view.ShowChoice("Choice1");
                 view.AddTextToDialog("Mengeluarkan uang saat Peduli Donasi dengan jumlah " + GameState.Instance.SavingText + " koin\n", 0.5f, true);
                 break;
@@ -318,15 +393,20 @@ public class ChoiceController : MonoBehaviour
         view.UpdateJumatBerkahText(GameState.Instance.SavingText);
     }
 
+    private bool Narasi(string aksi, int aksiKe, System.Action onComplete = null)
+    {
+        Debug.Log("Menampilkan narasi untuk aksi " + aksi);
+
+        return NarasiController.Instance.HandleNarasi(aksi, aksiKe, onComplete);
+    }
+
     private void UpdateMove()
     {
         GameState.Instance.UseMove(); 
         
-        if (GameState.Instance.movesLeft <= 0)
-        {
-            GameState.Instance.NextDay();
-            view.UpdateDay(GameState.Instance.day);
-        }
+        view.UpdateDay(GameState.Instance.day);
+        view.UpdatePlayerTurn(GameState.Instance.turn);
+        view.UpdatePlayerStats();
 
         if (GameState.Instance.IsJumatBerkah())
         {

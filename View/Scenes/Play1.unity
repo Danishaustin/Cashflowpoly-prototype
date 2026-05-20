@@ -202,7 +202,6 @@ GameObject:
   - component: {fileID: 414671734}
   - component: {fileID: 414671733}
   - component: {fileID: 414671735}
-  - component: {fileID: 414671737}
   m_Layer: 5
   m_Name: UIDocument
   m_TagString: Untagged
@@ -254,18 +253,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   choiceController: {fileID: 918224083}
---- !u!114 &414671737
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 414671732}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7003e0a9f16fed94a806b9395d0c4f30, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &918224082
 GameObject:
   m_ObjectHideFlags: 0
@@ -276,6 +263,7 @@ GameObject:
   m_Component:
   - component: {fileID: 918224084}
   - component: {fileID: 918224083}
+  - component: {fileID: 918224085}
   m_Layer: 0
   m_Name: Controller
   m_TagString: Untagged
@@ -311,6 +299,19 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &918224085
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 918224082}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e818f024a44fdb54485e2ffeb3ae9f74, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  view: {fileID: 0}
 --- !u!1 &1270987757
 GameObject:
   m_ObjectHideFlags: 0
@@ -445,6 +446,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7003e0a9f16fed94a806b9395d0c4f30, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  turn: 1
+  playerCount: 1
+  jmAksiKe: 1
+  tfAksiKe: 1
+  bmAksiKe: 1
+  klAksiKe: 1
+  kAksiKe: 1
 --- !u!4 &1902671342
 Transform:
   m_ObjectHideFlags: 0

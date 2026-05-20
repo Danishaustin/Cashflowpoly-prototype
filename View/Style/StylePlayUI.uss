@@ -9,8 +9,8 @@
     translate: 100% 0;
     position: absolute;
     right: 0;
-    transition-timing-function: ease-in-out-elastic;
-    transition-duration: 1s;
+    transition-timing-function: ease-in-sine;
+    transition-duration: 0.25s;
 }
 
 .show-character {

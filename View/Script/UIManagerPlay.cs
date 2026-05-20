@@ -11,6 +11,7 @@ public class UIManagerPlay : MonoBehaviour
     private Label coinCounter;
     private Label happinessCounter;
     private Label dayCounter;
+    private Label playerTurn;
     private Label savingCounter;
     private Label savingText;
     private Label jumatBerkahText;
@@ -22,6 +23,7 @@ public class UIManagerPlay : MonoBehaviour
     private List<string> specialButtons;
     private EventCallback<TransitionEndEvent> transitionCallback;
     private string selectedChoice;
+    private Tween dialogTween;
     void Start()
     {
         var root = GetComponent<UIDocument>().rootVisualElement;
@@ -30,6 +32,7 @@ public class UIManagerPlay : MonoBehaviour
         coinCounter = root.Q<Label>("CoinCounter");
         happinessCounter = root.Q<Label>("HappinessCounter");
         dayCounter = root.Q<Label>("DayCounter");
+        playerTurn = root.Q<Label>("PlayerTurn");
         savingText = root.Q<Label>("SavingText");
         savingCounter = root.Q<Label>("SavingCounter");
         jumatBerkahText = root.Q<Label>("JumatBerkahText");
@@ -80,10 +83,8 @@ public class UIManagerPlay : MonoBehaviour
 
         playerContainer.RegisterCallback<TransitionEndEvent>(ShowTextContainer);
         UpdateDay(GameState.Instance.day);
-
-        Dialog(coinCounter, GameState.Instance.Coins.ToString(), duration: 0.1f);
-        Dialog(happinessCounter, GameState.Instance.Happiness.ToString(), duration: 0.1f);
-        Dialog(savingCounter, GameState.Instance.Saving.ToString(), duration: 0.1f);
+        UpdatePlayerTurn(GameState.Instance.turn);
+        UpdatePlayerStats();
 
         Invoke("ShowPlayerContainer", .1f);
         Invoke("ShowChoice1", 1.5f);
@@ -133,9 +134,19 @@ public class UIManagerPlay : MonoBehaviour
 
     private void Dialog(Label l, string text, float duration = 0.5f)
     {
+        if (l == dialog)
+        {
+            dialogTween?.Kill();
+        }
+
         l.text = string.Empty;
         string m = text;
-        DOTween.To(()=> l.text, x => l.text = x, m, duration) .SetEase(Ease.Linear); 
+        Tween tween = DOTween.To(()=> l.text, x => l.text = x, m, duration) .SetEase(Ease.Linear);
+
+        if (l == dialog)
+        {
+            dialogTween = tween;
+        }
     }
 
     public void AddTextToDialog(string text, float duration = 0.5f, bool newLine = false)
@@ -148,6 +159,33 @@ public class UIManagerPlay : MonoBehaviour
             string newText = currentText + text;
             DOTween.To(() => dialog.text, x => dialog.text = x, newText, duration).SetEase(Ease.Linear);
         }  
+    }
+
+    public IEnumerator PlayDialogSteps(List<string> texts, float duration = 0.5f)
+    {
+        foreach (var text in texts)
+        {
+            AddTextToDialog(text, duration);
+            yield return null;
+
+            bool goToNextText = false;
+            while (!goToNextText)
+            {
+                if (Input.GetMouseButtonDown(0))
+                {
+                    if (dialogTween != null && dialogTween.IsActive() && dialogTween.IsPlaying())
+                    {
+                        dialogTween.Complete();
+                    }
+                    else
+                    {
+                        goToNextText = true;
+                    }
+                }
+
+                yield return null;
+            }
+        }
     }
 
     private void OnChoiceClicked(ClickEvent evt, VisualElement choiceContainer)
@@ -211,7 +249,19 @@ public class UIManagerPlay : MonoBehaviour
 
     public void UpdateDay(int day)
     {
-        dayCounter.text = "Day\n" + day;
+        dayCounter.text = "Day " + day;
+    }
+
+    public void UpdatePlayerTurn(int turn)
+    {
+        playerTurn.text = "Player " + turn;
+    }
+
+    public void UpdatePlayerStats()
+    {
+        UpdateCoins(GameState.Instance.Coins);
+        UpdateHappiness(GameState.Instance.Happiness);
+        UpdateSaving(GameState.Instance.Saving);
     }
 
     public void UpdateSaving(int saving)

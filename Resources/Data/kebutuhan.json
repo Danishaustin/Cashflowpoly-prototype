@@ -1,0 +1,53 @@
+{
+  "kebutuhan": [
+    {
+      "nama": "Baju",
+      "tipe": "primer"
+    },
+    {
+      "nama": "Buku",
+      "tipe": "primer"
+    },
+    {
+      "nama": "Sepatu",
+      "tipe": "primer"
+    },
+    {
+      "nama": "Makanan",
+      "tipe": "primer"
+    },
+    {
+      "nama": "Tas",
+      "tipe": "sekunder"
+    },
+    {
+      "nama": "Sepeda",
+      "tipe": "sekunder"
+    },
+    {
+      "nama": "AlatTulis",
+      "tipe": "sekunder"
+    },
+    {
+      "nama": "Kamera",
+      "tipe": "sekunder"
+    },
+    {
+      "nama": "GameConsole",
+      "tipe": "tersier"
+    },
+    {
+      "nama": "JamTangan",
+      "tipe": "tersier"
+    },
+    {
+      "nama": "WahanaBermain",
+      "tipe": "tersier"
+    },
+    {
+      "nama": "Boneka",
+      "tipe": "tersier"
+    }
+
+  ]
+}

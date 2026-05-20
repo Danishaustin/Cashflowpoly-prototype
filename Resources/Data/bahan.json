@@ -1,0 +1,25 @@
+{
+  "bahan": [
+    {
+      "nama": "Nasi",
+      "hargaBeli": 1
+    },
+    {
+      "nama": "Sayuran",
+      "hargaBeli": 2
+    },
+    {
+      "nama": "Telur",
+      "hargaBeli": 4
+    },
+    {
+      "nama": "Tahu",
+      "hargaBeli": 3
+    },
+    {
+      "nama": "Daging",
+      "hargaBeli": 5
+    }
+
+  ]
+}

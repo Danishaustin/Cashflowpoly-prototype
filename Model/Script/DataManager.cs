@@ -9,6 +9,7 @@ public class DataManager : MonoBehaviour
     public Dictionary<string, BahanMakananData> bahanDict {get; private set;}
     public Dictionary<string, KebutuhanData> kebutuhanDict {get; private set;}
     public Dictionary<string, TujuanFinansialData> tujuanFinansialDict {get; private set;}
+    public Dictionary<string, NarasiData> narasiDict {get; private set;}
 
     void Awake()
     {
@@ -48,6 +49,14 @@ public class DataManager : MonoBehaviour
 
         foreach (var t in tujuanFinansialDatabase.tujuanFinansial)
             tujuanFinansialDict[t.nama] = t;
+
+        TextAsset jsonNarasi = Resources.Load<TextAsset>("Data/narasi");
+        var narasiDatabase = JsonUtility.FromJson<NarasiDatabase>(jsonNarasi.text);
+
+        narasiDict = new();
+
+        foreach (var n in narasiDatabase.narasi)
+            narasiDict[n.nama] = n;
 
     }
 }

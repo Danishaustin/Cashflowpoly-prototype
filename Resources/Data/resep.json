@@ -1,0 +1,82 @@
+{
+  "resep": [
+    {
+      "nama": "LontongBalap",
+      "bahan": ["Sayuran", "Nasi"],
+      "hargaJual": 15,
+      "poinKebahagiaan": 5
+    },
+    {
+      "nama": "GadoGado",
+      "bahan": ["Telur", "Tahu", "Sayuran", "Nasi"],
+      "hargaJual": 12,
+      "poinKebahagiaan": 3
+    },
+    {
+      "nama": "SegoPenyet",
+      "bahan": ["Telur", "Tahu", "Nasi"],
+      "hargaJual": 20,
+      "poinKebahagiaan": 7
+    },
+    {
+      "nama": "NasiGoreng",
+      "bahan": ["Telur", "Nasi"],
+      "hargaJual": 18,
+      "poinKebahagiaan": 6
+    },
+    {
+      "nama": "SotoDaging",
+      "bahan": ["Daging", "Telur"],
+      "hargaJual": 10,
+      "poinKebahagiaan": 4
+    },
+    {
+      "nama": "NasiPecel",
+      "bahan": ["Tahu", "Sayuran", "Nasi"],
+      "hargaJual": 8,
+      "poinKebahagiaan": 3
+    },
+    {
+      "nama": "Rawon",
+      "bahan": ["Daging", "Telur", "Tahu"],
+      "hargaJual": 6,
+      "poinKebahagiaan": 2
+    },
+    {
+      "nama": "NasiCampur",
+      "bahan": ["Daging", "Sayuran", "Telur", "Nasi"],
+      "hargaJual": 5,
+      "poinKebahagiaan": 1
+    },
+    {
+      "nama": "SateKlopo",
+      "bahan": ["Daging", "Daging", "Nasi"],
+      "hargaJual": 3,
+      "poinKebahagiaan": 1
+    },
+    {
+      "nama": "TahuTelor",
+      "bahan": ["Tahu", "Telur", "Telur"],
+      "hargaJual": 2,
+      "poinKebahagiaan": 0
+    },
+    {
+      "nama": "TahuCampur",
+      "bahan": ["Daging", "Tahu"],
+      "hargaJual": 1,
+      "poinKebahagiaan": 0
+    },
+    {
+      "nama": "RujakCingur",
+      "bahan": ["Daging", "Tahu", "Sayuran", "Nasi"],
+      "hargaJual": 1,
+      "poinKebahagiaan": 0
+    },
+    {
+      "nama": "SemanggiSuroboyo",
+      "bahan": ["Sayuran", "Sayuran"],
+      "hargaJual": 1,
+      "poinKebahagiaan": 0
+    }
+  ]
+}

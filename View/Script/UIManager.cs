@@ -21,6 +21,8 @@ public class UIManager : MonoBehaviour
     private TextField usernameInput;
     private TextField passwordInput;
     private TextField nameInput;
+    private TextField playerCountInput;
+    private Label playValidationText;
 
     private VisualElement questContainer;
     private VisualElement loginContainer;
@@ -49,6 +51,8 @@ public class UIManager : MonoBehaviour
         usernameInput = root.Q<TextField>("UsernameInput");
         passwordInput = root.Q<TextField>("PasswordInput");
         nameInput = root.Q<TextField>("NameInput");
+        playerCountInput = root.Q<TextField>("PlayerCountInput");
+        playValidationText = root.Q<Label>("PlayValidationText");
 
         questContainer = root.Q<VisualElement>("QuestContainer");
         loginContainer = root.Q<VisualElement>("LoginContainer");
@@ -75,12 +79,12 @@ public class UIManager : MonoBehaviour
 
         profileContainer.style.display = DisplayStyle.None;
 
-        await LoginManager.Instance.InitializeServicesAsync();
+        // await LoginManager.Instance.InitializeServicesAsync();
 
-        if (!LoginManager.Instance.IsSignedIn())
-        {
-            loginContainer.AddToClassList("show-login");
-        }     
+        // if (!LoginManager.Instance.IsSignedIn())
+        // {
+        //     loginContainer.AddToClassList("show-login");
+        // }     
     }
 
     private void OnProfileClicked(ClickEvent evt)
@@ -118,8 +122,20 @@ public class UIManager : MonoBehaviour
         if (nameInput.value == string.Empty)
         {
             Debug.Log("Name is empty.");
+            playValidationText.text = "Nama tidak boleh kosong.";
             return;
         }
+
+        if (!int.TryParse(playerCountInput.value, out int playerCount) || playerCount < 3 || playerCount > 4)
+        {
+            Debug.Log("Player count must be 3 or 4.");
+            playValidationText.text = "Jumlah pemain harus 3 atau 4.";
+            return;
+        }
+
+        playValidationText.text = string.Empty;
+        PlayerPrefs.SetInt("PlayerCount", playerCount);
+        PlayerPrefs.Save();
         ChangeScene.Instance.ChangeToScene(1);
     }
 

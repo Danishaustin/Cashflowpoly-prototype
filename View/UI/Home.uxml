@@ -55,6 +55,11 @@
                         <ui:Label tabindex="-1" text="Name" parse-escape-sequences="true" display-tooltip-when-elided="true" class="label-field" style="font-size: 50%;" />
                         <ui:TextField picking-mode="Ignore" name="NameInput" class="input-field" style="font-size: 35px; height: 60px;" />
                     </ui:VisualElement>
+                    <ui:VisualElement name="PlayerCountContainer" style="flex-grow: 0; width: 500px; height: 20%;">
+                        <ui:Label tabindex="-1" text="Jumlah Pemain" parse-escape-sequences="true" display-tooltip-when-elided="true" class="label-field" style="font-size: 50%;" />
+                        <ui:TextField picking-mode="Ignore" name="PlayerCountInput" value="3" class="input-field" style="font-size: 35px; height: 60px;" />
+                    </ui:VisualElement>
+                    <ui:Label tabindex="-1" text="" parse-escape-sequences="true" display-tooltip-when-elided="true" name="PlayValidationText" class="label-field" style="font-size: 28px; color: rgb(255, 120, 120); height: 40px;" />
                     <ui:Button text="Play" parse-escape-sequences="true" display-tooltip-when-elided="true" name="Play2Button" class="home-button" style="height: 15%;" />
                 </ui:VisualElement>
             </ui:VisualElement>

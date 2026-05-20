@@ -1,0 +1,30 @@
+{
+  "tujuanFinansial": [
+    {
+      "nama": "Rumah",
+      "hargaBeli": 35,
+      "poinKebahagiaan": 35
+    },
+    {
+      "nama": "Mobil",
+      "hargaBeli": 32,
+      "poinKebahagiaan": 30
+    },
+    {
+      "nama": "Tamasya",
+      "hargaBeli": 30,
+      "poinKebahagiaan": 28
+    },
+    {
+      "nama": "KebunBinatang",
+      "hargaBeli": 28,
+      "poinKebahagiaan": 25
+    },
+    {
+      "nama": "BersamaKeluarga",
+      "hargaBeli": 25,
+      "poinKebahagiaan": 20
+    }
+
+  ]
+}
