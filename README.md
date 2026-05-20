@@ -78,9 +78,9 @@ sebagian besar isi script hanya mengatur UI, Animasi, dan Transisi.
 
 - NarasiController
 
-  NarasiController utamanya digunakan untuk InitiateNarasi dan HandleNarasi yang akan dipanggil dari ChoiceController. InitiateNarasi dipanggil dari UIManager, sedangkan HandleNarasi dipanggil dari ChoiceController setiap kali Aksi dilakukan
+  NarasiController utamanya digunakan untuk InitiateNarasi dan HandleNarasi yang akan dipanggil dari ChoiceController setiap kali Aksi dilakukan.
 
-  - InitiateNarasi
+  - BuildNarasiCache
  
     Fungsi yang berinteraksi dengan DataManager untuk mengambil data narasi berdasarkan Aksi dan AksiKe yang akan disimpan ke dalam Dictionary lokal.
 
