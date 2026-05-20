@@ -66,7 +66,7 @@ sebagian besar isi script hanya mengatur UI, Animasi, dan Transisi.
     
   - "Narasi1":
 
-    Narasi dipisahkan menjadi 3 bagian utama dan "Narasi1" adalah narasi yang akan dimunculkan pertama.
+    Narasi dipisahkan menjadi 3 bagian utama dan "Narasi1" adalah narasi yang akan dimunculkan pertama. Script akan melewatkan string kosong pada variabel Narasi
     
   - "Narasi2"
  
