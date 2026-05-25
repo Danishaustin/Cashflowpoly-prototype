@@ -10,6 +10,8 @@ public class DataManager : MonoBehaviour
     public Dictionary<string, KebutuhanData> kebutuhanDict {get; private set;}
     public Dictionary<string, TujuanFinansialData> tujuanFinansialDict {get; private set;}
     public Dictionary<string, NarasiData> narasiDict {get; private set;}
+    public Dictionary<string, QuestData> questDict {get; private set;}
+    public Dictionary<string, TargetKebutuhanData> targetKebutuhanDict {get; private set;}
 
     void Awake()
     {
@@ -57,6 +59,22 @@ public class DataManager : MonoBehaviour
 
         foreach (var n in narasiDatabase.narasi)
             narasiDict[n.nama] = n;
+
+        TextAsset jsonQuest = Resources.Load<TextAsset>("Data/quest");
+        var questDatabase = JsonUtility.FromJson<QuestDatabase>(jsonQuest.text);
+
+        questDict = new();
+
+        foreach (var q in questDatabase.quest)
+            questDict[q.id] = q;
+
+        TextAsset jsonTargetKebutuhan = Resources.Load<TextAsset>("Data/targetKebutuhan");
+        var targetKebutuhanDatabase = JsonUtility.FromJson<TargetKebutuhanDatabase>(jsonTargetKebutuhan.text);
+
+        targetKebutuhanDict = new();
+
+        foreach (var tk in targetKebutuhanDatabase.targetKebutuhan)
+            targetKebutuhanDict[tk.id] = tk;
 
     }
 }

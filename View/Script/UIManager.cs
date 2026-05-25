@@ -20,8 +20,9 @@ public class UIManager : MonoBehaviour
 
     private TextField usernameInput;
     private TextField passwordInput;
-    private TextField nameInput;
-    private TextField playerCountInput;
+    private DropdownField playerCountDropdown;
+    private TextField[] playerNameInputs;
+    private VisualElement[] playerNameGroups;
     private Label playValidationText;
 
     private VisualElement questContainer;
@@ -50,8 +51,21 @@ public class UIManager : MonoBehaviour
 
         usernameInput = root.Q<TextField>("UsernameInput");
         passwordInput = root.Q<TextField>("PasswordInput");
-        nameInput = root.Q<TextField>("NameInput");
-        playerCountInput = root.Q<TextField>("PlayerCountInput");
+        playerCountDropdown = root.Q<DropdownField>("PlayerCountDropdown");
+        playerNameInputs = new TextField[]
+        {
+            root.Q<TextField>("PlayerNameInput1"),
+            root.Q<TextField>("PlayerNameInput2"),
+            root.Q<TextField>("PlayerNameInput3"),
+            root.Q<TextField>("PlayerNameInput4")
+        };
+        playerNameGroups = new VisualElement[]
+        {
+            root.Q<VisualElement>("PlayerNameGroup1"),
+            root.Q<VisualElement>("PlayerNameGroup2"),
+            root.Q<VisualElement>("PlayerNameGroup3"),
+            root.Q<VisualElement>("PlayerNameGroup4")
+        };
         playValidationText = root.Q<Label>("PlayValidationText");
 
         questContainer = root.Q<VisualElement>("QuestContainer");
@@ -73,6 +87,10 @@ public class UIManager : MonoBehaviour
         backPlayButton.RegisterCallback<ClickEvent>(evt => OnBackClicked(evt, playContainer, "show-play"));
         signOutButton.RegisterCallback<ClickEvent>(OnSignOutClicked);
         scrim.RegisterCallback<ClickEvent>(OnScrimClicked);
+        playerCountDropdown.choices = new List<string>() { "3", "4" };
+        playerCountDropdown.value = "3";
+        playerCountDropdown.RegisterValueChangedCallback(evt => UpdatePlayerNameInputs());
+        UpdatePlayerNameInputs();
 
         questContainer.RegisterCallback<TransitionEndEvent>(OnQuestTransitionEnd);
         loginContainer.RegisterCallback<TransitionEndEvent>(OnLoginTransitionEnd);
@@ -119,24 +137,69 @@ public class UIManager : MonoBehaviour
     private void OnPlay2Clicked(ClickEvent evt)
     {
         Debug.Log("Play2 button clicked!");
-        if (nameInput.value == string.Empty)
+        int playerCount = GetSelectedPlayerCount();
+        for (int i = 0; i < playerCount; i++)
         {
-            Debug.Log("Name is empty.");
-            playValidationText.text = "Nama tidak boleh kosong.";
-            return;
-        }
+            string playerName = playerNameInputs[i].value.Trim();
 
-        if (!int.TryParse(playerCountInput.value, out int playerCount) || playerCount < 3 || playerCount > 4)
-        {
-            Debug.Log("Player count must be 3 or 4.");
-            playValidationText.text = "Jumlah pemain harus 3 atau 4.";
-            return;
+            if (playerName == string.Empty)
+            {
+                Debug.Log("Player name is empty.");
+                playValidationText.text = "Nama Player " + (i + 1) + " tidak boleh kosong.";
+                return;
+            }
+
+            if (playerName.Length > 8)
+            {
+                Debug.Log("Player name is too long.");
+                playValidationText.text = "Nama Player " + (i + 1) + " maksimal 8 karakter.";
+                return;
+            }
         }
 
         playValidationText.text = string.Empty;
         PlayerPrefs.SetInt("PlayerCount", playerCount);
+
+        for (int i = 0; i < playerNameInputs.Length; i++)
+        {
+            if (i < playerCount)
+            {
+                string playerName = playerNameInputs[i].value.Trim();
+                PlayerPrefs.SetString("PlayerName_" + (i + 1), playerName);
+
+                if (i == 0)
+                {
+                    PlayerPrefs.SetString("PlayerName", playerName);
+                }
+            }
+            else
+            {
+                PlayerPrefs.DeleteKey("PlayerName_" + (i + 1));
+            }
+        }
+
         PlayerPrefs.Save();
         ChangeScene.Instance.ChangeToScene(1);
+    }
+
+    private int GetSelectedPlayerCount()
+    {
+        if (int.TryParse(playerCountDropdown.value, out int playerCount))
+        {
+            return Mathf.Clamp(playerCount, 3, 4);
+        }
+
+        return 3;
+    }
+
+    private void UpdatePlayerNameInputs()
+    {
+        int playerCount = GetSelectedPlayerCount();
+
+        for (int i = 0; i < playerNameInputs.Length; i++)
+        {
+            playerNameGroups[i].style.display = i < playerCount ? DisplayStyle.Flex : DisplayStyle.None;
+        }
     }
 
     private void OnEditRulesetClicked(ClickEvent evt)

@@ -1,0 +1,84 @@
+{
+  "targetKebutuhan": [
+    {
+      "id": "target_primer_sekunder_boneka",
+      "nama": "Kebutuhan Seimbang",
+      "kebutuhanTarget": [
+        {
+          "jenisTarget": "tipe",
+          "value": "primer"
+        },
+        {
+          "jenisTarget": "tipe",
+          "value": "sekunder"
+        },
+        {
+          "jenisTarget": "nama",
+          "value": "Boneka"
+        }
+      ],
+      "poinKebahagiaanBerhasil": 5,
+      "poinKebahagiaanGagal": -3
+    },
+    {
+      "id": "target_buku_tas_jamtangan",
+      "nama": "Belanja Terencana",
+      "kebutuhanTarget": [
+        {
+          "jenisTarget": "nama",
+          "value": "Buku"
+        },
+        {
+          "jenisTarget": "nama",
+          "value": "Tas"
+        },
+        {
+          "jenisTarget": "nama",
+          "value": "JamTangan"
+        }
+      ],
+      "poinKebahagiaanBerhasil": 6,
+      "poinKebahagiaanGagal": -4
+    },
+    {
+      "id": "target_primer_sekunder_tersier",
+      "nama": "Lengkapi Semua Kategori",
+      "kebutuhanTarget": [
+        {
+          "jenisTarget": "tipe",
+          "value": "primer"
+        },
+        {
+          "jenisTarget": "tipe",
+          "value": "sekunder"
+        },
+        {
+          "jenisTarget": "tipe",
+          "value": "tersier"
+        }
+      ],
+      "poinKebahagiaanBerhasil": 4,
+      "poinKebahagiaanGagal": -2
+    },
+    {
+      "id": "target_makanan_kamera_boneka",
+      "nama": "Hari Bahagia",
+      "kebutuhanTarget": [
+        {
+          "jenisTarget": "nama",
+          "value": "Makanan"
+        },
+        {
+          "jenisTarget": "nama",
+          "value": "Kamera"
+        },
+        {
+          "jenisTarget": "nama",
+          "value": "Boneka"
+        }
+      ],
+      "poinKebahagiaanBerhasil": 7,
+      "poinKebahagiaanGagal": -5
+    }
+  ]
+}

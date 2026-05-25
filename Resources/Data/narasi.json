@@ -2,88 +2,148 @@
   "narasi": [
     {
       "nama": "bahan_default",
-      "aksi": "BahanMasakan",
-      "aksiKe": 0,
+      "prerequisiteAksi": [
+        {
+          "aksi": "BahanMasakan",
+          "value": 0
+        }
+      ],
       "narasi1": "Doni mampir ke pasar kecil di ujung jalan.",
       "narasi2": "Ia memilih bahan yang masih segar dan menghitung uangnya pelan-pelan.",
       "narasi3": "Semoga bahan ini bisa jadi masakan yang laku."
     },
     {
       "nama": "bahan_pertama",
-      "aksi": "BahanMasakan",
-      "aksiKe": 1,
+      "prerequisiteAksi": [
+        {
+          "aksi": "BahanMasakan",
+          "value": 1
+        }
+      ],
       "narasi1": "Ini belanja bahan pertama Doni hari ini.",
       "narasi2": "Ia belum tahu hasilnya nanti, tapi langkah kecil tetap harus dimulai.",
       "narasi3": ""
     },
     {
       "nama": "jual_default",
-      "aksi": "JualMasakan",
-      "aksiKe": 0,
+      "prerequisiteAksi": [
+        {
+          "aksi": "JualMasakan",
+          "value": 0
+        }
+      ],
       "narasi1": "Doni menawarkan masakannya kepada orang yang lewat.",
       "narasi2": "Tidak semua berhenti, tapi beberapa mulai melirik dagangannya.",
       "narasi3": "Hari ini ia belajar membaca selera pembeli."
     },
     {
       "nama": "jual_pertama",
-      "aksi": "JualMasakan",
-      "aksiKe": 1,
+      "prerequisiteAksi": [
+        {
+          "aksi": "JualMasakan",
+          "value": 1
+        }
+      ],
       "narasi1": "Masakan pertama Doni akhirnya terjual.",
       "narasi2": "Rasanya lega melihat seseorang menikmati hasil kerjanya.",
       "narasi3": "Doni jadi lebih yakin untuk terus mencoba."
     },
     {
       "nama": "jual_kedua",
-      "aksi": "JualMasakan",
-      "aksiKe": 2,
+      "prerequisiteAksi": [
+        {
+          "aksi": "JualMasakan",
+          "value": 2
+        }
+      ],
       "narasi1": "Pembeli berikutnya datang lebih cepat dari dugaan.",
       "narasi2": "Doni mulai hafal bagian mana dari masakannya yang paling disukai.",
       "narasi3": ""
     },
     {
       "nama": "kebutuhan_default",
-      "aksi": "Kebutuhan",
-      "aksiKe": 0,
+      "prerequisiteAksi": [
+        {
+          "aksi": "Kebutuhan",
+          "value": 0
+        }
+      ],
       "narasi1": "Doni membeli kebutuhan yang sudah lama ia catat.",
       "narasi2": "Uangnya berkurang, tapi hidupnya terasa sedikit lebih nyaman.",
       "narasi3": ""
     },
     {
+      "nama": "kebutuhan_setelah_jual_dua",
+      "prerequisiteAksi": [
+        {
+          "aksi": "Kebutuhan",
+          "value": 3
+        },
+        {
+          "aksi": "JualMasakan",
+          "value": 2
+        }
+      ],
+      "narasi1": "Doni mulai melihat pola dari usahanya sendiri.",
+      "narasi2": "Setelah beberapa masakan terjual, ia lebih berani memenuhi kebutuhan yang tertunda.",
+      "narasi3": "Keputusan kecil yang konsisten ternyata membuat hidupnya bergerak."
+    },
+    {
       "nama": "kebutuhan_keempat",
-      "aksi": "Kebutuhan",
-      "aksiKe": 4,
+      "prerequisiteAksi": [
+        {
+          "aksi": "Kebutuhan",
+          "value": 4
+        }
+      ],
       "narasi1": "Setelah beberapa kali menunda, Doni akhirnya memenuhi kebutuhan penting lainnya.",
       "narasi2": "Ia sadar mengatur uang bukan cuma soal menabung, tapi juga tahu kapan harus memakai.",
       "narasi3": ""
     },
     {
       "nama": "kerja_lepas_default",
-      "aksi": "KerjaLepas",
-      "aksiKe": 0,
+      "prerequisiteAksi": [
+        {
+          "aksi": "KerjaLepas",
+          "value": 0
+        }
+      ],
       "narasi1": "Doni mengambil pekerjaan kecil untuk menambah uang.",
       "narasi2": "Hasilnya tidak besar, tapi cukup untuk menjaga harapan tetap bergerak.",
       "narasi3": ""
     },
     {
       "nama": "kerja_lepas_pertama",
-      "aksi": "KerjaLepas",
-      "aksiKe": 1,
+      "prerequisiteAksi": [
+        {
+          "aksi": "KerjaLepas",
+          "value": 1
+        }
+      ],
       "narasi1": "Pekerjaan lepas pertama terasa melelahkan.",
       "narasi2": "Namun Doni pulang dengan satu koin dan sedikit rasa bangga.",
       "narasi3": ""
     },
     {
       "nama": "tujuan_finansial_default",
-      "aksi": "TujuanFinansial",
-      "aksiKe": 0,
+      "prerequisiteAksi": [
+        {
+          "aksi": "TujuanFinansial",
+          "value": 0
+        }
+      ],
       "narasi1": "Doni melihat lagi daftar impian yang ingin ia capai.",
       "narasi2": "Setiap koin yang terkumpul membuat tujuan itu terasa lebih dekat.",
       "narasi3": "Ia tersenyum kecil sebelum mengambil keputusan."
     },
     {
       "nama": "tujuan_finansial_pertama",
-      "aksi": "TujuanFinansial",
-      "aksiKe": 1,
+      "prerequisiteAksi": [
+        {
+          "aksi": "TujuanFinansial",
+          "value": 1
+        }
+      ],
       "narasi1": "Untuk pertama kalinya, Doni benar-benar memakai tabungan untuk tujuan besar.",
       "narasi2": "Ada rasa sayang melihat tabungan berkurang, tapi kebahagiaannya bertambah.",
       "narasi3": ""

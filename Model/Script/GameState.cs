@@ -35,6 +35,10 @@ public class GameState : MonoBehaviour
     public int JumatBerkah { get; private set; } = 0;
     public string  kebutuhanSelected {get; private set;} = "";
 
+    // Peduli Donasi
+    public Dictionary<int, List<int>> JuaraPeduliDonasi { get; private set; }
+    private Dictionary<int, int> playerPeduliDonasi;
+
     // Inventory
     public Dictionary<string, int> bahanList {get; private set;}
     public Dictionary<string, List<string>> kebutuhanList {get; private set;}
@@ -57,6 +61,7 @@ public class GameState : MonoBehaviour
 
         Instance = this;
         InitializePlayerStats();
+        InitializePeduliDonasi();
         bahanList = new Dictionary<string, int>();
         kebutuhanList = new Dictionary<string, List<string>>();
     }
@@ -76,6 +81,63 @@ public class GameState : MonoBehaviour
             playerHappiness[player] = InitialHappiness;
             playerSaving[player] = InitialSaving;
         }
+    }
+
+    private void InitializePeduliDonasi()
+    {
+        JuaraPeduliDonasi = new Dictionary<int, List<int>>();
+        playerPeduliDonasi = new Dictionary<int, int>();
+
+        for (int player = 1; player <= playerCount; player++)
+        {
+            playerPeduliDonasi[player] = 0;
+        }
+    }
+
+    private void EnsurePeduliDonasiPlayer(int player)
+    {
+        if (JuaraPeduliDonasi == null || playerPeduliDonasi == null)
+        {
+            InitializePeduliDonasi();
+        }
+
+        if (!playerPeduliDonasi.ContainsKey(player))
+        {
+            playerPeduliDonasi[player] = 0;
+        }
+    }
+
+    public void CatatPeduliDonasi(int amount)
+    {
+        EnsurePeduliDonasiPlayer(turn);
+        playerPeduliDonasi[turn] += amount;
+        JumatBerkah++;
+
+        var ranking = new List<int>();
+        for (int player = 1; player <= playerCount; player++)
+        {
+            EnsurePeduliDonasiPlayer(player);
+            ranking.Add(player);
+        }
+
+        ranking.Sort((a, b) =>
+        {
+            int donationCompare = playerPeduliDonasi[b].CompareTo(playerPeduliDonasi[a]);
+            if (donationCompare != 0)
+            {
+                return donationCompare;
+            }
+
+            return a.CompareTo(b);
+        });
+
+        JuaraPeduliDonasi[JumatBerkah] = ranking;
+    }
+
+    public int GetPeduliDonasiTotal(int player)
+    {
+        EnsurePeduliDonasiPlayer(player);
+        return playerPeduliDonasi[player];
     }
 
     private void EnsurePlayerStats(int player)
@@ -162,6 +224,42 @@ public class GameState : MonoBehaviour
     public void ChangeSavingText(int amount)
     {
         SavingText += amount;
+    }
+
+    public int GetActionCount(string aksi)
+    {
+        switch (NormalizeActionName(aksi))
+        {
+            case "BahanMasakan":
+                return Mathf.Max(0, bmAksiKe - 1);
+            case "JualMasakan":
+                return Mathf.Max(0, jmAksiKe - 1);
+            case "Kebutuhan":
+                return Mathf.Max(0, kAksiKe - 1);
+            case "KerjaLepas":
+                return Mathf.Max(0, klAksiKe - 1);
+            case "TujuanFinansial":
+                return Mathf.Max(0, tfAksiKe - 1);
+            case "JumatBerkah":
+                return JumatBerkah;
+            default:
+                return 0;
+        }
+    }
+
+    public string NormalizeActionName(string aksi)
+    {
+        switch (aksi)
+        {
+            case "BeliBahan":
+                return "BahanMasakan";
+            case "JualMakanan":
+                return "JualMasakan";
+            case "BeliKebutuhan":
+                return "Kebutuhan";
+            default:
+                return aksi;
+        }
     }
 
     public List<string> HasBahan(Dictionary<string, int> jumlahBahan)

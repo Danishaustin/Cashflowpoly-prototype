@@ -374,6 +374,7 @@ public class ChoiceController : MonoBehaviour
                     view.ShowChoice("JumatBerkah");
                     return;
                 }
+                GameState.Instance.CatatPeduliDonasi(GameState.Instance.SavingText);
                 GameState.Instance.ChangeCoins(-GameState.Instance.SavingText);
                 view.UpdateCoins(GameState.Instance.Coins);
                 GameState.Instance.NextDay();

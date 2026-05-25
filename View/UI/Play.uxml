@@ -119,6 +119,19 @@
                 <ui:Label tabindex="-1" text="0" parse-escape-sequences="true" display-tooltip-when-elided="true" name="CoinCounter" style="width: 50%; height: 50%; -unity-text-align: middle-left; -unity-font-definition: initial; -unity-font: url(&quot;project://database/Assets/Resources/Sprite/300Mind/2D%20Game%20UI%20Kit/Fonts/Ariston%20Comic%20Font.ttf?fileID=12800000&amp;guid=e28e9ad7f0a79f14d8c01971d5416eba&amp;type=3#Ariston Comic Font&quot;); font-size: 100px;" />
             </ui:VisualElement>
         </ui:VisualElement>
+        <ui:Button parse-escape-sequences="true" display-tooltip-when-elided="true" name="PauseToggleButton" class="pause-toggle-button" />
+        <ui:Button parse-escape-sequences="true" display-tooltip-when-elided="true" name="QuestToggleButton" class="quest-toggle-button" />
+        <ui:VisualElement name="QuestPanel" class="quest-panel" style="display: none;">
+            <ui:VisualElement name="QuestHeader" class="quest-panel-header">
+                <ui:Label tabindex="-1" text="Quest" parse-escape-sequences="true" display-tooltip-when-elided="true" class="quest-panel-title" />
+                <ui:Button text="X" parse-escape-sequences="true" display-tooltip-when-elided="true" name="CloseQuestButton" class="quest-close-button" />
+            </ui:VisualElement>
+            <ui:VisualElement name="QuestList" class="quest-list">
+                <ui:Label tabindex="-1" text="Jual 3 masakan 0/3" parse-escape-sequences="true" display-tooltip-when-elided="true" class="quest-item-title" />
+                <ui:Label tabindex="-1" text="Beli 2 kebutuhan 0/2" parse-escape-sequences="true" display-tooltip-when-elided="true" class="quest-item-title" />
+                <ui:Label tabindex="-1" text="Menabung 10 koin 0/10" parse-escape-sequences="true" display-tooltip-when-elided="true" class="quest-item-title" />
+            </ui:VisualElement>
+        </ui:VisualElement>
         <ui:VisualElement name="TurnContainer" style="flex-grow: 1; position: absolute; width: 20%; height: 20%; background-color: rgba(255, 255, 255, 0); left: 50%; background-image: url(&quot;project://database/Assets/View/UI/Sprites/UIElement/TurnContainer.png?fileID=21300000&amp;guid=91ee399fab5a4b3469bad30d25302782&amp;type=3#TurnContainer&quot;); flex-direction: column-reverse; transform-origin: center; -unity-slice-scale: 2px; -unity-background-scale-mode: stretch-to-fill; flex-shrink: 1; translate: -50% -40%; padding-top: 80px; padding-right: 40px; padding-bottom: 40px; padding-left: 40px;">
             <ui:Label tabindex="-1" text="Player 1" parse-escape-sequences="true" display-tooltip-when-elided="true" name="PlayerTurn" style="font-size: 70%; height: 100%; white-space: nowrap; -unity-text-align: middle-center; -unity-font: url(&quot;project://database/Assets/Resources/Sprite/300Mind/2D%20Game%20UI%20Kit/Fonts/Ariston%20Comic%20Font.ttf?fileID=12800000&amp;guid=e28e9ad7f0a79f14d8c01971d5416eba&amp;type=3#Ariston Comic Font&quot;); -unity-font-definition: initial; -unity-font-style: bold; border-top-left-radius: 100%; border-top-right-radius: 100%; border-bottom-right-radius: 100%; border-bottom-left-radius: 100%; width: 100%;" />
         </ui:VisualElement>

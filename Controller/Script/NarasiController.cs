@@ -7,14 +7,14 @@ public class NarasiController : MonoBehaviour
 {
     public static NarasiController Instance { get; private set; }
     [SerializeField] private UIManagerPlay view;
-    private Dictionary<string, Dictionary<int, List<string>>> narasiAksiDict;
+    private List<NarasiData> narasiList;
     private Coroutine currentNarasiCoroutine;
     private bool isNarasiCacheReady;
 
     void Awake()
     {
         Instance = this;
-        narasiAksiDict = new Dictionary<string, Dictionary<int, List<string>>>();
+        narasiList = new List<NarasiData>();
     }
 
     private bool EnsureNarasiCache()
@@ -37,36 +37,16 @@ public class NarasiController : MonoBehaviour
 
     private void BuildNarasiCache()
     {
-        narasiAksiDict.Clear();
+        narasiList.Clear();
 
         foreach (var n in DataManager.Instance.narasiDict.Values)
         {
-            if (string.IsNullOrWhiteSpace(n.aksi))
+            if (n.prerequisiteAksi == null || n.prerequisiteAksi.Count == 0)
             {
                 continue;
             }
 
-            if (!narasiAksiDict.ContainsKey(n.aksi))
-            {
-                narasiAksiDict[n.aksi] = new Dictionary<int, List<string>>();
-            }
-
-            if (!narasiAksiDict[n.aksi].ContainsKey(n.aksiKe))
-            {
-                narasiAksiDict[n.aksi][n.aksiKe] = new List<string>();
-            }
-
-            AddNarasiText(n.aksi, n.aksiKe, n.narasi1);
-            AddNarasiText(n.aksi, n.aksiKe, n.narasi2);
-            AddNarasiText(n.aksi, n.aksiKe, n.narasi3);
-        }
-    }
-
-    private void AddNarasiText(string aksi, int aksiKe, string text)
-    {
-        if (!string.IsNullOrWhiteSpace(text))
-        {
-            narasiAksiDict[aksi][aksiKe].Add(text);
+            narasiList.Add(n);
         }
     }
 
@@ -86,21 +66,10 @@ public class NarasiController : MonoBehaviour
             return false;
         }
 
-        if (!narasiAksiDict.ContainsKey(aksi))
+        NarasiData selectedNarasi = GetNarasiByPrerequisite(aksi, aksiKe);
+        if (selectedNarasi == null)
         {
             return false;
-        }
-
-        var narasiByAksiKe = narasiAksiDict[aksi];
-        int ke = aksiKe;
-        if (!narasiByAksiKe.ContainsKey(ke))
-        {
-            if (!narasiByAksiKe.ContainsKey(0))
-            {
-                return false;
-            }
-
-            ke = 0;
         }
 
 
@@ -120,8 +89,13 @@ public class NarasiController : MonoBehaviour
             StopCoroutine(currentNarasiCoroutine);
         }
 
-        var narasiList = narasiByAksiKe[ke]
-            .Where(narasi => !string.IsNullOrWhiteSpace(narasi))
+        var narasiList = new List<string>()
+        {
+            selectedNarasi.narasi1,
+            selectedNarasi.narasi2,
+            selectedNarasi.narasi3
+        }
+            .Where(text => !string.IsNullOrWhiteSpace(text))
             .ToList();
 
         if (narasiList.Count == 0)
@@ -131,6 +105,81 @@ public class NarasiController : MonoBehaviour
 
         currentNarasiCoroutine = StartCoroutine(PlayNarasi(narasiList, onComplete));
         return true;
+    }
+
+    private NarasiData GetNarasiByPrerequisite(string aksi, int aksiKe)
+    {
+        var matchingNarasi = narasiList
+            .Where(narasi => HasTriggerPrerequisite(narasi, aksi, aksiKe))
+            .Where(narasi => IsPrerequisiteMet(narasi))
+            .OrderByDescending(CountValidPrerequisites)
+            .FirstOrDefault();
+
+        if (matchingNarasi != null)
+        {
+            return matchingNarasi;
+        }
+
+        return narasiList
+            .Where(narasi => HasTriggerPrerequisite(narasi, aksi, 0))
+            .Where(narasi => IsPrerequisiteMet(narasi))
+            .OrderByDescending(CountValidPrerequisites)
+            .FirstOrDefault();
+    }
+
+    private bool HasTriggerPrerequisite(NarasiData narasi, string aksi, int value)
+    {
+        if (GameState.Instance == null || narasi.prerequisiteAksi == null)
+        {
+            return false;
+        }
+
+        string normalizedAksi = GameState.Instance.NormalizeActionName(aksi);
+        return narasi.prerequisiteAksi.Any(prerequisite =>
+            prerequisite != null
+            && GameState.Instance.NormalizeActionName(prerequisite.aksi) == normalizedAksi
+            && prerequisite.value == value);
+    }
+
+    private bool IsPrerequisiteMet(NarasiData narasi)
+    {
+        if (GameState.Instance == null)
+        {
+            return false;
+        }
+
+        var prerequisites = GetPrerequisites(narasi);
+        if (prerequisites.Count == 0)
+        {
+            return true;
+        }
+
+        foreach (var prerequisite in prerequisites)
+        {
+            if (GameState.Instance.GetActionCount(prerequisite.aksi) < prerequisite.value)
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private int CountValidPrerequisites(NarasiData narasi)
+    {
+        return GetPrerequisites(narasi).Count;
+    }
+
+    private List<PrerequisiteAksiData> GetPrerequisites(NarasiData narasi)
+    {
+        if (narasi.prerequisiteAksi == null)
+        {
+            return new List<PrerequisiteAksiData>();
+        }
+
+        return narasi.prerequisiteAksi
+            .Where(prerequisite => prerequisite != null && !string.IsNullOrWhiteSpace(prerequisite.aksi))
+            .ToList();
     }
 
     private IEnumerator PlayNarasi(List<string> narasiList, System.Action onComplete)

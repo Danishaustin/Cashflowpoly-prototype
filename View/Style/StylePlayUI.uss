@@ -74,3 +74,119 @@
     border-bottom-right-radius: 40px;
     border-bottom-left-radius: 40px;
 }
+
+.pause-toggle-button {
+    position: absolute;
+    top: 20px;
+    left: 20%;
+    width: 100px;
+    height: 100px;
+    background-color: rgb(255, 255, 255);
+    background-image: url("project://database/Assets/View/UI/Sprites/Icons/Heart.png?fileID=21300000&guid=97de086bbc8a38d4799cac1c8d00064e&type=3#Heart");
+    -unity-background-scale-mode: scale-to-fit;
+    -unity-background-image-tint-color: rgb(255, 255, 255);
+    border-top-left-radius: 25%;
+    border-top-right-radius: 25%;
+    border-bottom-right-radius: 25%;
+    border-bottom-left-radius: 25%;
+    padding-top: 10px;
+    padding-right: 10px;
+    padding-bottom: 10px;
+    padding-left: 10px;
+}
+
+.quest-toggle-button {
+    position: absolute;
+    top: 20px;
+    left: 30%;
+    width: 100px;
+    height: 100px;
+    background-color: rgb(255, 255, 255);
+    background-image: url("project://database/Assets/View/UI/Sprites/Icons/Money.png?fileID=21300000&guid=cba790c33b765944fa6dbaa548db9db9&type=3#Money");
+    -unity-background-scale-mode: scale-to-fit;
+    -unity-background-image-tint-color: rgb(255, 255, 255);
+    border-top-left-radius: 25%;
+    border-top-right-radius: 25%;
+    border-bottom-right-radius: 25%;
+    border-bottom-left-radius: 25%;
+    padding-top: 10px;
+    padding-right: 10px;
+    padding-bottom: 10px;
+    padding-left: 10px;
+}
+
+.pause-toggle-button:hover {
+    background-color: rgb(230, 230, 230);
+}
+
+.quest-toggle-button:hover {
+    background-color: rgb(230, 230, 230);
+}
+
+.quest-panel {
+    position: absolute;
+    top: 120px;
+    left: 24%;
+    width: 420px;
+    height: 330px;
+    padding-top: 18px;
+    padding-right: 18px;
+    padding-bottom: 18px;
+    padding-left: 18px;
+    background-color: rgba(255, 255, 255, 0.94);
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+    border-bottom-right-radius: 20px;
+    border-bottom-left-radius: 20px;
+    border-left-width: 4px;
+    border-right-width: 4px;
+    border-top-width: 4px;
+    border-bottom-width: 4px;
+    border-left-color: rgb(64, 92, 72);
+    border-right-color: rgb(64, 92, 72);
+    border-top-color: rgb(64, 92, 72);
+    border-bottom-color: rgb(64, 92, 72);
+}
+
+.quest-panel-header {
+    flex-direction: row;
+    height: 64px;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.quest-panel-title {
+    -unity-font: resource('Sprite/300Mind/2D Game UI Kit/Fonts/Ariston Comic Font');
+    -unity-font-definition: initial;
+    -unity-font-style: bold;
+    font-size: 44px;
+    color: rgb(22, 52, 42);
+}
+
+.quest-close-button {
+    width: 56px;
+    height: 56px;
+    background-color: rgb(255, 238, 224);
+    -unity-font: resource('Sprite/300Mind/2D Game UI Kit/Fonts/Ariston Comic Font');
+    -unity-font-definition: initial;
+    -unity-font-style: bold;
+    font-size: 28px;
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+    border-bottom-right-radius: 12px;
+    border-bottom-left-radius: 12px;
+}
+
+.quest-list {
+    flex-grow: 1;
+    padding-top: 14px;
+}
+
+.quest-item-title {
+    -unity-font: resource('Sprite/300Mind/2D Game UI Kit/Fonts/Ariston Comic Font');
+    -unity-font-definition: initial;
+    font-size: 32px;
+    color: rgb(22, 52, 42);
+    margin-bottom: 14px;
+    white-space: normal;
+}

@@ -7,6 +7,7 @@ using DG.Tweening;
 public class UIManagerPlay : MonoBehaviour
 {
     [SerializeField] private ChoiceController choiceController;
+    private Label nameTag;
     private Label dialog;
     private Label coinCounter;
     private Label happinessCounter;
@@ -17,17 +18,24 @@ public class UIManagerPlay : MonoBehaviour
     private Label jumatBerkahText;
     private Label hargaBeliText;
     private Label selesaiText;
+    private Button pauseToggleButton;
+    private Button questToggleButton;
+    private Button closeQuestButton;
     private VisualElement playerContainer;
     private VisualElement textContainer;
+    private VisualElement questPanel;
     private Dictionary<string, VisualElement> choiceContainers;
     private List<string> specialButtons;
     private EventCallback<TransitionEndEvent> transitionCallback;
     private string selectedChoice;
     private Tween dialogTween;
+    private bool isPaused;
     void Start()
     {
+        Time.timeScale = 1f;
         var root = GetComponent<UIDocument>().rootVisualElement;
 
+        nameTag = root.Q<Label>("NameTag");
         dialog = root.Q<Label>("Dialog");
         coinCounter = root.Q<Label>("CoinCounter");
         happinessCounter = root.Q<Label>("HappinessCounter");
@@ -38,9 +46,13 @@ public class UIManagerPlay : MonoBehaviour
         jumatBerkahText = root.Q<Label>("JumatBerkahText");
         hargaBeliText = root.Q<Label>("KHargaBeliText");
         selesaiText = root.Q<Label>("SelesaiText");
+        pauseToggleButton = root.Q<Button>("PauseToggleButton");
+        questToggleButton = root.Q<Button>("QuestToggleButton");
+        closeQuestButton = root.Q<Button>("CloseQuestButton");
 
         playerContainer = root.Q<VisualElement>("PlayerContainer");
         textContainer = root.Q<VisualElement>("TextContainer");
+        questPanel = root.Q<VisualElement>("QuestPanel");
 
         choiceContainers = new();
 
@@ -82,12 +94,21 @@ public class UIManagerPlay : MonoBehaviour
         // choice1.style.display = DisplayStyle.None;
 
         playerContainer.RegisterCallback<TransitionEndEvent>(ShowTextContainer);
+        pauseToggleButton.RegisterCallback<ClickEvent>(TogglePause);
+        questToggleButton.RegisterCallback<ClickEvent>(ToggleQuestPanel);
+        closeQuestButton.RegisterCallback<ClickEvent>(HideQuestPanel);
+        UpdateNameTag();
         UpdateDay(GameState.Instance.day);
         UpdatePlayerTurn(GameState.Instance.turn);
         UpdatePlayerStats();
 
         Invoke("ShowPlayerContainer", .1f);
         Invoke("ShowChoice1", 1.5f);
+    }
+
+    void OnDestroy()
+    {
+        Time.timeScale = 1f;
     }
 
     void RegisterChoiceGroup(string containerName, VisualElement root)
@@ -130,6 +151,31 @@ public class UIManagerPlay : MonoBehaviour
         {
             choiceContainers["Choice1"].AddToClassList("show-choice");
         }).StartingIn(1);
+    }
+
+    private void TogglePause(ClickEvent evt)
+    {
+        isPaused = !isPaused;
+        Time.timeScale = isPaused ? 0f : 1f;
+    }
+
+    private void ToggleQuestPanel(ClickEvent evt)
+    {
+        bool isVisible = questPanel.style.display == DisplayStyle.Flex;
+        questPanel.style.display = isVisible ? DisplayStyle.None : DisplayStyle.Flex;
+    }
+
+    private void HideQuestPanel(ClickEvent evt)
+    {
+        questPanel.style.display = DisplayStyle.None;
+    }
+
+    private void UpdateNameTag()
+    {
+        string playerNameKey = "PlayerName_" + GameState.Instance.turn;
+        string fallbackName = "Player " + GameState.Instance.turn;
+        string playerName = PlayerPrefs.GetString(playerNameKey, fallbackName);
+        nameTag.text = playerName;
     }
 
     private void Dialog(Label l, string text, float duration = 0.5f)
@@ -255,6 +301,7 @@ public class UIManagerPlay : MonoBehaviour
     public void UpdatePlayerTurn(int turn)
     {
         playerTurn.text = "Player " + turn;
+        UpdateNameTag();
     }
 
     public void UpdatePlayerStats()

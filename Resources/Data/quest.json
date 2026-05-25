@@ -1,0 +1,57 @@
+{
+  "quest": [
+    {
+      "id": "jual_3_masakan",
+      "title": "Pedagang Baru",
+      "description": "Jual 3 masakan kepada pembeli.",
+      "aksi": "JualMasakan",
+      "target": 3,
+      "rewardCoins": 5,
+      "rewardHappiness": 2
+    },
+    {
+      "id": "beli_5_bahan",
+      "title": "Stok Dapur",
+      "description": "Beli bahan masakan sebanyak 5 kali.",
+      "aksi": "BahanMasakan",
+      "target": 5,
+      "rewardCoins": 3,
+      "rewardHappiness": 1
+    },
+    {
+      "id": "beli_2_kebutuhan",
+      "title": "Hidup Lebih Nyaman",
+      "description": "Beli kebutuhan sebanyak 2 kali.",
+      "aksi": "Kebutuhan",
+      "target": 2
+    },
+    {
+      "id": "kerja_lepas_4_kali",
+      "title": "Rajin Bekerja",
+      "description": "Lakukan kerja lepas sebanyak 4 kali.",
+      "aksi": "KerjaLepas",
+      "target": 4
+    },
+    {
+      "id": "menabung_10_koin",
+      "title": "Mulai Menabung",
+      "description": "Tabung total 10 koin.",
+      "aksi": "Menabung",
+      "target": 10
+    },
+    {
+      "id": "beli_tujuan_finansial",
+      "title": "Impian Pertama",
+      "description": "Beli 1 tujuan finansial.",
+      "aksi": "TujuanFinansial",
+      "target": 1
+    },
+    {
+      "id": "donasi_1_kali",
+      "title": "Peduli Sesama",
+      "description": "Lakukan Peduli Donasi 1 kali.",
+      "aksi": "JumatBerkah",
+      "target": 1
+    }
+  ]
+}
