@@ -481,19 +481,6 @@ Contoh:
 ]
 ```
 
-## PlayerPrefs Yang Sekarang Dipakai
-
-Saat ini data setup game baru disimpan sementara di `PlayerPrefs`.
-
-| Key | Type | Keterangan |
-|---|---|---|
-| `PlayerCount` | int | Jumlah player, 3 atau 4 |
-| `PlayerName_1` | string | Nama player 1 |
-| `PlayerName_2` | string | Nama player 2 |
-| `PlayerName_3` | string | Nama player 3 |
-| `PlayerName_4` | string | Nama player 4, hanya jika player count 4 |
-
-Jika memakai database, data ini menjadi bagian dari `game_sessions` dan `session_players`.
 
 ## Relasi Singkat
 
