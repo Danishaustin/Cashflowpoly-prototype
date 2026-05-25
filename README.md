@@ -46,4 +46,44 @@ sebagian besar isi script hanya mengatur UI, Animasi, dan Transisi.
   
 - UIManagerPlay
 
-  Memiliki interaksi dengan ChoiceController untuk mengatur input pilihan user dan akan memiliki interaksi dengan NarasiController pada fitur mendatang 
+  Memiliki interaksi dengan ChoiceController untuk mengatur input pilihan user dan akan memiliki interaksi dengan NarasiController pada fitur mendatang
+
+## Narasi
+
+### Script
+
+- NarasiData
+
+  NarasiData.cs akan bertugas sebagai template format narasi.json yang akan dimasukkan ke dalam Dictionary pada DataManager. Isi dari narasi.json meliputi:
+
+  - "Aksi"
+
+    berupa nama Aksi yang membutuhkan narasinya.
+    
+  - "AksiKe"
+ 
+    Digunakan untuk mengidentifikasi pada "Aksi" ke-berapa narasi akan ditampilkan. Script akan membaca 0 sebagai narasi default yang akan ditampilkan setiap melakukan "Aksi".
+    
+  - "Narasi1":
+
+    Narasi dipisahkan menjadi 3 bagian utama dan "Narasi1" adalah narasi yang akan dimunculkan pertama. Script akan melewatkan string kosong pada variabel Narasi
+    
+  - "Narasi2"
+ 
+    Narasi yang akan dimunculkan setelah "Narasi1".
+    
+  - "Narasi3"
+ 
+    Narasi yang akan dimunculkan setelah "Narasi2".
+
+- NarasiController
+
+  NarasiController utamanya digunakan untuk InitiateNarasi dan HandleNarasi yang akan dipanggil dari ChoiceController setiap kali Aksi dilakukan.
+
+  - BuildNarasiCache
+ 
+    Fungsi yang berinteraksi dengan DataManager untuk mengambil data narasi berdasarkan Aksi dan AksiKe yang akan disimpan ke dalam Dictionary lokal.
+
+  - HandleNarasi
+
+    Fungsi yang akan berinteraksi dengan UIManager untuk menampilkan narasi secara bertahap .
