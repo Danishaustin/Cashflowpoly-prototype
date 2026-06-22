@@ -1,0 +1,223 @@
+{
+  "dialogKarakter": [
+    {
+      "id": "mentor_bahan_default",
+      "prerequisite": [
+        {
+          "aksi": "BahanMasakan",
+          "aksiValue": 0,
+          "uang": 0,
+          "kebahagiaan": 0,
+          "tabungan": 0,
+          "emas": 0,
+          "kartuPinjaman": 0,
+          "mingguKe": 0,
+          "hariKe": 0,
+          "asuransiDimiliki": false,
+          "bahanDimiliki": [],
+          "kebutuhanDimiliki": [],
+          "tujuanFinansialDimiliki": [],
+          "masakanDijual": []
+        }
+      ],
+      "steps": [
+        {
+          "namaKarakter": "Mentor",
+          "spritePath": "",
+          "menghadapKanan": false,
+          "aksiKarakter": "Kemunculan",
+          "dialog": [
+            "Membeli bahan adalah langkah awal untuk menyiapkan masakan."
+          ]
+        },
+        {
+          "namaKarakter": "Mentor",
+          "spritePath": "",
+          "menghadapKanan": false,
+          "aksiKarakter": "PergantianEkspresi",
+          "dialog": [
+            "Pilih bahan yang sesuai dengan resep yang ingin kamu jual nanti."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "mentor_bahan_nasi_dua",
+      "prerequisite": [
+        {
+          "aksi": "Ending",
+          "aksiValue": 0,
+          "uang": 20,
+          "kebahagiaan": 30,
+          "tabungan": 16,
+          "emas": 2,
+          "kartuPinjaman": 0,
+          "mingguKe": 0,
+          "hariKe": 0,
+          "asuransiDimiliki": false,
+          "bahanDimiliki": [
+            "Nasi",
+            "Daging"
+          ],
+          "kebutuhanDimiliki": [
+            "Primer",
+            "Boneka"
+          ],
+          "tujuanFinansialDimiliki": [
+            "Rumah",
+            "Mobil"
+          ],
+          "masakanDijual": [
+            "LontongBalap",
+            "RujakCingur"
+          ]
+        }
+      ],
+      "steps": [
+        {
+          "namaKarakter": "Mentor",
+          "spritePath": "",
+          "menghadapKanan": false,
+          "aksiKarakter": "PergantianEkspresi",
+          "dialog": [
+            "Stok nasimu mulai cukup untuk beberapa resep."
+          ]
+        },
+        {
+          "namaKarakter": "Pedagang",
+          "spritePath": "",
+          "menghadapKanan": true,
+          "aksiKarakter": "Kemunculan",
+          "dialog": [
+            "Coba pikirkan masakan yang paling menguntungkan."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "mentor_jual_masakan_kedua_stat_cukup",
+      "prerequisite": [
+        {
+          "aksi": "JualMasakan",
+          "aksiValue": 2,
+          "uang": 10,
+          "kebahagiaan": 0,
+          "tabungan": 0,
+          "emas": 0,
+          "kartuPinjaman": 0,
+          "mingguKe": 0,
+          "hariKe": 0,
+          "asuransiDimiliki": false,
+          "bahanDimiliki": [],
+          "kebutuhanDimiliki": [],
+          "tujuanFinansialDimiliki": [],
+          "masakanDijual": []
+        }
+      ],
+      "steps": [
+        {
+          "namaKarakter": "Mentor",
+          "spritePath": "",
+          "menghadapKanan": false,
+          "aksiKarakter": "PergantianEkspresi",
+          "dialog": [
+            "Kamu mulai terbiasa menjual masakan."
+          ]
+        },
+        {
+          "namaKarakter": "Mentor",
+          "spritePath": "",
+          "menghadapKanan": false,
+          "aksiKarakter": "PergantianEkspresi",
+          "dialog": [
+            "Perhatikan bahan yang tersisa supaya usahamu tetap berjalan."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "mentor_kebutuhan_default",
+      "prerequisite": [
+        {
+          "aksi": "Kebutuhan",
+          "aksiValue": 0,
+          "uang": 0,
+          "kebahagiaan": 0,
+          "tabungan": 0,
+          "emas": 0,
+          "kartuPinjaman": 0,
+          "mingguKe": 0,
+          "hariKe": 0,
+          "asuransiDimiliki": false,
+          "bahanDimiliki": [],
+          "kebutuhanDimiliki": [],
+          "tujuanFinansialDimiliki": [],
+          "masakanDijual": []
+        }
+      ],
+      "steps": [
+        {
+          "namaKarakter": "Mentor",
+          "spritePath": "",
+          "menghadapKanan": true,
+          "aksiKarakter": "Kemunculan",
+          "dialog": [
+            "Kebutuhan yang kamu beli akan membantu memenuhi target pemain."
+          ]
+        },
+        {
+          "namaKarakter": "Mentor",
+          "spritePath": "",
+          "menghadapKanan": true,
+          "aksiKarakter": "PergantianEkspresi",
+          "dialog": [
+            "Coba seimbangkan kebutuhan primer, sekunder, dan barang spesifik yang diminta."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "mentor_kebutuhan_primer_terpenuhi",
+      "prerequisite": [
+        {
+          "aksi": "Kebutuhan",
+          "aksiValue": 0,
+          "uang": 0,
+          "kebahagiaan": 0,
+          "tabungan": 0,
+          "emas": 0,
+          "kartuPinjaman": 0,
+          "mingguKe": 0,
+          "hariKe": 0,
+          "asuransiDimiliki": false,
+          "bahanDimiliki": [],
+          "kebutuhanDimiliki": [
+            "primer"
+          ],
+          "tujuanFinansialDimiliki": [],
+          "masakanDijual": []
+        }
+      ],
+      "steps": [
+        {
+          "namaKarakter": "Mentor",
+          "spritePath": "",
+          "menghadapKanan": true,
+          "aksiKarakter": "Kemunculan",
+          "dialog": [
+            "Kebutuhan primer sudah mulai terpenuhi."
+          ]
+        },
+        {
+          "namaKarakter": "Mentor",
+          "spritePath": "",
+          "menghadapKanan": true,
+          "aksiKarakter": "PergantianEkspresi",
+          "dialog": [
+            "Jangan lupa lihat target kebutuhan pemain sebelum membeli barang berikutnya."
+          ]
+        }
+      ]
+    }
+  ]
+}

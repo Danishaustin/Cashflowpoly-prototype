@@ -3,79 +3,79 @@
     {
       "nama": "LontongBalap",
       "bahan": ["Sayuran", "Nasi"],
-      "hargaJual": 15,
-      "poinKebahagiaan": 5
+      "hargaJual": 13,
+      "poinKebahagiaan": 0
     },
     {
       "nama": "GadoGado",
-      "bahan": ["Telur", "Tahu", "Sayuran", "Nasi"],
-      "hargaJual": 12,
-      "poinKebahagiaan": 3
+      "bahan": ["Telur", "TahuTempe", "Sayuran", "Nasi"],
+      "hargaJual": 26,
+      "poinKebahagiaan": 0
     },
     {
       "nama": "SegoPenyet",
-      "bahan": ["Telur", "Tahu", "Nasi"],
-      "hargaJual": 20,
-      "poinKebahagiaan": 7
+      "bahan": ["Telur", "TahuTempe", "Nasi"],
+      "hargaJual": 22,
+      "poinKebahagiaan": 0
     },
     {
       "nama": "NasiGoreng",
       "bahan": ["Telur", "Nasi"],
-      "hargaJual": 18,
-      "poinKebahagiaan": 6
+      "hargaJual": 15,
+      "poinKebahagiaan": 0
     },
     {
       "nama": "SotoDaging",
       "bahan": ["Daging", "Telur"],
-      "hargaJual": 10,
-      "poinKebahagiaan": 4
+      "hargaJual": 17,
+      "poinKebahagiaan": 0
     },
     {
       "nama": "NasiPecel",
-      "bahan": ["Tahu", "Sayuran", "Nasi"],
-      "hargaJual": 8,
-      "poinKebahagiaan": 3
+      "bahan": ["TahuTempe", "Sayuran", "Nasi"],
+      "hargaJual": 20,
+      "poinKebahagiaan": 0
     },
     {
       "nama": "Rawon",
-      "bahan": ["Daging", "Telur", "Tahu"],
-      "hargaJual": 6,
-      "poinKebahagiaan": 2
+      "bahan": ["Daging", "Telur", "TahuTempe"],
+      "hargaJual": 24,
+      "poinKebahagiaan": 0
     },
     {
       "nama": "NasiCampur",
       "bahan": ["Daging", "Sayuran", "Telur", "Nasi"],
-      "hargaJual": 5,
-      "poinKebahagiaan": 1
+      "hargaJual": 27,
+      "poinKebahagiaan": 0
     },
     {
       "nama": "SateKlopo",
       "bahan": ["Daging", "Daging", "Nasi"],
-      "hargaJual": 3,
-      "poinKebahagiaan": 1
+      "hargaJual": 26,
+      "poinKebahagiaan": 0
     },
     {
       "nama": "TahuTelor",
-      "bahan": ["Tahu", "Telur", "Telur"],
-      "hargaJual": 2,
+      "bahan": ["TahuTempe", "Telur", "Telur"],
+      "hargaJual": 25,
       "poinKebahagiaan": 0
     },
     {
       "nama": "TahuCampur",
-      "bahan": ["Daging", "Tahu"],
-      "hargaJual": 1,
+      "bahan": ["Daging", "TahuTempe"],
+      "hargaJual": 16,
       "poinKebahagiaan": 0
     },
     {
       "nama": "RujakCingur",
-      "bahan": ["Daging", "Tahu", "Sayuran", "Nasi"],
-      "hargaJual": 1,
+      "bahan": ["Daging", "TahuTempe", "Sayuran", "Nasi"],
+      "hargaJual": 28,
       "poinKebahagiaan": 0
     },
     {
       "nama": "SemanggiSuroboyo",
       "bahan": ["Sayuran", "Sayuran"],
-      "hargaJual": 1,
+      "hargaJual": 14,
       "poinKebahagiaan": 0
     }
   ]

@@ -2,7 +2,7 @@
   "targetKebutuhan": [
     {
       "id": "target_primer_sekunder_boneka",
-      "nama": "Kebutuhan Seimbang",
+      "nama": "Target Kebutuhan Boneka",
       "kebutuhanTarget": [
         {
           "jenisTarget": "tipe",
@@ -21,28 +21,8 @@
       "poinKebahagiaanGagal": -3
     },
     {
-      "id": "target_buku_tas_jamtangan",
-      "nama": "Belanja Terencana",
-      "kebutuhanTarget": [
-        {
-          "jenisTarget": "nama",
-          "value": "Buku"
-        },
-        {
-          "jenisTarget": "nama",
-          "value": "Tas"
-        },
-        {
-          "jenisTarget": "nama",
-          "value": "JamTangan"
-        }
-      ],
-      "poinKebahagiaanBerhasil": 6,
-      "poinKebahagiaanGagal": -4
-    },
-    {
-      "id": "target_primer_sekunder_tersier",
-      "nama": "Lengkapi Semua Kategori",
+      "id": "target_primer_sekunder_jamtangan",
+      "nama": "Target Kebutuhan Jam Tangan",
       "kebutuhanTarget": [
         {
           "jenisTarget": "tipe",
@@ -53,28 +33,48 @@
           "value": "sekunder"
         },
         {
+          "jenisTarget": "nama",
+          "value": "JamTangan"
+        }
+      ],
+      "poinKebahagiaanBerhasil": 6,
+      "poinKebahagiaanGagal": -4
+    },
+    {
+      "id": "target_primer_sekunder_wahanabermain",
+      "nama": "Target Kebutuhan Wahana Bermain",
+      "kebutuhanTarget": [
+        {
           "jenisTarget": "tipe",
-          "value": "tersier"
+          "value": "primer"
+        },
+        {
+          "jenisTarget": "tipe",
+          "value": "sekunder"
+        },
+        {
+          "jenisTarget": "nama",
+          "value": "WahanaBermain"
         }
       ],
       "poinKebahagiaanBerhasil": 4,
       "poinKebahagiaanGagal": -2
     },
     {
-      "id": "target_makanan_kamera_boneka",
-      "nama": "Hari Bahagia",
+      "id": "target_primer_sekunder_gameconsole",
+      "nama": "Target Kebutuhan Game Console",
       "kebutuhanTarget": [
         {
-          "jenisTarget": "nama",
-          "value": "Makanan"
+          "jenisTarget": "tipe",
+          "value": "primer"
+        },
+        {
+          "jenisTarget": "tipe",
+          "value": "sekunder"
         },
         {
           "jenisTarget": "nama",
-          "value": "Kamera"
-        },
-        {
-          "jenisTarget": "nama",
-          "value": "Boneka"
+          "value": "GameConsole"
         }
       ],
       "poinKebahagiaanBerhasil": 7,
