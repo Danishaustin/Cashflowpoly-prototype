@@ -44,11 +44,6 @@
     color: rgb(5, 46, 22);
 }
 
-.home-button:hover {
-    -unity-background-image-tint-color: rgb(249, 199, 199);
-    scale: 1.1 1.1;
-}
-
 .home-button:active {
     -unity-background-image-tint-color: rgba(255, 255, 255, 0.78);
 }

@@ -1,0 +1,123 @@
+<mxfile host="app.diagrams.net" agent="Codex" version="24.7.17">
+  <diagram id="cashflowpoly-pdm" name="Physical Data Model">
+    <mxGraphModel dx="2400" dy="1600" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="2600" pageHeight="1900" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="title" value="Physical Data Model - Cashflowpoly" style="text;html=1;strokeColor=none;fillColor=none;fontSize=28;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="850" y="30" width="700" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="legend" value="PK = Primary Key&lt;br&gt;FK = Foreign Key&lt;br&gt;UNQ = Unique Constraint&lt;br&gt;IDX = Index" style="rounded=1;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=10;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=14" vertex="1" parent="1">
+          <mxGeometry x="40" y="90" width="260" height="110" as="geometry" />
+        </mxCell>
+
+        <mxCell id="groupAccount" value="Account And Game Session Data" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;dashed=1;fontSize=18;fontStyle=1;verticalAlign=top;spacingTop=10" vertex="1" parent="1">
+          <mxGeometry x="40" y="230" width="650" height="660" as="geometry" />
+        </mxCell>
+        <mxCell id="groupMaster" value="Master Data" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;dashed=1;fontSize=18;fontStyle=1;verticalAlign=top;spacingTop=10" vertex="1" parent="1">
+          <mxGeometry x="740" y="100" width="1760" height="790" as="geometry" />
+        </mxCell>
+        <mxCell id="groupProgress" value="Runtime Progress Data" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;dashed=1;fontSize=18;fontStyle=1;verticalAlign=top;spacingTop=10" vertex="1" parent="1">
+          <mxGeometry x="40" y="940" width="2460" height="780" as="geometry" />
+        </mxCell>
+
+        <mxCell id="users" value="&lt;b&gt;users&lt;/b&gt;&lt;br&gt;&lt;hr&gt;PK id: uuid&lt;br&gt;UNQ username: varchar(50)&lt;br&gt;password_hash: varchar(255)&lt;br&gt;created_at: datetime&lt;br&gt;updated_at: datetime" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=8;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=13" vertex="1" parent="1">
+          <mxGeometry x="80" y="290" width="260" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="user_profiles" value="&lt;b&gt;user_profiles&lt;/b&gt;&lt;br&gt;&lt;hr&gt;PK/FK user_id: uuid&lt;br&gt;display_name: varchar(80)&lt;br&gt;last_login_at: datetime" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=8;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=13" vertex="1" parent="1">
+          <mxGeometry x="390" y="290" width="260" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="game_sessions" value="&lt;b&gt;game_sessions&lt;/b&gt;&lt;br&gt;&lt;hr&gt;PK id: uuid&lt;br&gt;FK user_id: uuid&lt;br&gt;player_count: tinyint&lt;br&gt;day: int&lt;br&gt;turn: tinyint&lt;br&gt;moves_left: tinyint&lt;br&gt;finish_day: int&lt;br&gt;is_game_over: bool&lt;br&gt;created_at: datetime&lt;br&gt;updated_at: datetime" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=8;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=13" vertex="1" parent="1">
+          <mxGeometry x="80" y="500" width="260" height="230" as="geometry" />
+        </mxCell>
+        <mxCell id="session_players" value="&lt;b&gt;session_players&lt;/b&gt;&lt;br&gt;&lt;hr&gt;PK id: uuid&lt;br&gt;FK session_id: uuid&lt;br&gt;IDX player_index: tinyint&lt;br&gt;name: varchar(8)&lt;br&gt;coins: int default 20&lt;br&gt;happiness: int default 0&lt;br&gt;saving: int default 0" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=8;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=13" vertex="1" parent="1">
+          <mxGeometry x="390" y="510" width="260" height="190" as="geometry" />
+        </mxCell>
+
+        <mxCell id="bahan_makanan" value="&lt;b&gt;bahan_makanan&lt;/b&gt;&lt;br&gt;&lt;hr&gt;PK id: varchar(80)&lt;br&gt;nama: varchar(80)&lt;br&gt;harga_beli: int" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=8;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=13" vertex="1" parent="1">
+          <mxGeometry x="790" y="170" width="250" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="resep" value="&lt;b&gt;resep&lt;/b&gt;&lt;br&gt;&lt;hr&gt;PK id: varchar(80)&lt;br&gt;nama: varchar(80)&lt;br&gt;harga_jual: int&lt;br&gt;poin_kebahagiaan: int" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=8;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=13" vertex="1" parent="1">
+          <mxGeometry x="1090" y="170" width="250" height="135" as="geometry" />
+        </mxCell>
+        <mxCell id="resep_bahan" value="&lt;b&gt;resep_bahan&lt;/b&gt;&lt;br&gt;&lt;hr&gt;PK/FK resep_id: varchar(80)&lt;br&gt;PK/FK bahan_id: varchar(80)&lt;br&gt;jumlah: int" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=8;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=13" vertex="1" parent="1">
+          <mxGeometry x="950" y="360" width="280" height="125" as="geometry" />
+        </mxCell>
+        <mxCell id="kebutuhan" value="&lt;b&gt;kebutuhan&lt;/b&gt;&lt;br&gt;&lt;hr&gt;PK id: varchar(80)&lt;br&gt;nama: varchar(80)&lt;br&gt;tipe: varchar(30)" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=8;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=13" vertex="1" parent="1">
+          <mxGeometry x="1390" y="170" width="250" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="tujuan_finansial" value="&lt;b&gt;tujuan_finansial&lt;/b&gt;&lt;br&gt;&lt;hr&gt;PK id: varchar(80)&lt;br&gt;nama: varchar(80)&lt;br&gt;harga_beli: int&lt;br&gt;poin_kebahagiaan: int" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=8;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=13" vertex="1" parent="1">
+          <mxGeometry x="1690" y="170" width="260" height="135" as="geometry" />
+        </mxCell>
+        <mxCell id="target_kebutuhan" value="&lt;b&gt;target_kebutuhan&lt;/b&gt;&lt;br&gt;&lt;hr&gt;PK id: varchar(120)&lt;br&gt;nama: varchar(120)&lt;br&gt;poin_kebahagiaan_berhasil: int&lt;br&gt;poin_kebahagiaan_gagal: int" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=8;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=13" vertex="1" parent="1">
+          <mxGeometry x="2000" y="170" width="300" height="145" as="geometry" />
+        </mxCell>
+        <mxCell id="target_kebutuhan_items" value="&lt;b&gt;target_kebutuhan_items&lt;/b&gt;&lt;br&gt;&lt;hr&gt;PK/FK target_kebutuhan_id: varchar(120)&lt;br&gt;PK urutan: tinyint&lt;br&gt;jenis_target: varchar(20)&lt;br&gt;value: varchar(80)" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=8;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=13" vertex="1" parent="1">
+          <mxGeometry x="2000" y="370" width="320" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="narasi" value="&lt;b&gt;narasi&lt;/b&gt;&lt;br&gt;&lt;hr&gt;PK id: varchar(120)&lt;br&gt;narasi_1: text&lt;br&gt;narasi_2: text nullable&lt;br&gt;narasi_3: text nullable" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=8;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=13" vertex="1" parent="1">
+          <mxGeometry x="790" y="610" width="280" height="145" as="geometry" />
+        </mxCell>
+        <mxCell id="narasi_prerequisite_aksi" value="&lt;b&gt;narasi_prerequisite_aksi&lt;/b&gt;&lt;br&gt;&lt;hr&gt;PK id: uuid&lt;br&gt;FK narasi_id: varchar(120)&lt;br&gt;aksi: varchar(80)&lt;br&gt;value: int&lt;br&gt;IDX aksi_value: (aksi, value)" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=8;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=13" vertex="1" parent="1">
+          <mxGeometry x="1130" y="610" width="310" height="165" as="geometry" />
+        </mxCell>
+        <mxCell id="quest" value="&lt;b&gt;quest&lt;/b&gt;&lt;br&gt;&lt;hr&gt;PK id: varchar(120)&lt;br&gt;title: varchar(120)&lt;br&gt;description: text&lt;br&gt;aksi: varchar(80)&lt;br&gt;target: int" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=8;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=13" vertex="1" parent="1">
+          <mxGeometry x="1500" y="610" width="270" height="160" as="geometry" />
+        </mxCell>
+
+        <mxCell id="player_bahan" value="&lt;b&gt;player_bahan&lt;/b&gt;&lt;br&gt;&lt;hr&gt;PK/FK session_player_id: uuid&lt;br&gt;PK/FK bahan_id: varchar(80)&lt;br&gt;jumlah: int" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=8;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=13" vertex="1" parent="1">
+          <mxGeometry x="80" y="1020" width="300" height="125" as="geometry" />
+        </mxCell>
+        <mxCell id="player_kebutuhan" value="&lt;b&gt;player_kebutuhan&lt;/b&gt;&lt;br&gt;&lt;hr&gt;PK id: uuid&lt;br&gt;FK session_player_id: uuid&lt;br&gt;FK kebutuhan_id: varchar(80)&lt;br&gt;tipe: varchar(30)&lt;br&gt;purchased_at_day: int nullable" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=8;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=13" vertex="1" parent="1">
+          <mxGeometry x="430" y="1020" width="310" height="155" as="geometry" />
+        </mxCell>
+        <mxCell id="player_target_kebutuhan" value="&lt;b&gt;player_target_kebutuhan&lt;/b&gt;&lt;br&gt;&lt;hr&gt;PK/FK session_player_id: uuid&lt;br&gt;PK/FK target_kebutuhan_id: varchar(120)&lt;br&gt;is_completed: bool&lt;br&gt;is_failed: bool&lt;br&gt;reward_applied: bool" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=8;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=13" vertex="1" parent="1">
+          <mxGeometry x="790" y="1020" width="330" height="160" as="geometry" />
+        </mxCell>
+        <mxCell id="player_tujuan_finansial" value="&lt;b&gt;player_tujuan_finansial&lt;/b&gt;&lt;br&gt;&lt;hr&gt;PK/FK session_player_id: uuid&lt;br&gt;PK/FK tujuan_finansial_id: varchar(80)&lt;br&gt;purchased_at_day: int" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=8;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=13" vertex="1" parent="1">
+          <mxGeometry x="1170" y="1020" width="330" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="player_quest_progress" value="&lt;b&gt;player_quest_progress&lt;/b&gt;&lt;br&gt;&lt;hr&gt;PK/FK session_player_id: uuid&lt;br&gt;PK/FK quest_id: varchar(120)&lt;br&gt;progress: int&lt;br&gt;target: int&lt;br&gt;is_completed: bool&lt;br&gt;is_reward_claimed: bool" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=8;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=13" vertex="1" parent="1">
+          <mxGeometry x="1550" y="1020" width="330" height="175" as="geometry" />
+        </mxCell>
+        <mxCell id="player_action_counters" value="&lt;b&gt;player_action_counters&lt;/b&gt;&lt;br&gt;&lt;hr&gt;PK/FK session_player_id: uuid&lt;br&gt;PK aksi: varchar(80)&lt;br&gt;count: int" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=8;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=13" vertex="1" parent="1">
+          <mxGeometry x="1930" y="1020" width="310" height="125" as="geometry" />
+        </mxCell>
+        <mxCell id="player_peduli_donasi" value="&lt;b&gt;player_peduli_donasi&lt;/b&gt;&lt;br&gt;&lt;hr&gt;PK/FK session_player_id: uuid&lt;br&gt;total_donasi: int" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=8;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=13" vertex="1" parent="1">
+          <mxGeometry x="80" y="1270" width="300" height="105" as="geometry" />
+        </mxCell>
+        <mxCell id="peduli_donasi_events" value="&lt;b&gt;peduli_donasi_events&lt;/b&gt;&lt;br&gt;&lt;hr&gt;PK id: uuid&lt;br&gt;FK session_id: uuid&lt;br&gt;event_ke: int&lt;br&gt;day: int" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=8;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=13" vertex="1" parent="1">
+          <mxGeometry x="430" y="1270" width="300" height="135" as="geometry" />
+        </mxCell>
+        <mxCell id="peduli_donasi_rankings" value="&lt;b&gt;peduli_donasi_rankings&lt;/b&gt;&lt;br&gt;&lt;hr&gt;PK/FK event_id: uuid&lt;br&gt;PK rank: int&lt;br&gt;FK session_player_id: uuid&lt;br&gt;total_donasi: int" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=8;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=13" vertex="1" parent="1">
+          <mxGeometry x="790" y="1270" width="330" height="140" as="geometry" />
+        </mxCell>
+
+        <mxCell id="e_users_profiles" value="1 : 0..1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=ERone;startArrow=ERone;" edge="1" parent="1" source="users" target="user_profiles"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e_users_sessions" value="1 : many" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=ERmany;startArrow=ERone;" edge="1" parent="1" source="users" target="game_sessions"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e_sessions_players" value="1 : 3..4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=ERmany;startArrow=ERone;" edge="1" parent="1" source="game_sessions" target="session_players"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <mxCell id="e_resep_bahan_resep" value="1 : many" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=ERmany;startArrow=ERone;" edge="1" parent="1" source="resep" target="resep_bahan"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e_resep_bahan_bahan" value="1 : many" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=ERmany;startArrow=ERone;" edge="1" parent="1" source="bahan_makanan" target="resep_bahan"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e_target_items" value="1 : 3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=ERmany;startArrow=ERone;" edge="1" parent="1" source="target_kebutuhan" target="target_kebutuhan_items"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e_narasi_prereq" value="1 : many" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=ERmany;startArrow=ERone;" edge="1" parent="1" source="narasi" target="narasi_prerequisite_aksi"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <mxCell id="e_player_bahan_player" value="1 : many" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=ERmany;startArrow=ERone;" edge="1" parent="1" source="session_players" target="player_bahan"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e_player_bahan_master" value="1 : many" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=ERmany;startArrow=ERone;" edge="1" parent="1" source="bahan_makanan" target="player_bahan"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e_player_kebutuhan_player" value="1 : many" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=ERmany;startArrow=ERone;" edge="1" parent="1" source="session_players" target="player_kebutuhan"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e_player_kebutuhan_master" value="1 : many" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=ERmany;startArrow=ERone;" edge="1" parent="1" source="kebutuhan" target="player_kebutuhan"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e_player_target_player" value="1 : many" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=ERmany;startArrow=ERone;" edge="1" parent="1" source="session_players" target="player_target_kebutuhan"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e_player_target_master" value="1 : many" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=ERmany;startArrow=ERone;" edge="1" parent="1" source="target_kebutuhan" target="player_target_kebutuhan"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e_player_tf_player" value="1 : many" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=ERmany;startArrow=ERone;" edge="1" parent="1" source="session_players" target="player_tujuan_finansial"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e_player_tf_master" value="1 : many" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=ERmany;startArrow=ERone;" edge="1" parent="1" source="tujuan_finansial" target="player_tujuan_finansial"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e_player_quest_player" value="1 : many" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=ERmany;startArrow=ERone;" edge="1" parent="1" source="session_players" target="player_quest_progress"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e_player_quest_master" value="1 : many" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=ERmany;startArrow=ERone;" edge="1" parent="1" source="quest" target="player_quest_progress"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e_player_counter" value="1 : many" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=ERmany;startArrow=ERone;" edge="1" parent="1" source="session_players" target="player_action_counters"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e_player_donasi" value="1 : 0..1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=ERone;startArrow=ERone;" edge="1" parent="1" source="session_players" target="player_peduli_donasi"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e_session_donasi_events" value="1 : many" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=ERmany;startArrow=ERone;" edge="1" parent="1" source="game_sessions" target="peduli_donasi_events"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e_donasi_ranking_event" value="1 : many" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=ERmany;startArrow=ERone;" edge="1" parent="1" source="peduli_donasi_events" target="peduli_donasi_rankings"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e_donasi_ranking_player" value="1 : many" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=ERmany;startArrow=ERone;" edge="1" parent="1" source="session_players" target="peduli_donasi_rankings"><mxGeometry relative="1" as="geometry" /></mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

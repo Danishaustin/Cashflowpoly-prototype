@@ -1,0 +1,351 @@
+<mxfile host="app.diagrams.net" agent="Codex">
+  <diagram id="cashflowpoly-activity" name="Activity Diagram">
+    <mxGraphModel dx="1572" dy="880" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="2300" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="title" parent="1" style="text;html=1;strokeColor=none;fillColor=none;fontSize=24;fontStyle=1" value="Activity Diagram - Alur Utama Cashflowpoly + Backend" vertex="1">
+          <mxGeometry height="40" width="620" x="360" y="30" as="geometry" />
+        </mxCell>
+        <mxCell id="start" parent="1" style="ellipse;html=1;aspect=fixed;fillColor=#1f2937;strokeColor=#111827;" value="" vertex="1">
+          <mxGeometry height="32" width="32" x="660" y="90" as="geometry" />
+        </mxCell>
+        <mxCell id="home" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" value="Home UI tampil" vertex="1">
+          <mxGeometry height="60" width="230" x="560" y="150" as="geometry" />
+        </mxCell>
+        <mxCell id="addPlayerHome" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" value="Home: klik Add Player" vertex="1">
+          <mxGeometry height="60" width="230" x="865" y="150" as="geometry" />
+        </mxCell>
+        <mxCell id="inputPlayerName" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" value="Input nama player baru" vertex="1">
+          <mxGeometry height="60" width="230" x="1140" y="150" as="geometry" />
+        </mxCell>
+        <mxCell id="apiSavePlayer" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" value="Backend API&lt;br&gt;Save Player" vertex="1">
+          <mxGeometry height="70" width="230" x="1450" y="145" as="geometry" />
+        </mxCell>
+        <mxCell id="dbPlayers" parent="1" style="shape=cylinder3d;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#f5f5f5;strokeColor=#666666;" value="Database&lt;br&gt;players" vertex="1">
+          <mxGeometry height="90" width="160" x="1800" y="135" as="geometry" />
+        </mxCell>
+        <mxCell id="authInit" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" value="Initialize Unity Services" vertex="1">
+          <mxGeometry height="60" width="240" x="35" y="150" as="geometry" />
+        </mxCell>
+        <mxCell id="authDecision" parent="1" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" value="Sudah login?" vertex="1">
+          <mxGeometry height="110" width="180" x="65" y="220" as="geometry" />
+        </mxCell>
+        <mxCell id="loginPanel" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" value="Tampilkan Login / Register" vertex="1">
+          <mxGeometry height="70" width="230" x="40" y="370" as="geometry" />
+        </mxCell>
+        <mxCell id="loginResult" parent="1" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" value="Login / Register berhasil?" vertex="1">
+          <mxGeometry height="120" width="210" x="50" y="480" as="geometry" />
+        </mxCell>
+        <mxCell id="loginError" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" value="Tampilkan error&lt;br&gt;dan ulangi login" vertex="1">
+          <mxGeometry height="70" width="230" x="40" y="640" as="geometry" />
+        </mxCell>
+        <mxCell id="setup" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" value="Pilih jumlah player&lt;br&gt;3 atau 4" vertex="1">
+          <mxGeometry height="70" width="230" x="560" y="240" as="geometry" />
+        </mxCell>
+        <mxCell id="apiLoadPlayers" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" value="Backend API&lt;br&gt;Load Player List" vertex="1">
+          <mxGeometry height="70" width="230" x="1450" y="240" as="geometry" />
+        </mxCell>
+        <mxCell id="valid" parent="1" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" value="Input valid?" vertex="1">
+          <mxGeometry height="110" width="170" x="590" y="340" as="geometry" />
+        </mxCell>
+        <mxCell id="validation" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" value="Tampilkan pesan validasi&lt;br&gt;di PlayValidationText" vertex="1">
+          <mxGeometry height="70" width="250" x="1015" y="360" as="geometry" />
+        </mxCell>
+        <mxCell id="savePrefs" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" value="Siapkan setup game&lt;br&gt;PlayerCount dan PlayerName" vertex="1">
+          <mxGeometry height="70" width="270" x="540" y="490" as="geometry" />
+        </mxCell>
+        <mxCell id="apiCreateSession" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" value="Backend API&lt;br&gt;Create Game Session" vertex="1">
+          <mxGeometry height="70" width="250" x="1000" y="490" as="geometry" />
+        </mxCell>
+        <mxCell id="dbCreateSession" parent="1" style="shape=cylinder3d;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#f5f5f5;strokeColor=#666666;" value="Database&lt;br&gt;game_sessions, session_players,&lt;br&gt;player_target_kebutuhan" vertex="1">
+          <mxGeometry height="110" width="230" x="1380" y="470" as="geometry" />
+        </mxCell>
+        <mxCell id="loadScene" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" value="Load scene Play" vertex="1">
+          <mxGeometry height="60" width="230" x="560" y="590" as="geometry" />
+        </mxCell>
+        <mxCell id="apiLoadMaster" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" value="Backend API&lt;br&gt;Load Master Data" vertex="1">
+          <mxGeometry height="70" width="250" x="1000" y="680" as="geometry" />
+        </mxCell>
+        <mxCell id="dbMasterData" parent="1" style="shape=cylinder3d;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#f5f5f5;strokeColor=#666666;" value="Database Master Data&lt;br&gt;bahan, resep, kebutuhan,&lt;br&gt;narasi, quest, target" vertex="1">
+          <mxGeometry height="110" width="230" x="1380" y="660" as="geometry" />
+        </mxCell>
+        <mxCell id="init" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" value="DataManager load master data&lt;br&gt;GameState init dari session" vertex="1">
+          <mxGeometry height="70" width="310" x="520" y="680" as="geometry" />
+        </mxCell>
+        <mxCell id="showChoice" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" value="UIManagerPlay tampilkan&lt;br&gt;turn, stats, Choice1" vertex="1">
+          <mxGeometry height="70" width="270" x="540" y="780" as="geometry" />
+        </mxCell>
+        <mxCell id="select" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" value="Player memilih menu aksi" vertex="1">
+          <mxGeometry height="60" width="230" x="560" y="880" as="geometry" />
+        </mxCell>
+        <mxCell id="handle" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" value="ChoiceController.HandleChoice&lt;br&gt;menentukan handler aksi" vertex="1">
+          <mxGeometry height="70" width="290" x="530" y="970" as="geometry" />
+        </mxCell>
+        <mxCell id="action" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" value="Eksekusi aksi&lt;br&gt;Beli bahan, kebutuhan, jual masakan,&lt;br&gt;menabung, tujuan finansial, kerja lepas" vertex="1">
+          <mxGeometry height="90" width="350" x="500" y="1070" as="geometry" />
+        </mxCell>
+        <mxCell id="checkValid" parent="1" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" value="Syarat aksi terpenuhi?" vertex="1">
+          <mxGeometry height="110" width="190" x="580" y="1190" as="geometry" />
+        </mxCell>
+        <mxCell id="invalidAction" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" value="Tampilkan dialog gagal&lt;br&gt;lalu kembali ke Choice1" vertex="1">
+          <mxGeometry height="70" width="260" x="850" y="1210" as="geometry" />
+        </mxCell>
+        <mxCell id="updateState" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" value="Update GameState&lt;br&gt;coins, happiness, inventory, saving" vertex="1">
+          <mxGeometry height="70" width="310" x="520" y="1340" as="geometry" />
+        </mxCell>
+        <mxCell id="apiPersistProgress" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" value="Backend API&lt;br&gt;Persist Progress" vertex="1">
+          <mxGeometry height="70" width="250" x="900" y="1340" as="geometry" />
+        </mxCell>
+        <mxCell id="dbProgressData" parent="1" style="shape=cylinder3d;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#f5f5f5;strokeColor=#666666;" value="Database Progress&lt;br&gt;player_bahan, player_kebutuhan,&lt;br&gt;quest, counters, donasi" vertex="1">
+          <mxGeometry height="110" width="230" x="1240" y="1320" as="geometry" />
+        </mxCell>
+        <mxCell id="narasi" parent="1" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" value="Prerequisite narasi terpenuhi?" vertex="1">
+          <mxGeometry height="110" width="210" x="570" y="1440" as="geometry" />
+        </mxCell>
+        <mxCell id="playNarasi" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" value="NarasiController&lt;br&gt;PlayDialogSteps bertahap" vertex="1">
+          <mxGeometry height="70" width="260" x="1020" y="1500" as="geometry" />
+        </mxCell>
+        <mxCell id="result" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" value="Tampilkan dialog hasil aksi" vertex="1">
+          <mxGeometry height="60" width="250" x="550" y="1590" as="geometry" />
+        </mxCell>
+        <mxCell id="useMove" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" value="GameState.UseMove&lt;br&gt;update turn atau day" vertex="1">
+          <mxGeometry height="70" width="250" x="550" y="1680" as="geometry" />
+        </mxCell>
+        <mxCell id="donation" parent="1" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" value="Hari Jumat Berkah?" vertex="1">
+          <mxGeometry height="110" width="190" x="580" y="1780" as="geometry" />
+        </mxCell>
+        <mxCell id="donationFlow" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" value="Tiap player melakukan&lt;br&gt;Peduli Donasi&lt;br&gt;atau otomatis skip jika coin 0" vertex="1">
+          <mxGeometry height="90" width="280" x="850" y="1790" as="geometry" />
+        </mxCell>
+        <mxCell id="gameOver" parent="1" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" value="Game selesai?" vertex="1">
+          <mxGeometry height="110" width="190" x="580" y="1930" as="geometry" />
+        </mxCell>
+        <mxCell id="finish" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" value="Tampilkan Permainan Selesai" vertex="1">
+          <mxGeometry height="60" width="270" x="540" y="2080" as="geometry" />
+        </mxCell>
+        <mxCell id="apiFinalizeSession" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" value="Backend API&lt;br&gt;Finalize Session" vertex="1">
+          <mxGeometry height="70" width="250" x="1190" y="2075" as="geometry" />
+        </mxCell>
+        <mxCell id="end" parent="1" style="ellipse;html=1;shape=doubleEllipse;aspect=fixed;fillColor=#1f2937;strokeColor=#111827;" value="" vertex="1">
+          <mxGeometry height="36" width="36" x="660" y="2180" as="geometry" />
+        </mxCell>
+        <mxCell id="e1" edge="1" parent="1" source="start" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;" target="home">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="eAddPlayer1" edge="1" parent="1" source="home" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;" target="addPlayerHome" value="Opsional">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="eAddPlayer2" edge="1" parent="1" source="addPlayerHome" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;" target="inputPlayerName">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="eAddPlayer3" edge="1" parent="1" source="inputPlayerName" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;" target="apiSavePlayer">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="eAddPlayer4" edge="1" parent="1" source="apiSavePlayer" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;" target="dbPlayers" value="insert players">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="eAddPlayer5" edge="1" parent="1" source="apiSavePlayer" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;" target="home" value="OK">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1495" y="80" />
+              <mxPoint x="675" y="80" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e2" edge="1" parent="1" source="home" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;" target="authInit">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="eLogin1" edge="1" parent="1" source="authInit" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;" target="authDecision">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="eLogin2" edge="1" parent="1" source="authDecision" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;" target="setup" value="Ya">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="eLogin3" edge="1" parent="1" source="authDecision" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;" target="loginPanel" value="Tidak">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="eLogin4" edge="1" parent="1" source="loginPanel" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;" target="loginResult">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="eLogin5" edge="1" parent="1" source="loginResult" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;" target="setup" value="Ya">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="430" y="530" />
+              <mxPoint x="430" y="275" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="eLogin6" edge="1" parent="1" source="loginResult" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;" target="loginError" value="Tidak">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="eLogin7" edge="1" parent="1" source="loginError" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;" target="loginPanel">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="20" y="665" />
+              <mxPoint x="20" y="385" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e3" edge="1" parent="1" source="selectSavedPlayers" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;" target="apiLoadPlayers">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="eLoadPlayers1" edge="1" parent="1" source="apiLoadPlayers" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;" target="dbPlayers" value="select by user_id">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="eLoadPlayers2" edge="1" parent="1" source="apiLoadPlayers" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;" target="selectSavedPlayers" value="player list">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="eLoadPlayers3" edge="1" parent="1" source="selectSavedPlayers" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;" target="valid">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e4" edge="1" parent="1" source="valid" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;" target="validation" value="Tidak">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e5" edge="1" parent="1" source="validation" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;" target="setup">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="980" y="275" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e6" edge="1" parent="1" source="valid" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;" target="savePrefs" value="Ya">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e7" edge="1" parent="1" source="savePrefs" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;" target="apiCreateSession">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="eBackend1" edge="1" parent="1" source="apiCreateSession" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;" target="dbCreateSession" value="insert">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="eBackend2" edge="1" parent="1" source="apiCreateSession" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;" target="loadScene" value="session_id">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1110" y="620" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e8" edge="1" parent="1" source="loadScene" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;" target="apiLoadMaster">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="eBackend3" edge="1" parent="1" source="apiLoadMaster" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;" target="dbMasterData" value="select">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="eBackend4" edge="1" parent="1" source="apiLoadMaster" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;" target="init" value="master data + session">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="eBackend5" edge="1" parent="1" source="dbCreateSession" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;dashed=1;" target="dbMasterData" value="target assignment uses">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e9" edge="1" parent="1" source="init" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;" target="showChoice">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e10" edge="1" parent="1" source="showChoice" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;" target="select">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e11" edge="1" parent="1" source="select" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;" target="handle">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e12" edge="1" parent="1" source="handle" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;" target="action">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e13" edge="1" parent="1" source="action" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;" target="checkValid">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e14" edge="1" parent="1" source="checkValid" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;" target="invalidAction" value="Tidak">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e15" edge="1" parent="1" source="invalidAction" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;" target="showChoice">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1180" y="815" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e16" edge="1" parent="1" source="checkValid" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;" target="updateState" value="Ya">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e17" edge="1" parent="1" source="updateState" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;" target="apiPersistProgress">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="eBackend6" edge="1" parent="1" source="apiPersistProgress" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;" target="dbProgressData" value="upsert">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="eBackend7" edge="1" parent="1" source="apiPersistProgress" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;" target="narasi" value="OK">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1025" y="1495" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e18" edge="1" parent="1" source="narasi" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;" target="playNarasi" value="Ya">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e19" edge="1" parent="1" source="narasi" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;" target="result" value="Tidak">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e20" edge="1" parent="1" source="playNarasi" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;" target="result">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1140" y="1620" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e21" edge="1" parent="1" source="result" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;" target="useMove">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e22" edge="1" parent="1" source="useMove" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;" target="donation">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e23" edge="1" parent="1" source="donation" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;" target="donationFlow" value="Ya">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e24" edge="1" parent="1" source="donationFlow" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;" target="gameOver">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="990" y="1985" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e25" edge="1" parent="1" source="donation" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;" target="gameOver" value="Tidak">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e26" edge="1" parent="1" source="gameOver" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;" target="apiFinalizeSession" value="Ya">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="eBackend8" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;exitX=0.566;exitY=-0.002;exitDx=0;exitDy=0;exitPerimeter=0;" value="update is_game_over">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1350" y="2075" />
+            </Array>
+            <mxPoint x="1351.43" y="2075" as="sourcePoint" />
+            <mxPoint x="1350" y="1440" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="eBackend9" edge="1" parent="1" source="apiFinalizeSession" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;" target="finish">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e27" edge="1" parent="1" source="finish" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;" target="end">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e28" edge="1" parent="1" source="gameOver" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;" target="showChoice" value="Tidak">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="260" y="1985" />
+              <mxPoint x="260" y="815" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="zsnjyc3CiD3rawQ0RD_d-1" edge="1" parent="1" source="setup" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;" target="selectSavedPlayers" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="790" y="275" as="sourcePoint" />
+            <mxPoint x="1450" y="275" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="selectSavedPlayers" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" value="Pilih player tersimpan&lt;br&gt;untuk tiap slot" vertex="1">
+          <mxGeometry height="70" width="240" x="1020" y="240" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

@@ -1,0 +1,270 @@
+@startuml CashflowpolyClassDiagram
+title Cashflowpoly - Class Diagram
+
+left to right direction
+skinparam classAttributeIconSize 0
+skinparam packageStyle rectangle
+skinparam shadowing false
+hide empty members
+
+package "Model / Data" {
+    class BahanMakananData <<Serializable>> {
+        +nama: string
+        +hargaBeli: int
+    }
+
+    class BahanMakananDatabase <<JSON Wrapper>> {
+        +bahan: List~BahanMakananData~
+    }
+
+    class KebutuhanData <<Serializable>> {
+        +nama: string
+        +tipe: string
+    }
+
+    class KebutuhanDatabase <<JSON Wrapper>> {
+        +kebutuhan: List~KebutuhanData~
+    }
+
+    class ResepData <<Serializable>> {
+        +nama: string
+        +bahan: List~string~
+        +hargaJual: int
+        +poinKebahagiaan: int
+    }
+
+    class ResepDatabase <<JSON Wrapper>> {
+        +resep: List~ResepData~
+    }
+
+    class TujuanFinansialData <<Serializable>> {
+        +nama: string
+        +hargaBeli: int
+        +poinKebahagiaan: int
+    }
+
+    class TujuanFinansialDatabase <<JSON Wrapper>> {
+        +tujuanFinansial: List~TujuanFinansialData~
+    }
+
+    class PrerequisiteAksiData <<Serializable>> {
+        +aksi: string
+        +value: int
+    }
+
+    class NarasiData <<Serializable>> {
+        +nama: string
+        +prerequisiteAksi: List~PrerequisiteAksiData~
+        +narasi1: string
+        +narasi2: string
+        +narasi3: string
+    }
+
+    class NarasiDatabase <<JSON Wrapper>> {
+        +narasi: List~NarasiData~
+    }
+
+    class QuestData <<Serializable>> {
+        +id: string
+        +title: string
+        +description: string
+        +aksi: string
+        +target: int
+        +rewardCoins: int
+        +rewardHappiness: int
+    }
+
+    class QuestDatabase <<JSON Wrapper>> {
+        +quest: List~QuestData~
+    }
+
+    class TargetKebutuhanItemData <<Serializable>> {
+        +jenisTarget: string
+        +value: string
+    }
+
+    class TargetKebutuhanData <<Serializable>> {
+        +id: string
+        +nama: string
+        +kebutuhanTarget: List~TargetKebutuhanItemData~
+        +poinKebahagiaanBerhasil: int
+        +poinKebahagiaanGagal: int
+    }
+
+    class TargetKebutuhanDatabase <<JSON Wrapper>> {
+        +targetKebutuhan: List~TargetKebutuhanData~
+    }
+}
+
+package "Model / Runtime" {
+    class DataManager <<MonoBehaviour Singleton>> {
+        {static} +Instance: DataManager
+        +resepDict: Dictionary~string, ResepData~
+        +bahanDict: Dictionary~string, BahanMakananData~
+        +kebutuhanDict: Dictionary~string, KebutuhanData~
+        +tujuanFinansialDict: Dictionary~string, TujuanFinansialData~
+        +narasiDict: Dictionary~string, NarasiData~
+        +questDict: Dictionary~string, QuestData~
+        +targetKebutuhanDict: Dictionary~string, TargetKebutuhanData~
+        -InitializeData(): void
+    }
+
+    class GameState <<MonoBehaviour Singleton>> {
+        {static} +Instance: GameState
+        +turn: int
+        +playerCount: int
+        +Coins: int
+        +Happiness: int
+        +Saving: int
+        +day: int
+        +movesLeft: int
+        +finishDay: int
+        +isGameOver: bool
+        +isPaused: bool
+        +JumatBerkah: int
+        +JuaraPeduliDonasi: Dictionary~int, List~int~~
+        +bahanList: Dictionary~string, int~
+        +kebutuhanList: Dictionary~string, List~string~~
+        +tujuanFinansial: string
+        +ChangeCoins(amount: int): void
+        +ChangeHappiness(amount: int): void
+        +ChangeSaving(amount: int): void
+        +SetPause(pause: bool): void
+        +CatatPeduliDonasi(amount: int): void
+        +AdvancePeduliDonasiTurn(): bool
+        +GetActionCount(aksi: string): int
+        +HasBahan(jumlahBahan): List~string~
+        +AddBahanToList(nama: string): void
+        +RemoveBahanFromList(nama: string, jumlah: int): void
+        +AddKebutuhanToList(nama: string, tipe: string): void
+        +UseMove(): void
+        +NextDay(): void
+    }
+
+    class LoginManager <<MonoBehaviour Singleton>> {
+        {static} +Instance: LoginManager
+        +InitializeServicesAsync(): Task
+        +SignUp(username: string, password: string): Task~bool~
+        +SignIn(username: string, password: string): Task~bool~
+        +SignOut(): void
+        +IsSignedIn(): bool
+    }
+}
+
+package "Controller" {
+    class ChoiceController <<MonoBehaviour>> {
+        +view: UIManagerPlay
+        +HandleChoice(currentContainer: string, selectedChoice: string): void
+        -HandleChoiceBahan(selectedChoice: string): void
+        -HandleChoiceJM(selectedChoice: string): void
+        -HandleChoiceK(selectedChoice: string): void
+        -HandleChoiceKL(): void
+        -HandleChoiceTF(selectedChoice: string): void
+        -HandleChoiceMenabung(selectedChoice: string): void
+        -JumatBerkah(selectedChoice: string): void
+        -UpdateMove(): void
+    }
+
+    class NarasiController <<MonoBehaviour Singleton>> {
+        {static} +Instance: NarasiController
+        -narasiList: List~NarasiData~
+        +ReloadNarasi(): void
+        +HandleNarasi(aksi: string, aksiKe: int, onComplete: Action): bool
+        -GetNarasiByPrerequisite(aksi: string, aksiKe: int): NarasiData
+        -IsPrerequisiteMet(narasi: NarasiData): bool
+        -PlayNarasi(narasiList: List~string~, onComplete: Action): IEnumerator
+    }
+}
+
+package "View" {
+    class UIManager <<MonoBehaviour>> {
+        -playerCountDropdown: DropdownField
+        -playerNameInputs: TextField[]
+        -GetSelectedPlayerCount(): int
+        -UpdatePlayerNameInputs(): void
+        -OnPlay2Clicked(evt: ClickEvent): void
+        -OnLoginClicked(evt: ClickEvent): void
+        -OnRegisterClicked(evt: ClickEvent): void
+        -OnSignOutClicked(evt: ClickEvent): void
+    }
+
+    class UIManagerPlay <<MonoBehaviour>> {
+        -choiceContainers: Dictionary~string, VisualElement~
+        -BuildBahanChoiceButtons(container: VisualElement): void
+        -BuildKebutuhanChoiceButtons(container: VisualElement): void
+        -BuildJualMasakanChoiceButtons(container: VisualElement): void
+        -BuildTujuanFinansialChoiceButtons(container: VisualElement): void
+        -SetPauseState(pause: bool): void
+        +AddTextToDialog(text: string, duration: float, newLine: bool): void
+        +PlayDialogSteps(texts: List~string~, duration: float): IEnumerator
+        +UpdatePlayerStats(): void
+        +ShowChoice(id: string): void
+    }
+
+    class ChangeScene <<MonoBehaviour Singleton>> {
+        {static} +Instance: ChangeScene
+        +ChangeToScene(sceneID: int): void
+    }
+}
+
+package "Unity / External" {
+    class Resources <<Unity>>
+    class JsonUtility <<Unity>>
+    class PlayerPrefs <<Unity>>
+    class SceneManager <<Unity>>
+    class AuthenticationService <<Unity Services>>
+}
+
+BahanMakananDatabase "1" *-- "0..*" BahanMakananData
+KebutuhanDatabase "1" *-- "0..*" KebutuhanData
+ResepDatabase "1" *-- "0..*" ResepData
+TujuanFinansialDatabase "1" *-- "0..*" TujuanFinansialData
+NarasiDatabase "1" *-- "0..*" NarasiData
+NarasiData "1" *-- "0..*" PrerequisiteAksiData
+QuestDatabase "1" *-- "0..*" QuestData
+TargetKebutuhanDatabase "1" *-- "0..*" TargetKebutuhanData
+TargetKebutuhanData "1" *-- "3" TargetKebutuhanItemData
+
+DataManager --> BahanMakananData
+DataManager --> KebutuhanData
+DataManager --> ResepData
+DataManager --> TujuanFinansialData
+DataManager --> NarasiData
+DataManager --> QuestData
+DataManager --> TargetKebutuhanData
+DataManager ..> Resources : load JSON
+DataManager ..> JsonUtility : deserialize
+
+ChoiceController --> UIManagerPlay : update UI
+ChoiceController --> GameState : change gameplay state
+ChoiceController --> DataManager : read item data
+ChoiceController --> NarasiController : trigger dialog
+
+NarasiController --> UIManagerPlay : play dialog steps
+NarasiController --> GameState : validate action count
+NarasiController --> DataManager : read narrative data
+
+UIManagerPlay --> GameState : display stats and pause state
+UIManagerPlay --> DataManager : build dynamic item buttons
+UIManagerPlay ..> SceneManager : restart / home
+
+UIManager --> LoginManager : authentication
+UIManager --> ChangeScene : start game
+UIManager ..> PlayerPrefs : save player count and names
+
+LoginManager ..> AuthenticationService : sign up / sign in / sign out
+ChangeScene ..> SceneManager : load scene
+
+note right of DataManager
+Loads JSON resources from Assets/Resources/Data:
+bahan, kebutuhan, resep, tujuanFinansial,
+narasi, quest, and targetKebutuhan.
+end note
+
+note bottom of UIManagerPlay
+Play.uxml and StylePlayUI.uss define the visual layout.
+The item buttons for ChoiceBM, ChoiceK, ChoiceJM,
+and ChoiceTF are created dynamically from DataManager.
+end note
+
+@enduml

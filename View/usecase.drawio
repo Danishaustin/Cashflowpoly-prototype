@@ -1,0 +1,250 @@
+<mxfile host="app.diagrams.net" agent="Codex">
+  <diagram id="cashflowpoly-usecase" name="Usecase Diagram">
+    <mxGraphModel dx="1278" dy="1815" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="2500" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="system" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#666666;dashed=1;fontSize=18;fontStyle=1;verticalAlign=top;spacingTop=12;" value="Cashflowpoly Game System + Backend Integration" vertex="1">
+          <mxGeometry height="1080" width="1800" x="250" y="-110" as="geometry" />
+        </mxCell>
+        <mxCell id="player" parent="1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;" value="User (Instruktur)&lt;div&gt;&lt;br&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="130" width="70" x="90" y="260" as="geometry" />
+        </mxCell>
+        <mxCell id="designer" parent="1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;" value="Content Designer" vertex="1">
+          <mxGeometry height="130" width="90" x="2150" y="172.5" as="geometry" />
+        </mxCell>
+        <mxCell id="backendActor" parent="1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;" value="Backend API" vertex="1">
+          <mxGeometry height="130" width="90" x="2160" y="482.5" as="geometry" />
+        </mxCell>
+        <mxCell id="databaseActor" parent="1" style="shape=cylinder3d;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#f5f5f5;strokeColor=#666666;" value="Database" vertex="1">
+          <mxGeometry height="100" width="120" x="2150" y="717.5" as="geometry" />
+        </mxCell>
+        <mxCell id="ucLogin" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" value="Login atau Register" vertex="1">
+          <mxGeometry height="70" width="200" x="1090" y="-5" as="geometry" />
+        </mxCell>
+        <mxCell id="ucAddPlayer" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" value="Add Player&lt;br&gt;di Home" vertex="1">
+          <mxGeometry height="80" width="200" x="350" y="-10" as="geometry" />
+        </mxCell>
+        <mxCell id="ucStart" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" value="Mulai Game" vertex="1">
+          <mxGeometry height="70" width="190" x="750" y="202.5" as="geometry" />
+        </mxCell>
+        <mxCell id="ucSelect" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" value="Pilih Aksi Turn" vertex="1">
+          <mxGeometry height="70" width="190" x="740" y="420" as="geometry" />
+        </mxCell>
+        <mxCell id="ucBahan" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" value="Beli Bahan Masakan" vertex="1">
+          <mxGeometry height="70" width="210" x="500" y="530" as="geometry" />
+        </mxCell>
+        <mxCell id="ucKebutuhan" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" value="Beli Kebutuhan" vertex="1">
+          <mxGeometry height="70" width="200" x="735" y="530" as="geometry" />
+        </mxCell>
+        <mxCell id="ucJual" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" value="Jual Masakan" vertex="1">
+          <mxGeometry height="70" width="190" x="950" y="530" as="geometry" />
+        </mxCell>
+        <mxCell id="ucMenabung" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" value="Menabung" vertex="1">
+          <mxGeometry height="70" width="190" x="280" y="530" as="geometry" />
+        </mxCell>
+        <mxCell id="ucTF" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" value="Beli Tujuan Finansial" vertex="1">
+          <mxGeometry height="70" width="220" x="720" y="640" as="geometry" />
+        </mxCell>
+        <mxCell id="ucKL" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" value="Kerja Lepas" vertex="1">
+          <mxGeometry height="70" width="180" x="1170" y="520" as="geometry" />
+        </mxCell>
+        <mxCell id="ucDonation" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" value="Peduli Donasi&lt;br&gt;Jumat Berkah" vertex="1">
+          <mxGeometry height="80" width="220" x="725" y="750" as="geometry" />
+        </mxCell>
+        <mxCell id="ucQuest" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" value="Lihat Quest" vertex="1">
+          <mxGeometry height="70" width="180" x="350" y="870" as="geometry" />
+        </mxCell>
+        <mxCell id="ucTarget" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" value="Lihat Target Kebutuhan&lt;br&gt;Tiap Player" vertex="1">
+          <mxGeometry height="80" width="230" x="570" y="860" as="geometry" />
+        </mxCell>
+        <mxCell id="ucPause" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" value="Pause, Resume,&lt;br&gt;Restart, Home" vertex="1">
+          <mxGeometry height="80" width="220" x="850" y="860" as="geometry" />
+        </mxCell>
+        <mxCell id="ucData" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" value="Kelola Master Data&lt;br&gt;di Backend" vertex="1">
+          <mxGeometry height="70" width="190" x="1790" as="geometry" />
+        </mxCell>
+        <mxCell id="ucMaster" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" value="Ubah bahan, resep,&lt;br&gt;kebutuhan, tujuan finansial" vertex="1">
+          <mxGeometry height="80" width="230" x="1770" y="130" as="geometry" />
+        </mxCell>
+        <mxCell id="ucNarrative" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" value="Ubah narasi dan&lt;br&gt;prerequisiteAksi" vertex="1">
+          <mxGeometry height="80" width="210" x="1540" y="130" as="geometry" />
+        </mxCell>
+        <mxCell id="ucQuestData" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" value="Ubah quest dan&lt;br&gt;target kebutuhan" vertex="1">
+          <mxGeometry height="80" width="230" x="1270" y="130" as="geometry" />
+        </mxCell>
+        <mxCell id="ucSavePlayerProfile" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" value="Simpan Player Profile&lt;br&gt;ke tabel players" vertex="1">
+          <mxGeometry height="80" width="240" x="725" y="-15" as="geometry" />
+        </mxCell>
+        <mxCell id="ucLoadPlayerList" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" value="Load Player List&lt;br&gt;dari tabel players" vertex="1">
+          <mxGeometry height="80" width="230" x="570" y="320" as="geometry" />
+        </mxCell>
+        <mxCell id="ucSaveProgress" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" value="Simpan Progress Player&lt;br&gt;dan Counter Aksi" vertex="1">
+          <mxGeometry height="80" width="240" x="1330" y="600" as="geometry" />
+        </mxCell>
+        <mxCell id="ucFinalizeSession" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" value="Finalisasi Game Session&lt;br&gt;Saat Game Selesai" vertex="1">
+          <mxGeometry height="80" width="240" x="1330" y="840" as="geometry" />
+        </mxCell>
+        <mxCell id="a1" edge="1" parent="1" source="ucCreateSession" style="endArrow=none;html=1;rounded=0;" target="ucLogin">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a2" edge="1" parent="1" source="player" style="endArrow=none;html=1;rounded=0;" target="ucSetup">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="aAddPlayer" edge="1" parent="1" source="player" style="endArrow=none;html=1;rounded=0;" target="ucAddPlayer">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="aSelectSavedPlayers" edge="1" parent="1" source="player" style="endArrow=none;html=1;rounded=0;" target="ucSelectSavedPlayers">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a3" edge="1" parent="1" source="player" style="endArrow=none;html=1;rounded=0;" target="ucStart">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a4" edge="1" parent="1" source="ucSelectSavedPlayers" style="endArrow=none;html=1;rounded=0;" target="ucSelect">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a5" edge="1" parent="1" source="player" style="endArrow=none;html=1;rounded=0;" target="ucQuest">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a6" edge="1" parent="1" source="player" style="endArrow=none;html=1;rounded=0;" target="ucTarget">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a7" edge="1" parent="1" source="player" style="endArrow=none;html=1;rounded=0;" target="ucPause">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a8" edge="1" parent="1" source="designer" style="endArrow=none;html=1;rounded=0;" target="ucData">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="aBackend1" edge="1" parent="1" source="backendActor" style="endArrow=none;html=1;rounded=0;" target="ucCreateSession">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="aBackendSavePlayer" edge="1" parent="1" source="backendActor" style="endArrow=none;html=1;rounded=0;" target="ucSavePlayerProfile">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="aBackendLoadPlayers" edge="1" parent="1" source="backendActor" style="endArrow=none;html=1;rounded=0;" target="ucLoadPlayerList">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="aBackend2" edge="1" parent="1" source="backendActor" style="endArrow=none;html=1;rounded=0;" target="ucLoadMaster">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="aBackend3" edge="1" parent="1" source="backendActor" style="endArrow=none;html=1;rounded=0;" target="ucSaveProgress">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="aBackend4" edge="1" parent="1" source="backendActor" style="endArrow=none;html=1;rounded=0;" target="ucFinalizeSession">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="aDatabase1" edge="1" parent="1" source="databaseActor" style="endArrow=none;html=1;rounded=0;" target="ucData">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="aDatabase2" edge="1" parent="1" source="databaseActor" style="endArrow=none;html=1;rounded=0;" target="ucSaveProgress">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="aDatabasePlayers" edge="1" parent="1" source="ucLoadMaster" style="endArrow=none;html=1;rounded=0;" target="ucSavePlayerProfile">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="inc1" edge="1" parent="1" source="ucStart" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=open;dashed=1;" target="ucSetup" value="include">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="incAddPlayer" edge="1" parent="1" source="ucAddPlayer" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=open;dashed=1;" target="ucSavePlayerProfile" value="include">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="incSetupLoadPlayers" edge="1" parent="1" source="ucSetup" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=open;dashed=1;" target="ucLoadPlayerList" value="include">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="incSetupSelectPlayers" edge="1" parent="1" source="ucSetup" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=open;dashed=1;" target="ucSelectSavedPlayers" value="include">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="incBackend1" edge="1" parent="1" source="ucStart" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=open;dashed=1;" target="ucCreateSession" value="include">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="incBackend2" edge="1" parent="1" source="ucStart" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=open;dashed=1;" target="ucLoadMaster" value="include">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="inc2" edge="1" parent="1" source="ucSelect" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=open;dashed=1;" target="ucBahan" value="include">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="inc3" edge="1" parent="1" source="ucSelect" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=open;dashed=1;" target="ucKebutuhan" value="include">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="inc4" edge="1" parent="1" source="ucSelect" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=open;dashed=1;" target="ucJual" value="include">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="inc5" edge="1" parent="1" source="ucSelect" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=open;dashed=1;" target="ucMenabung" value="include">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="inc6" edge="1" parent="1" source="ucTF" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=open;dashed=1;" target="ucMenabung" value="extend">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="inc7" edge="1" parent="1" source="ucSelect" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=open;dashed=1;" target="ucKL" value="include">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="inc8" edge="1" parent="1" source="ucDonation" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=open;dashed=1;" target="ucSelect" value="extend">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="incBackend3" edge="1" parent="1" source="ucSelect" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=open;dashed=1;" target="ucSaveProgress" value="include">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="incBackend4" edge="1" parent="1" source="ucFinalizeSession" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=open;dashed=1;" target="ucSaveProgress" value="include">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="inc9" edge="1" parent="1" source="ucData" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=open;dashed=1;" target="ucMaster" value="include">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="inc10" edge="1" parent="1" source="ucData" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=open;dashed=1;" target="ucNarrative" value="include">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="inc11" edge="1" parent="1" source="ucData" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=open;dashed=1;" target="ucQuestData" value="include">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="T8oPIjhF_oKLv0ep22oq-2" edge="1" parent="1" style="endArrow=none;html=1;rounded=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" target="ucLogin">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="2150" y="779" as="sourcePoint" />
+            <mxPoint x="1557" y="680" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="T8oPIjhF_oKLv0ep22oq-3" edge="1" parent="1" style="endArrow=none;html=1;rounded=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" target="ucLogin">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="2160" y="551" as="sourcePoint" />
+            <mxPoint x="1113" y="310" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="qJMQ2b4yUudQI0NOfKAw-1" edge="1" parent="1" source="databaseActor" style="endArrow=none;html=1;rounded=0;" target="ucLoadMaster" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="2150" y="736" as="sourcePoint" />
+            <mxPoint x="874" y="64" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ucLoadMaster" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" value="Load Master Data&lt;br&gt;dari Database" vertex="1">
+          <mxGeometry height="80" width="220" x="1030" y="197.5" as="geometry" />
+        </mxCell>
+        <mxCell id="qJMQ2b4yUudQI0NOfKAw-2" edge="1" parent="1" source="ucSetup" style="endArrow=none;html=1;rounded=0;" target="ucCreateSession" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="160" y="315" as="sourcePoint" />
+            <mxPoint x="1112" y="52" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ucCreateSession" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" value="Buat Game Session&lt;br&gt;dan Session Players" vertex="1">
+          <mxGeometry height="80" width="230" x="730" y="92.5" as="geometry" />
+        </mxCell>
+        <mxCell id="qJMQ2b4yUudQI0NOfKAw-3" edge="1" parent="1" source="player" style="endArrow=none;html=1;rounded=0;" target="ucSetup" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="160" y="316" as="sourcePoint" />
+            <mxPoint x="754" y="157" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ucSetup" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" value="Atur Jumlah Player&lt;br&gt;dan Nama Player" vertex="1">
+          <mxGeometry height="80" width="220" x="350" y="192.5" as="geometry" />
+        </mxCell>
+        <mxCell id="qJMQ2b4yUudQI0NOfKAw-4" edge="1" parent="1" source="player" style="endArrow=none;html=1;rounded=0;" target="ucSelectSavedPlayers" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="160" y="331" as="sourcePoint" />
+            <mxPoint x="750" y="439" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ucSelectSavedPlayers" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" value="Pilih Player&lt;br&gt;yang Sudah Ditambahkan" vertex="1">
+          <mxGeometry height="90" width="260" x="280" y="320" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

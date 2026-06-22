@@ -1,3 +1,66 @@
+.choice-background {
+    -unity-background-scale-mode: scale-and-crop;
+}
+
+Button {
+    background-color: rgba(255, 255, 255, 0);
+    transform-origin: center;
+    transition-property: scale;
+    transition-duration: 0.14s;
+    transition-timing-function: ease-out;
+    border-left-width: 0;
+    border-right-width: 0;
+    border-top-width: 0;
+    border-bottom-width: 0;
+    border-left-color: rgba(255, 255, 255, 0);
+    border-right-color: rgba(255, 255, 255, 0);
+    border-top-color: rgba(255, 255, 255, 0);
+    border-bottom-color: rgba(255, 255, 255, 0);
+}
+
+Button:active {
+    scale: 0.9 0.9;
+    transition-duration: 0.08s;
+    transition-timing-function: ease-in-out;
+}
+
+.background-transition-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    display: none;
+    transition-property: opacity;
+    transition-duration: 0.4s;
+    transition-timing-function: ease-in-out;
+}
+
+.show-background-transition {
+    opacity: 1;
+}
+
+.background-city {
+    background-image: url("project://database/Assets/View/UI/Sprites/Background/City.png?fileID=21300000&guid=f150ff836c6632443a474cc64e662bdd&type=3#City");
+}
+
+.background-choice-bm {
+    background-image: url("project://database/Assets/View/UI/Sprites/Background/choice_bm.png?fileID=21300000&guid=9d23042cd07c3fe42acd29ca1600f712&type=3#choice_bm");
+}
+
+.background-choice-k {
+    background-image: url("project://database/Assets/View/UI/Sprites/Background/choice_k.png?fileID=21300000&guid=cb4cfc7c91acedd41968dc243f735b15&type=3#choice_k");
+}
+
+.background-choice-jm {
+    background-image: url("project://database/Assets/View/UI/Sprites/Background/choice_jm.png?fileID=21300000&guid=a92124515d9217043b2a824b967cffc0&type=3#choice_jm");
+}
+
+.background-choice-tf {
+    background-image: url("project://database/Assets/View/UI/Sprites/Background/choice_tf.png?fileID=21300000&guid=cbc7162caba0adf40a9ecc134f92792f&type=3#choice_tf");
+}
+
 .character {
     background-image: url("project://database/Assets/Screenshot_12-3-2026_135519_static.vecteezy.com-removebg-preview.png?fileID=21300000&guid=fd59a42e74877d04392891d8547925e2&type=3#Screenshot_12-3-2026_135519_static.vecteezy.com-removebg-preview");
     -unity-background-scale-mode: stretch-to-fill;
@@ -17,20 +80,32 @@
     translate: 0 0;
 }
 
+.dialog-character-left {
+    left: 0;
+    right: auto;
+    translate: -100% 0;
+    scale: 1 1;
+}
+
+.show-dialog-character-left {
+    translate: 0 0;
+}
+
 .choice-button {
-    background-color: rgb(255, 255, 255);
+    background-color: rgba(255, 255, 255, 0);
     margin-top: 1%;
     margin-bottom: 2%;
-    border-top-left-radius: 10%;
-    border-top-right-radius: 10%;
-    border-bottom-right-radius: 10%;
-    border-bottom-left-radius: 10%;
     -unity-font: url("project://database/Assets/Resources/Sprite/300Mind/2D%20Game%20UI%20Kit/Fonts/Ariston%20Comic%20Font.ttf?fileID=12800000&guid=e28e9ad7f0a79f14d8c01971d5416eba&type=3#Ariston Comic Font");
     -unity-font-definition: initial;
     font-size: 60px;
     -unity-font-style: normal;
-    background-image: url("project://database/Assets/Resources/Sprite/300Mind/2D%20Game%20UI%20Kit/Sprites/UI-pack_Sprite_2.png?fileID=-8760834427580073799&guid=39e0242329775814891ef673e48ae932&type=3#UI-pack_Sprite_2_16");
-    -unity-background-scale-mode: scale-and-crop;
+    background-image: url("project://database/Assets/View/UI/Sprites/Icons/Rect-Green-Idle.png?fileID=21300000&guid=0b54069952d9e494fb495df2998058ef&type=3#Rect-Green-Idle");
+    -unity-background-scale-mode: stretch-to-fill;
+    -unity-slice-scale: 1px;
+    border-left-color: rgba(255, 255, 255, 0);
+    border-right-color: rgba(255, 255, 255, 0);
+    border-top-color: rgba(255, 255, 255, 0);
+    border-bottom-color: rgba(255, 255, 255, 0);
 }
 
 .choice-list {
@@ -38,26 +113,651 @@
     position: absolute;
     width: 50%;
     height: 100%;
-    justify-content: flex-end;
+    justify-content: center;
     padding-top: 0;
     padding-right: 0;
     padding-bottom: 0;
     padding-left: 0;
     translate: 0 -100%;
-    transition-timing-function: ease-in-out-elastic;
-    transition-duration: 1s;
+    transition-timing-function: ease-out-back;
+    transition-duration: 0.45s;
+}
+
+.main-choice-list {
+    width: 74%;
+    height: 78%;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    align-content: center;
+    padding-top: 2%;
+    padding-right: 2%;
+    padding-bottom: 2%;
+    padding-left: 2%;
+    scale: 1 1;
+    translate: 0 -120%;
+}
+
+.main-choice-button {
+    width: 41%;
+    height: 18%;
+    flex-grow: 0;
+    flex-shrink: 0;
+    margin-top: 1.2%;
+    margin-right: 3%;
+    margin-bottom: 1.2%;
+    margin-left: 3%;
+    font-size: 38px;
+    white-space: normal;
+    -unity-text-align: middle-center;
+}
+
+.target-kebutuhan-panel {
+    padding-top: 2%;
+    padding-right: 4%;
+    padding-bottom: 4%;
+    padding-left: 4%;
+    translate: 0 -140%;
+}
+
+.initial-bahan-panel {
+    padding-top: 2%;
+    padding-right: 4%;
+    padding-bottom: 4%;
+    padding-left: 4%;
+    translate: 0 -140%;
+}
+
+.initial-bahan-panel.show-choice {
+    translate: 0 0;
+}
+
+.initial-bahan-title {
+    width: 82%;
+    min-height: 86px;
+    align-self: center;
+    -unity-font: resource('Sprite/300Mind/2D Game UI Kit/Fonts/Ariston Comic Font');
+    -unity-font-definition: initial;
+    -unity-font-style: bold;
+    font-size: 46px;
+    color: rgb(22, 52, 42);
+    -unity-text-align: middle-center;
+    white-space: normal;
+    background-color: rgba(255, 255, 255, 0.96);
+    border-top-left-radius: 26px;
+    border-top-right-radius: 26px;
+    border-bottom-left-radius: 26px;
+    border-bottom-right-radius: 26px;
+    padding-top: 12px;
+    padding-right: 20px;
+    padding-bottom: 12px;
+    padding-left: 20px;
+    margin-bottom: 3.5%;
+}
+
+.initial-bahan-grid {
+    width: 100%;
+    flex-grow: 1;
+    height: 74%;
+    margin-top: 1.5%;
+    margin-bottom: 3.5%;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-content: center;
+}
+
+.initial-bahan-button {
+    width: 25%;
+    height: 50%;
+    margin-top: 1.2%;
+    margin-right: 1.4%;
+    margin-bottom: 1.2%;
+    margin-left: 1.4%;
+    position: relative;
+    -unity-background-scale-mode: stretch-to-fill;
+}
+
+.selected-initial-bahan {
+    scale: 1.08 1.08;
+}
+
+.initial-bahan-check {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 40px;
+    height: 40px;
+    display: none;
+    background-color: rgb(58, 158, 78);
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+    border-bottom-left-radius: 20px;
+    border-bottom-right-radius: 20px;
+    -unity-font: resource('Sprite/300Mind/2D Game UI Kit/Fonts/Ariston Comic Font');
+    -unity-font-definition: initial;
+    -unity-font-style: bold;
+    font-size: 28px;
+    color: rgb(255, 255, 255);
+    -unity-text-align: middle-center;
+}
+
+.selected-initial-bahan .initial-bahan-check {
+    display: flex;
+}
+
+.initial-bahan-footer {
+    width: 100%;
+    height: 18%;
+    justify-content: center;
+    align-items: center;
+}
+
+.initial-bahan-next-button {
+    width: 180px;
+    height: 78px;
+    background-image: url("project://database/Assets/View/UI/Sprites/Icons/Rect-Idle.png?fileID=21300000&guid=913eee861df48db40badaabe419fd9df&type=3#Rect-Idle");
+    -unity-background-scale-mode: stretch-to-fill;
+    -unity-font: resource('Sprite/300Mind/2D Game UI Kit/Fonts/Ariston Comic Font');
+    -unity-font-definition: initial;
+    -unity-font-style: bold;
+    font-size: 34px;
+    color: rgb(22, 52, 42);
+    -unity-text-align: middle-center;
+    border-top-left-radius: 14px;
+    border-top-right-radius: 14px;
+    border-bottom-right-radius: 14px;
+    border-bottom-left-radius: 14px;
+}
+
+.initial-bahan-next-button:active {
+    background-image: url("project://database/Assets/View/UI/Sprites/Icons/Rect-Click.png?fileID=21300000&guid=dd3fef2ba78660a47b7e03f7e64c1bc6&type=3#Rect-Click");
+}
+
+.target-kebutuhan-panel.show-choice {
+    translate: 0 0;
+}
+
+.target-kebutuhan-overlay {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    background-color: rgba(0, 0, 0, 0.45);
+}
+
+.target-kebutuhan-title {
+    width: 82%;
+    min-height: 86px;
+    align-self: center;
+    -unity-font: resource('Sprite/300Mind/2D Game UI Kit/Fonts/Ariston Comic Font');
+    -unity-font-definition: initial;
+    -unity-font-style: bold;
+    font-size: 46px;
+    color: rgb(22, 52, 42);
+    -unity-text-align: middle-center;
+    white-space: normal;
+    background-color: rgba(255, 255, 255, 0.96);
+    border-top-left-radius: 26px;
+    border-top-right-radius: 26px;
+    border-bottom-left-radius: 26px;
+    border-bottom-right-radius: 26px;
+    padding-top: 12px;
+    padding-right: 20px;
+    padding-bottom: 12px;
+    padding-left: 20px;
+    margin-bottom: 2%;
+}
+
+.target-kebutuhan-grid {
+    width: 100%;
+    flex-grow: 1;
+    height: 72%;
+    margin-bottom: 2%;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-content: center;
+}
+
+.target-kebutuhan-button {
+    width: 44%;
+    height: 44%;
+    margin-top: 2%;
+    margin-right: 2%;
+    margin-bottom: 2%;
+    margin-left: 2%;
+    padding-top: 14px;
+    padding-right: 14px;
+    padding-bottom: 14px;
+    padding-left: 14px;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-image: url("project://database/Assets/View/UI/Sprites/Icons/Item-Button.png?fileID=2800000&guid=4b4b3da8267c1c4438d6af607e4a35e6&type=3#Item-Button");
+    -unity-background-scale-mode: stretch-to-fill;
+    border-left-color: rgba(255, 255, 255, 0);
+    border-right-color: rgba(255, 255, 255, 0);
+    border-top-color: rgba(255, 255, 255, 0);
+    border-bottom-color: rgba(255, 255, 255, 0);
+    position: relative;
+}
+
+.target-kebutuhan-button:active {
+    -unity-background-image-tint-color: rgba(255, 255, 255, 0.8);
+}
+
+.selected-target-kebutuhan {
+    scale: 1.06 1.06;
+}
+
+.target-kebutuhan-order-badge {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 40px;
+    height: 40px;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    background-color: rgb(58, 158, 78);
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+    border-bottom-left-radius: 20px;
+    border-bottom-right-radius: 20px;
+    -unity-font: resource('Sprite/300Mind/2D Game UI Kit/Fonts/Ariston Comic Font');
+    -unity-font-definition: initial;
+    -unity-font-style: bold;
+    font-size: 28px;
+    color: rgb(255, 255, 255);
+    -unity-text-align: middle-center;
+}
+
+.target-kebutuhan-footer {
+    width: 100%;
+    height: 15%;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+
+.target-kebutuhan-action-button {
+    width: 170px;
+    height: 72px;
+    margin-left: 10px;
+    margin-right: 10px;
+    background-image: url("project://database/Assets/View/UI/Sprites/Icons/Rect-Idle.png?fileID=21300000&guid=913eee861df48db40badaabe419fd9df&type=3#Rect-Idle");
+    -unity-background-scale-mode: stretch-to-fill;
+    -unity-font: resource('Sprite/300Mind/2D Game UI Kit/Fonts/Ariston Comic Font');
+    -unity-font-definition: initial;
+    -unity-font-style: bold;
+    font-size: 34px;
+    color: rgb(22, 52, 42);
+    -unity-text-align: middle-center;
+    border-top-left-radius: 14px;
+    border-top-right-radius: 14px;
+    border-bottom-right-radius: 14px;
+    border-bottom-left-radius: 14px;
+}
+
+.target-kebutuhan-action-button:active {
+    background-image: url("project://database/Assets/View/UI/Sprites/Icons/Rect-Click.png?fileID=21300000&guid=dd3fef2ba78660a47b7e03f7e64c1bc6&type=3#Rect-Click");
+}
+
+.menabung-title-text {
+    width: 82%;
+    min-height: 86px;
+    align-self: center;
+    -unity-font: resource('Sprite/300Mind/2D Game UI Kit/Fonts/Ariston Comic Font');
+    -unity-font-definition: initial;
+    -unity-font-style: bold;
+    font-size: 46px;
+    color: rgb(22, 52, 42);
+    -unity-text-align: middle-center;
+    white-space: normal;
+    background-color: rgba(255, 255, 255, 0.96);
+    border-top-left-radius: 26px;
+    border-top-right-radius: 26px;
+    border-bottom-left-radius: 26px;
+    border-bottom-right-radius: 26px;
+    padding-top: 12px;
+    padding-right: 20px;
+    padding-bottom: 12px;
+    padding-left: 20px;
+    margin-bottom: 2%;
+}
+
+.tf-confirm-panel {
+    width: 58%;
+    height: 44%;
+    background-color: rgba(255, 255, 255, 0.94);
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+    border-bottom-right-radius: 20px;
+    border-bottom-left-radius: 20px;
+    border-left-width: 4px;
+    border-right-width: 4px;
+    border-top-width: 4px;
+    border-bottom-width: 4px;
+    border-left-color: rgb(64, 92, 72);
+    border-right-color: rgb(64, 92, 72);
+    border-top-color: rgb(64, 92, 72);
+    border-bottom-color: rgb(64, 92, 72);
+    padding-top: 4%;
+    padding-right: 5%;
+    padding-bottom: 4%;
+    padding-left: 5%;
+    translate: 0 -200%;
+}
+
+.tf-confirm-text {
+    width: 100%;
+    flex-grow: 1;
+    -unity-font: resource('Sprite/300Mind/2D Game UI Kit/Fonts/Ariston Comic Font');
+    -unity-font-definition: initial;
+    -unity-font-style: bold;
+    font-size: 44px;
+    color: rgb(22, 52, 42);
+    -unity-text-align: middle-center;
+    white-space: normal;
+}
+
+.tf-confirm-buttons {
+    width: 100%;
+    height: 34%;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
 }
 
 .show-choice {
     translate: 0 0;
 }
 
-.choice-button:hover {
-    -unity-background-image-tint-color: rgb(180, 180, 180);
-}
-
 .choice-button:active {
     -unity-background-image-tint-color: rgba(255, 255, 255, 0.78);
+}
+
+.choice-button:disabled {
+    opacity: 0.45;
+    -unity-background-image-tint-color: rgb(150, 150, 150);
+}
+
+.risk-panel {
+    background-color: rgba(255, 255, 255, 0.94);
+    border-left-width: 4px;
+    border-right-width: 4px;
+    border-top-width: 4px;
+    border-bottom-width: 4px;
+    border-left-color: rgb(64, 92, 72);
+    border-right-color: rgb(64, 92, 72);
+    border-top-color: rgb(64, 92, 72);
+    border-bottom-color: rgb(64, 92, 72);
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+    border-bottom-left-radius: 20px;
+    border-bottom-right-radius: 20px;
+    padding-top: 3%;
+    padding-right: 5%;
+    padding-bottom: 3%;
+    padding-left: 5%;
+    translate: 0 -130%;
+}
+
+.risk-panel.show-choice {
+    translate: 0 0;
+}
+
+.risk-panel-header {
+    height: 14%;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+    background-color: rgb(235, 228, 198);
+    border-left-width: 3px;
+    border-right-width: 3px;
+    border-top-width: 3px;
+    border-bottom-width: 3px;
+    border-left-color: rgb(64, 92, 72);
+    border-right-color: rgb(64, 92, 72);
+    border-top-color: rgb(64, 92, 72);
+    border-bottom-color: rgb(64, 92, 72);
+    border-top-left-radius: 16px;
+    border-top-right-radius: 16px;
+    border-bottom-left-radius: 16px;
+    border-bottom-right-radius: 16px;
+    margin-bottom: 10px;
+}
+
+.risk-panel-title {
+    width: 100%;
+    -unity-font: resource('Sprite/300Mind/2D Game UI Kit/Fonts/Ariston Comic Font');
+    -unity-font-definition: initial;
+    -unity-font-style: bold;
+    font-size: 50px;
+    color: rgb(22, 52, 42);
+    -unity-text-align: middle-center;
+}
+
+.risk-content {
+    flex-grow: 1;
+    width: 100%;
+    justify-content: center;
+}
+
+.risk-decision-player-text {
+    width: 100%;
+    height: 16%;
+    -unity-font: resource('Sprite/300Mind/2D Game UI Kit/Fonts/Ariston Comic Font');
+    -unity-font-definition: initial;
+    -unity-font-style: bold;
+    font-size: 36px;
+    color: rgb(22, 52, 42);
+    -unity-text-align: middle-center;
+    white-space: normal;
+}
+
+.risk-toggle {
+    height: 12%;
+    width: 100%;
+    -unity-font: resource('Sprite/300Mind/2D Game UI Kit/Fonts/Ariston Comic Font');
+    -unity-font-definition: initial;
+    -unity-font-style: bold;
+    font-size: 34px;
+    color: rgb(22, 52, 42);
+    -unity-text-align: middle-left;
+    margin-top: 4px;
+    margin-bottom: 4px;
+}
+
+.risk-toggle:disabled {
+    opacity: 0.45;
+}
+
+.risk-sub-toggle {
+    width: 45%;
+    height: 100%;
+    font-size: 28px;
+}
+
+.risk-warning-text {
+    width: 100%;
+    height: 8%;
+    -unity-font: resource('Sprite/300Mind/2D Game UI Kit/Fonts/Ariston Comic Font');
+    -unity-font-definition: initial;
+    -unity-font-style: bold;
+    font-size: 26px;
+    color: rgb(180, 48, 42);
+    -unity-text-align: middle-center;
+    white-space: normal;
+}
+
+.item-choice-list {
+    position: absolute;
+    width: 50%;
+    height: 100%;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    align-content: center;
+    padding-top: 4%;
+    padding-right: 4%;
+    padding-bottom: 4%;
+    padding-left: 4%;
+    translate: 0 -100%;
+    transition-timing-function: ease-out-back;
+    transition-duration: 0.45s;
+}
+
+.item-choice-list.show-choice {
+    translate: 0 0;
+}
+
+.jual-masakan-choice-list {
+    width: 72%;
+    padding-left: 2%;
+    padding-right: 2%;
+    flex-wrap: nowrap;
+    justify-content: center;
+    align-items: center;
+}
+
+.item-back-button {
+    position: absolute;
+    bottom: 10%;
+    left: 50%;
+    width: 140px;
+    height: 72px;
+    translate: -50% 0;
+    background-color: rgba(255, 255, 255, 0);
+    background-image: url("project://database/Assets/View/UI/Sprites/Icons/Rect-Idle.png?fileID=21300000&guid=913eee861df48db40badaabe419fd9df&type=3#Rect-Idle");
+    -unity-background-scale-mode: stretch-to-fill;
+    -unity-font: resource('Sprite/300Mind/2D Game UI Kit/Fonts/Ariston Comic Font');
+    -unity-font-definition: initial;
+    -unity-font-style: bold;
+    font-size: 34px;
+    color: rgb(22, 52, 42);
+    -unity-text-align: middle-center;
+    border-top-left-radius: 14px;
+    border-top-right-radius: 14px;
+    border-bottom-right-radius: 14px;
+    border-bottom-left-radius: 14px;
+}
+
+.item-back-button:active {
+    background-image: url("project://database/Assets/View/UI/Sprites/Icons/Rect-Click.png?fileID=21300000&guid=dd3fef2ba78660a47b7e03f7e64c1bc6&type=3#Rect-Click");
+}
+
+.item-page-button {
+    position: absolute;
+    bottom: 10%;
+    width: 72px;
+    height: 72px;
+    background-color: rgba(255, 255, 255, 0);
+    -unity-background-scale-mode: stretch-to-fill;
+    -unity-background-image-tint-color: rgb(255, 255, 255);
+    padding-top: 14px;
+    padding-right: 14px;
+    padding-bottom: 14px;
+    padding-left: 14px;
+    border-top-left-radius: 14px;
+    border-top-right-radius: 14px;
+    border-bottom-right-radius: 14px;
+    border-bottom-left-radius: 14px;
+}
+
+.item-page-button:active {
+    background-color: rgba(255, 255, 255, 0);
+    -unity-background-image-tint-color: rgb(255, 255, 255);
+}
+
+.item-page-button:disabled {
+    opacity: 0.35;
+}
+
+.item-page-previous-button {
+    left: 28%;
+    background-image: url("project://database/Assets/View/UI/Sprites/Icons/SolidArrow-Left-Idle.png?fileID=21300000&guid=2b7e39767b553cc48a9ca677974d7dc9&type=3#SolidArrow-Left-Idle");
+}
+
+.item-page-previous-button:active {
+    background-image: url("project://database/Assets/View/UI/Sprites/Icons/SolidArrow-Left-Click.png?fileID=21300000&guid=9187c62d625d0704c85eb27b478ba438&type=3#SolidArrow-Left-Click");
+}
+
+.item-page-next-button {
+    right: 28%;
+    background-image: url("project://database/Assets/View/UI/Sprites/Icons/SolidArrow-Right-Idle.png?fileID=21300000&guid=fc11b2d2efe21ba44844a24e499ad777&type=3#SolidArrow-Right-Idle");
+}
+
+.item-page-next-button:active {
+    background-image: url("project://database/Assets/View/UI/Sprites/Icons/SolidArrow-Right-Click.png?fileID=21300000&guid=3f5c36361eb325c419f05b08d6d75d6b&type=3#SolidArrow-Right-Click");
+}
+
+.item-choice-button {
+    width: 30%;
+    height: 24%;
+    margin-top: 1%;
+    margin-right: 1.5%;
+    margin-bottom: 1%;
+    margin-left: 1.5%;
+    padding-top: 10px;
+    padding-right: 10px;
+    padding-bottom: 10px;
+    padding-left: 10px;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-image: url("project://database/Assets/View/UI/Sprites/Icons/Item-Button.png?fileID=2800000&guid=4b4b3da8267c1c4438d6af607e4a35e6&type=3#Item-Button");
+    -unity-background-scale-mode: scale-to-fit;
+}
+
+.jual-masakan-choice-button {
+    width: 16.5%;
+    height: 52%;
+    margin-left: 0.8%;
+    margin-right: 0.8%;
+}
+
+.item-button-icon {
+    width: 72px;
+    height: 72px;
+    margin-bottom: 8px;
+    -unity-background-scale-mode: scale-to-fit;
+    -unity-background-image-tint-color: rgb(255, 255, 255);
+}
+
+.item-button-label {
+    width: 100%;
+    -unity-font: url("project://database/Assets/Resources/Sprite/300Mind/2D%20Game%20UI%20Kit/Fonts/Ariston%20Comic%20Font.ttf?fileID=12800000&guid=e28e9ad7f0a79f14d8c01971d5416eba&type=3#Ariston Comic Font");
+    -unity-font-definition: initial;
+    -unity-font-style: bold;
+    font-size: 32px;
+    -unity-text-align: middle-center;
+    color: rgb(22, 52, 42);
+    white-space: normal;
+}
+
+.bahan-nasi-icon {
+    background-image: url("project://database/Assets/View/UI/Sprites/Icons/Coin.png?fileID=21300000&guid=9ab5bd145c5f7ac49b811a662b05ee3f&type=3#Coin");
+}
+
+.bahan-telur-icon {
+    background-image: url("project://database/Assets/View/UI/Sprites/Icons/Heart.png?fileID=21300000&guid=97de086bbc8a38d4799cac1c8d00064e&type=3#Heart");
+}
+
+.bahan-daging-icon {
+    background-image: url("project://database/Assets/View/UI/Sprites/Icons/Money.png?fileID=21300000&guid=cba790c33b765944fa6dbaa548db9db9&type=3#Money");
+}
+
+.bahan-sayuran-icon {
+    background-image: url("project://database/Assets/View/UI/Sprites/Icons/Heart.png?fileID=21300000&guid=97de086bbc8a38d4799cac1c8d00064e&type=3#Heart");
+}
+
+.bahan-tahu-icon {
+    background-image: url("project://database/Assets/View/UI/Sprites/Icons/Coin.png?fileID=21300000&guid=9ab5bd145c5f7ac49b811a662b05ee3f&type=3#Coin");
 }
 
 .text {
@@ -75,15 +775,34 @@
     border-bottom-left-radius: 40px;
 }
 
+.debug-set-day-button {
+    position: absolute;
+    top: 118px;
+    left: 28px;
+    width: 112px;
+    height: 52px;
+    background-image: url("project://database/Assets/View/UI/Sprites/Icons/Rect-Idle.png?fileID=21300000&guid=913eee861df48db40badaabe419fd9df&type=3#Rect-Idle");
+    -unity-background-scale-mode: stretch-to-fill;
+    -unity-font: resource('Sprite/300Mind/2D Game UI Kit/Fonts/Ariston Comic Font');
+    -unity-font-definition: initial;
+    -unity-font-style: bold;
+    font-size: 24px;
+    color: rgb(22, 52, 42);
+}
+
+.debug-set-day-button:active {
+    background-image: url("project://database/Assets/View/UI/Sprites/Icons/Rect-Click.png?fileID=21300000&guid=dd3fef2ba78660a47b7e03f7e64c1bc6&type=3#Rect-Click");
+}
+
 .pause-toggle-button {
     position: absolute;
     top: 20px;
     left: 20%;
     width: 100px;
     height: 100px;
-    background-color: rgb(255, 255, 255);
-    background-image: url("project://database/Assets/View/UI/Sprites/Icons/Heart.png?fileID=21300000&guid=97de086bbc8a38d4799cac1c8d00064e&type=3#Heart");
-    -unity-background-scale-mode: scale-to-fit;
+    background-color: rgba(255, 255, 255, 0);
+    background-image: url("project://database/Assets/View/UI/Sprites/Icons/Pause-Idle.png?fileID=21300000&guid=2ee4b38c7f3f30342afcf51c30df6712&type=3#Pause-Idle");
+    -unity-background-scale-mode: stretch-to-fill;
     -unity-background-image-tint-color: rgb(255, 255, 255);
     border-top-left-radius: 25%;
     border-top-right-radius: 25%;
@@ -93,17 +812,42 @@
     padding-right: 10px;
     padding-bottom: 10px;
     padding-left: 10px;
+    border-left-color: rgba(255, 255, 255, 0);
+    border-right-color: rgba(255, 255, 255, 0);
+    border-top-color: rgba(255, 255, 255, 0);
+    border-bottom-color: rgba(255, 255, 255, 0);
 }
 
 .quest-toggle-button {
     position: absolute;
     top: 20px;
-    left: 30%;
+    left: 65%;
     width: 100px;
     height: 100px;
-    background-color: rgb(255, 255, 255);
-    background-image: url("project://database/Assets/View/UI/Sprites/Icons/Money.png?fileID=21300000&guid=cba790c33b765944fa6dbaa548db9db9&type=3#Money");
-    -unity-background-scale-mode: scale-to-fit;
+    background-color: rgba(255, 255, 255, 0);
+    background-image: url("project://database/Assets/View/UI/Sprites/Icons/Quest-Idle.png?fileID=21300000&guid=9a73571b24c21b54c831f48d2de30d36&type=3#Quest-Idle");
+    -unity-background-scale-mode: stretch-to-fill;
+    -unity-background-image-tint-color: rgb(255, 255, 255);
+    border-top-left-radius: 25%;
+    border-top-right-radius: 25%;
+    border-bottom-right-radius: 25%;
+    border-bottom-left-radius: 25%;
+    padding-top: 10px;
+    padding-right: 10px;
+    padding-bottom: 10px;
+    padding-left: 10px;
+    display: none;
+}
+
+.inventory-toggle-button {
+    position: absolute;
+    top: 20px;
+    left: 75%;
+    width: 100px;
+    height: 100px;
+    background-color: rgba(255, 255, 255, 0);
+    background-image: url("project://database/Assets/View/UI/Sprites/Icons/Inventory-Idle.png?fileID=21300000&guid=738ae72de367e8042af8d750f0631151&type=3#Inventory-Idle");
+    -unity-background-scale-mode: stretch-to-fill;
     -unity-background-image-tint-color: rgb(255, 255, 255);
     border-top-left-radius: 25%;
     border-top-right-radius: 25%;
@@ -115,18 +859,22 @@
     padding-left: 10px;
 }
 
-.pause-toggle-button:hover {
-    background-color: rgb(230, 230, 230);
+.pause-toggle-button:active {
+    -unity-background-image-tint-color: rgb(255, 255, 255);
 }
 
-.quest-toggle-button:hover {
-    background-color: rgb(230, 230, 230);
+.quest-toggle-button:active {
+    -unity-background-image-tint-color: rgb(175, 175, 175);
+}
+
+.inventory-toggle-button:active {
+    -unity-background-image-tint-color: rgb(175, 175, 175);
 }
 
 .quest-panel {
     position: absolute;
-    top: 120px;
-    left: 24%;
+    top: 130px;
+    left: 60%;
     width: 420px;
     height: 330px;
     padding-top: 18px;
@@ -146,6 +894,7 @@
     border-right-color: rgb(64, 92, 72);
     border-top-color: rgb(64, 92, 72);
     border-bottom-color: rgb(64, 92, 72);
+    translate: -160px 0;
 }
 
 .quest-panel-header {
@@ -166,7 +915,9 @@
 .quest-close-button {
     width: 56px;
     height: 56px;
-    background-color: rgb(255, 238, 224);
+    background-color: rgba(255, 255, 255, 0);
+    background-image: url("project://database/Assets/View/UI/Sprites/Icons/Cross-Idle.png?fileID=21300000&guid=310041c1d9d773a4797f6062374aee29&type=3#Cross-Idle");
+    -unity-background-scale-mode: stretch-to-fill;
     -unity-font: resource('Sprite/300Mind/2D Game UI Kit/Fonts/Ariston Comic Font');
     -unity-font-definition: initial;
     -unity-font-style: bold;
@@ -189,4 +940,327 @@
     color: rgb(22, 52, 42);
     margin-bottom: 14px;
     white-space: normal;
+}
+
+.inventory-panel {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 920px;
+    height: 740px;
+    padding-top: 34px;
+    padding-right: 38px;
+    padding-bottom: 38px;
+    padding-left: 38px;
+    background-color: rgba(255, 255, 255, 0.94);
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+    border-bottom-right-radius: 20px;
+    border-bottom-left-radius: 20px;
+    border-left-width: 4px;
+    border-right-width: 4px;
+    border-top-width: 4px;
+    border-bottom-width: 4px;
+    border-left-color: rgb(64, 92, 72);
+    border-right-color: rgb(64, 92, 72);
+    border-top-color: rgb(64, 92, 72);
+    border-bottom-color: rgb(64, 92, 72);
+    translate: -50% -220%;
+    opacity: 0;
+    transition-property: translate, opacity;
+    transition-duration: 0.35s;
+    transition-timing-function: ease-out-back;
+}
+
+.quest-close-button:active {
+    background-image: url("project://database/Assets/View/UI/Sprites/Icons/Cross-Click.png?fileID=21300000&guid=933580cc95710714fa66329ed638d1f2&type=3#Cross-Click");
+}
+
+.show-inventory-panel {
+    translate: -50% -50%;
+    opacity: 1;
+}
+
+.inventory-panel-header {
+    flex-direction: row;
+    height: 118px;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.inventory-title-group {
+    flex-direction: column;
+    justify-content: center;
+}
+
+.inventory-panel-title {
+    -unity-font: resource('Sprite/300Mind/2D Game UI Kit/Fonts/Ariston Comic Font');
+    -unity-font-definition: initial;
+    -unity-font-style: bold;
+    font-size: 62px;
+    color: rgb(22, 52, 42);
+}
+
+.inventory-player-text {
+    -unity-font: resource('Sprite/300Mind/2D Game UI Kit/Fonts/Ariston Comic Font');
+    -unity-font-definition: initial;
+    font-size: 34px;
+    color: rgb(39, 70, 58);
+    white-space: normal;
+}
+
+.inventory-close-button {
+    width: 56px;
+    height: 56px;
+    background-color: rgba(255, 255, 255, 0);
+    background-image: url("project://database/Assets/View/UI/Sprites/Icons/Cross-Idle.png?fileID=21300000&guid=310041c1d9d773a4797f6062374aee29&type=3#Cross-Idle");
+    -unity-background-scale-mode: stretch-to-fill;
+    -unity-font: resource('Sprite/300Mind/2D Game UI Kit/Fonts/Ariston Comic Font');
+    -unity-font-definition: initial;
+    -unity-font-style: bold;
+    font-size: 28px;
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+    border-bottom-right-radius: 12px;
+    border-bottom-left-radius: 12px;
+}
+
+.inventory-close-button:active {
+    background-image: url("project://database/Assets/View/UI/Sprites/Icons/Cross-Click.png?fileID=21300000&guid=933580cc95710714fa66329ed638d1f2&type=3#Cross-Click");
+}
+
+.inventory-list {
+    flex-grow: 1;
+    padding-top: 24px;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-content: flex-start;
+}
+
+.inventory-section {
+    width: 100%;
+    min-height: 420px;
+    padding-top: 12px;
+    padding-right: 18px;
+    padding-bottom: 14px;
+    padding-left: 18px;
+    margin-top: 8px;
+    margin-right: 1%;
+    margin-bottom: 8px;
+    margin-left: 1%;
+    background-color: rgba(255, 238, 224, 0.86);
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+    border-bottom-right-radius: 12px;
+    border-bottom-left-radius: 12px;
+}
+
+.inventory-footer {
+    height: 82px;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+
+.inventory-page-button {
+    width: 72px;
+    height: 72px;
+    background-color: rgba(255, 255, 255, 0);
+    -unity-background-scale-mode: stretch-to-fill;
+    -unity-background-image-tint-color: rgb(255, 255, 255);
+    padding-top: 14px;
+    padding-right: 14px;
+    padding-bottom: 14px;
+    padding-left: 14px;
+    border-top-left-radius: 14px;
+    border-top-right-radius: 14px;
+    border-bottom-right-radius: 14px;
+    border-bottom-left-radius: 14px;
+}
+
+.inventory-page-button:active {
+    background-color: rgba(255, 255, 255, 0);
+    -unity-background-image-tint-color: rgb(255, 255, 255);
+}
+
+.inventory-page-button:disabled {
+    opacity: 0.35;
+}
+
+.inventory-page-previous-button {
+    background-image: url("project://database/Assets/View/UI/Sprites/Icons/SolidArrow-Left-Idle.png?fileID=21300000&guid=2b7e39767b553cc48a9ca677974d7dc9&type=3#SolidArrow-Left-Idle");
+}
+
+.inventory-page-previous-button:active {
+    background-image: url("project://database/Assets/View/UI/Sprites/Icons/SolidArrow-Left-Click.png?fileID=21300000&guid=9187c62d625d0704c85eb27b478ba438&type=3#SolidArrow-Left-Click");
+}
+
+.inventory-page-next-button {
+    background-image: url("project://database/Assets/View/UI/Sprites/Icons/SolidArrow-Right-Idle.png?fileID=21300000&guid=fc11b2d2efe21ba44844a24e499ad777&type=3#SolidArrow-Right-Idle");
+}
+
+.inventory-page-next-button:active {
+    background-image: url("project://database/Assets/View/UI/Sprites/Icons/SolidArrow-Right-Click.png?fileID=21300000&guid=3f5c36361eb325c419f05b08d6d75d6b&type=3#SolidArrow-Right-Click");
+}
+
+.inventory-page-text {
+    width: 360px;
+    -unity-font: resource('Sprite/300Mind/2D Game UI Kit/Fonts/Ariston Comic Font');
+    -unity-font-definition: initial;
+    -unity-font-style: bold;
+    font-size: 40px;
+    color: rgb(22, 52, 42);
+    -unity-text-align: middle-center;
+}
+
+.inventory-section-title {
+    -unity-font: resource('Sprite/300Mind/2D Game UI Kit/Fonts/Ariston Comic Font');
+    -unity-font-definition: initial;
+    -unity-font-style: bold;
+    font-size: 40px;
+    color: rgb(22, 52, 42);
+    white-space: normal;
+}
+
+.inventory-detail {
+    -unity-font: resource('Sprite/300Mind/2D Game UI Kit/Fonts/Ariston Comic Font');
+    -unity-font-definition: initial;
+    font-size: 34px;
+    color: rgb(39, 70, 58);
+    white-space: normal;
+}
+
+.inventory-input-blocker {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.18);
+}
+
+.pause-input-blocker {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.3);
+}
+
+.pause-panel {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 620px;
+    height: 380px;
+    padding-top: 42px;
+    padding-right: 42px;
+    padding-bottom: 42px;
+    padding-left: 42px;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(255, 255, 255, 0.96);
+    border-top-left-radius: 22px;
+    border-top-right-radius: 22px;
+    border-bottom-right-radius: 22px;
+    border-bottom-left-radius: 22px;
+    border-left-width: 4px;
+    border-right-width: 4px;
+    border-top-width: 4px;
+    border-bottom-width: 4px;
+    border-left-color: rgb(64, 92, 72);
+    border-right-color: rgb(64, 92, 72);
+    border-top-color: rgb(64, 92, 72);
+    border-bottom-color: rgb(64, 92, 72);
+    translate: -50% -260%;
+    opacity: 0;
+    transition-property: translate, opacity;
+    transition-duration: 0.35s;
+    transition-timing-function: ease-out-back;
+}
+
+.show-pause-panel {
+    translate: -50% -50%;
+    opacity: 1;
+}
+
+.pause-panel-title {
+    -unity-font: resource('Sprite/300Mind/2D Game UI Kit/Fonts/Ariston Comic Font');
+    -unity-font-definition: initial;
+    -unity-font-style: bold;
+    font-size: 82px;
+    color: rgb(22, 52, 42);
+    -unity-text-align: middle-center;
+    margin-bottom: 42px;
+}
+
+.pause-panel-button-container {
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+
+.pause-panel-icon-button {
+    width: 120px;
+    height: 120px;
+    margin-left: 18px;
+    margin-right: 18px;
+    background-color: rgba(255, 255, 255, 0);
+    -unity-background-scale-mode: stretch-to-fill;
+    -unity-background-image-tint-color: rgb(255, 255, 255);
+    padding-top: 20px;
+    padding-right: 20px;
+    padding-bottom: 20px;
+    padding-left: 20px;
+    border-top-left-radius: 14px;
+    border-top-right-radius: 14px;
+    border-bottom-right-radius: 14px;
+    border-bottom-left-radius: 14px;
+}
+
+.pause-panel-icon-button:active {
+    background-color: rgba(255, 255, 255, 0);
+    -unity-background-image-tint-color: rgb(255, 255, 255);
+}
+
+.pause-resume-button {
+    background-image: url("project://database/Assets/View/UI/Sprites/Icons/Play-Idle.png?fileID=21300000&guid=a678aa74dba24b64db7a36a5c046e9a5&type=3#Play-Idle");
+    border-left-color: rgba(255, 255, 255, 0);
+    border-right-color: rgba(255, 255, 255, 0);
+    border-top-color: rgba(255, 255, 255, 0);
+    border-bottom-color: rgba(255, 255, 255, 0);
+}
+
+.pause-resume-button:active {
+    background-image: url("project://database/Assets/View/UI/Sprites/Icons/Play-Click.png?fileID=21300000&guid=ed8c76e8f04533e4ca4ddf5053bcb5a6&type=3#Play-Click");
+}
+
+.pause-restart-button {
+    background-image: url("project://database/Assets/View/UI/Sprites/Icons/Repeat-Right-Idle.png?fileID=21300000&guid=75ae5dca92bd51049a051e24e05abf1b&type=3#Repeat-Right-Idle");
+    border-left-color: rgba(255, 255, 255, 0);
+    border-right-color: rgba(255, 255, 255, 0);
+    border-top-color: rgba(255, 255, 255, 0);
+    border-bottom-color: rgba(255, 255, 255, 0);
+}
+
+.pause-restart-button:active {
+    background-image: url("project://database/Assets/View/UI/Sprites/Icons/Repeat-Right-Click.png?fileID=21300000&guid=25bd480bb65f58849abc5953a3dfce03&type=3#Repeat-Right-Click");
+}
+
+.pause-home-button {
+    background-image: url("project://database/Assets/View/UI/Sprites/Icons/Home-Idle.png?fileID=21300000&guid=a8c8bdca8d328e44ca6ee205ef9fe8a3&type=3#Home-Idle");
+    border-left-color: rgba(255, 255, 255, 0);
+    border-right-color: rgba(255, 255, 255, 0);
+    border-top-color: rgba(255, 255, 255, 0);
+    border-bottom-color: rgba(255, 255, 255, 0);
+}
+
+.pause-home-button:active {
+    background-image: url("project://database/Assets/View/UI/Sprites/Icons/Home-Click.png?fileID=21300000&guid=c257918cd1ff4054aab3474e1e1fafc9&type=3#Home-Click");
+}
+
+.tf-button {
+    -unity-slice-left: 36;
+    -unity-slice-right: 36;
 }

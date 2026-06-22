@@ -252,6 +252,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4feea0d6f9afd2a468ce133abff29f8e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  debugTargetDay: 5
   choiceController: {fileID: 918224083}
 --- !u!1 &918224082
 GameObject:
