@@ -2,8 +2,24 @@ using UnityEngine;
 
 public partial class ChoiceController
 {
-    private int initialBahanSelectionPlayer = 1;
+    private int initialBahanSelectionIndex = 0;
     private string selectedInitialBahanName = string.Empty;
+
+    public void ResetInitialBahanSelection()
+    {
+        initialBahanSelectionIndex = 0;
+        selectedInitialBahanName = string.Empty;
+    }
+
+    private int GetCurrentInitialBahanPlayer()
+    {
+        if (GameState.Instance == null)
+        {
+            return 1;
+        }
+
+        return GameState.Instance.GetTurnOrderPlayerAt(initialBahanSelectionIndex);
+    }
 
     private void HandleChoiceInitialBahan(string selectedChoice)
     {
@@ -35,14 +51,14 @@ public partial class ChoiceController
             return;
         }
 
-        if (!DataManager.Instance.bahanDict.TryGetValue(selectedInitialBahanName, out BahanMakananData bahanData))
+        if (!DataManager.Instance.bahanDict.ContainsKey(selectedInitialBahanName))
         {
             Debug.LogWarning("Data bahan awal tidak ditemukan: " + selectedInitialBahanName);
             return;
         }
 
-        int hargaBahan = Mathf.Max(0, bahanData.hargaBeli);
-        int player = initialBahanSelectionPlayer;
+        int hargaBahan = GameState.Instance.GetHargaBahanEfektif(selectedInitialBahanName);
+        int player = GetCurrentInitialBahanPlayer();
         if (GameState.Instance.GetCoins(player) < hargaBahan)
         {
             Debug.LogWarning("Coin player tidak cukup untuk bahan awal: " + selectedInitialBahanName);
@@ -52,20 +68,21 @@ public partial class ChoiceController
         GameState.Instance.ChangeCoins(player, -hargaBahan);
         GameState.Instance.AddBahanToList(player, selectedInitialBahanName);
 
-        if (initialBahanSelectionPlayer < GameState.Instance.playerCount)
+        if (initialBahanSelectionIndex < GameState.Instance.playerCount - 1)
         {
-            initialBahanSelectionPlayer++;
+            initialBahanSelectionIndex++;
             selectedInitialBahanName = string.Empty;
-            GameState.Instance.SetTurnAndMoves(initialBahanSelectionPlayer, 2);
+            int nextPlayer = GetCurrentInitialBahanPlayer();
+            GameState.Instance.SetTurnAndMoves(nextPlayer, GameState.Instance.ActionsPerTurn);
             view.UpdatePlayerTurn(GameState.Instance.turn);
             view.UpdatePlayerStats();
-            view.ShowInitialBahanChoiceForPlayer(initialBahanSelectionPlayer);
+            view.ShowInitialBahanChoiceForPlayer(nextPlayer);
             return;
         }
 
-        initialBahanSelectionPlayer = 1;
+        initialBahanSelectionIndex = 0;
         selectedInitialBahanName = string.Empty;
-        GameState.Instance.SetTurnAndMoves(1, 2);
+        GameState.Instance.SetTurnAndMoves(GameState.Instance.GetFirstPlayerInTurnOrder(), GameState.Instance.ActionsPerTurn);
         view.UpdatePlayerTurn(GameState.Instance.turn);
         view.UpdatePlayerStats();
         view.TransitionInitialBahanToTargetKebutuhan();

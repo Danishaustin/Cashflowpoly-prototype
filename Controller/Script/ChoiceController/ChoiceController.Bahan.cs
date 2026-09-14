@@ -22,7 +22,8 @@ public partial class ChoiceController
             return;
         }
 
-        var amount = 0 - DataManager.Instance.bahanDict[selectedChoice].hargaBeli;
+        int hargaBahan = GameState.Instance.GetHargaBahanEfektif(selectedChoice);
+        var amount = 0 - hargaBahan;
 
         if (GameState.Instance.Coins + amount < 0)
         {
@@ -35,11 +36,17 @@ public partial class ChoiceController
         GameState.Instance.AddBahanToList(activePlayer, selectedChoice);
         GameState.Instance.ChangeCoins(amount);
         view.UpdateCoins(GameState.Instance.Coins);
+        PostBahanMasakanEvent(activePlayer, selectedChoice, hargaBahan);
 
         string resultText = "Membeli " + selectedChoice + " seharga " + (-amount) + " koin\n";
         int aksiKe = GameState.Instance.bmAksiKe;
         GameState.Instance.bmAksiKe++;
         Debug.Log("bmAksiKe: " + GameState.Instance.bmAksiKe);
+
+        if (PlayNpcStaticDialogThen("BahanMasakan", resultText, UpdateMove))
+        {
+            return;
+        }
 
         if (Narasi("BahanMasakan", aksiKe, () =>
         {

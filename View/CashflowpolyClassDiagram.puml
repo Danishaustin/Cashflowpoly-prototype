@@ -148,6 +148,32 @@ package "Model / Runtime" {
         +SignIn(username: string, password: string): Task~bool~
         +SignOut(): void
         +IsSignedIn(): bool
+        +AccessToken: string
+        +CurrentUserId: string
+        +CurrentUsername: string
+        +CurrentDisplayName: string
+        +CurrentRole: string
+    }
+
+    class NarafinApiClient <<HTTP Client>> {
+        +LoginAsync(username: string, password: string): Task~NarafinAuthResult~
+        +RegisterAsync(username: string, password: string): Task~NarafinAuthResult~
+    }
+
+    class NarafinAuthResult <<DTO>> {
+        +Success: bool
+        +ErrorCode: string
+        +ErrorMessage: string
+        +Session: NarafinAuthSession
+    }
+
+    class NarafinAuthSession <<DTO>> {
+        +user_id: string
+        +username: string
+        +role: string
+        +display_name: string
+        +access_token: string
+        +expires_at: string
     }
 }
 
@@ -212,7 +238,7 @@ package "Unity / External" {
     class JsonUtility <<Unity>>
     class PlayerPrefs <<Unity>>
     class SceneManager <<Unity>>
-    class AuthenticationService <<Unity Services>>
+    class UnityWebRequest <<Unity>>
 }
 
 BahanMakananDatabase "1" *-- "0..*" BahanMakananData
@@ -252,7 +278,9 @@ UIManager --> LoginManager : authentication
 UIManager --> ChangeScene : start game
 UIManager ..> PlayerPrefs : save player count and names
 
-LoginManager ..> AuthenticationService : sign up / sign in / sign out
+LoginManager --> NarafinApiClient : auth requests
+LoginManager ..> PlayerPrefs : persist Narafin session
+NarafinApiClient ..> UnityWebRequest : HTTP POST
 ChangeScene ..> SceneManager : load scene
 
 note right of DataManager

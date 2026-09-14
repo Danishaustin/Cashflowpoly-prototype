@@ -1,0 +1,441 @@
+{
+  "name": "Ruleset PEMULA Default",
+  "description": "Ruleset PEMULA",
+  "definition": {
+    "mode": "PEMULA",
+    "settings": {
+      "actions_per_turn": 2,
+      "starting_cash": 20,
+      "initial_coins": 20,
+      "initial_happiness": 0,
+      "initial_saving": 0,
+      "finish_day": 11,
+      "min_players": 3,
+      "max_players": 4,
+      "cash_min": 0,
+      "max_ingredient_total": 6,
+      "max_same_ingredient": 3,
+      "primary_need_max_per_day": 1,
+      "require_primary_before_others": true,
+      "donation_min_amount": 1,
+      "donation_max_amount": 99,
+      "gold_trade_allow_buy": false,
+      "gold_trade_allow_sell": false,
+      "loan_enabled": false,
+      "insurance_enabled": false,
+      "saving_goal_enabled": true,
+      "freelance_income": 1
+    },
+    "player_ordering": {
+      "ordering_code": "PLAYER_ORDER",
+      "friday_feature": "DONATION",
+      "friday_enabled": true,
+      "saturday_feature": "GOLD_TRADE",
+      "saturday_enabled": false,
+      "sunday_feature": "REST",
+      "sunday_enabled": true,
+      "instructor_player_usernames": []
+    },
+    "actions": [
+      { "action_id": "KerjaLepas" },
+      { "action_id": "Kebutuhan" },
+      { "action_id": "BahanMasakan" },
+      { "action_id": "JualMasakan" },
+      { "action_id": "Menabung" },
+      { "action_id": "TujuanFinansial" },
+      { "action_id": "GunakanOpsiDarurat" },
+      { "action_id": "AkhirGiliran" }
+    ],
+    "ingredients": [
+      {
+        "id": "ING-001",
+        "nama": "Nasi",
+        "hargaBeli": 1
+      },
+      {
+        "id": "ING-002",
+        "nama": "Telur",
+        "hargaBeli": 4
+      },
+      {
+        "id": "ING-003",
+        "nama": "Sayuran",
+        "hargaBeli": 2
+      },
+      {
+        "id": "ING-004",
+        "nama": "TahuTempe",
+        "hargaBeli": 3
+      },
+      {
+        "id": "ING-005",
+        "nama": "Daging",
+        "hargaBeli": 5
+      }
+    ],
+    "orders": [
+        {
+        "id": "ORD-001",
+        "nama": "LontongBalap",
+        "hargaJual": 13,
+        "poinKebahagiaan": 0,
+        "bahan": ["ING-003", "ING-001"],
+        "cardQty": 2
+        },
+        {
+        "id": "ORD-002",
+        "nama": "GadoGado",
+        "hargaJual": 26,
+        "poinKebahagiaan": 0,
+        "bahan": ["ING-002", "ING-004", "ING-003", "ING-001"],
+        "cardQty": 2
+        },
+        {
+        "id": "ORD-003",
+        "nama": "SegoPenyet",
+        "hargaJual": 22,
+        "poinKebahagiaan": 0,
+        "bahan": ["ING-002", "ING-004", "ING-001"],
+        "cardQty": 2
+        },
+        {
+        "id": "ORD-004",
+        "nama": "NasiGoreng",
+        "hargaJual": 15,
+        "poinKebahagiaan": 0,
+        "bahan": ["ING-002", "ING-001"],
+        "cardQty": 1
+        },
+        {
+        "id": "ORD-005",
+        "nama": "SotoDaging",
+        "hargaJual": 17,
+        "poinKebahagiaan": 0,
+        "bahan": ["ING-005", "ING-002"],
+        "cardQty": 2
+        },
+        {
+        "id": "ORD-006",
+        "nama": "NasiPecel",
+        "hargaJual": 20,
+        "poinKebahagiaan": 0,
+        "bahan": ["ING-004", "ING-003", "ING-001"],
+        "cardQty": 2
+        },
+        {
+        "id": "ORD-007",
+        "nama": "Rawon",
+        "hargaJual": 24,
+        "poinKebahagiaan": 0,
+        "bahan": ["ING-005", "ING-002", "ING-004"],
+        "cardQty": 2
+        },
+        {
+        "id": "ORD-008",
+        "nama": "NasiCampur",
+        "hargaJual": 27,
+        "poinKebahagiaan": 0,
+        "bahan": ["ING-005", "ING-003", "ING-002", "ING-001"],
+        "cardQty": 2
+        },
+        {
+        "id": "ORD-009",
+        "nama": "SateKlopo",
+        "hargaJual": 26,
+        "poinKebahagiaan": 0,
+        "bahan": ["ING-005", "ING-005", "ING-001"],
+        "cardQty": 2
+        },
+        {
+        "id": "ORD-010",
+        "nama": "TahuTelor",
+        "hargaJual": 25,
+        "poinKebahagiaan": 0,
+        "bahan": ["ING-004", "ING-002", "ING-002"],
+        "cardQty": 2
+        },
+        {
+        "id": "ORD-011",
+        "nama": "TahuCampur",
+        "hargaJual": 16,
+        "poinKebahagiaan": 0,
+        "bahan": ["ING-005", "ING-004"],
+        "cardQty": 2
+        },
+        {
+        "id": "ORD-012",
+        "nama": "RujakCingur",
+        "hargaJual": 28,
+        "poinKebahagiaan": 0,
+        "bahan": ["ING-005", "ING-004", "ING-003", "ING-001"],
+        "cardQty": 2
+        },
+        {
+        "id": "ORD-013",
+        "nama": "SemanggiSuroboyo",
+        "hargaJual": 14,
+        "poinKebahagiaan": 0,
+        "bahan": ["ING-003", "ING-003"],
+        "cardQty": 2
+        }
+    ],
+    "needs": [
+        {
+            "id": "NEED-P-001",
+            "nama": "Baju",
+            "tipe": "primer",
+            "hargaBeli": 0,
+            "poinKebahagiaan": 0
+        },
+        {
+            "id": "NEED-P-002",
+            "nama": "Buku",
+            "tipe": "primer",
+            "hargaBeli": 0,
+            "poinKebahagiaan": 0
+        },
+        {
+            "id": "NEED-P-003",
+            "nama": "Sepatu",
+            "tipe": "primer",
+            "hargaBeli": 0,
+            "poinKebahagiaan": 0
+        },
+        {
+            "id": "NEED-P-004",
+            "nama": "Makanan",
+            "tipe": "primer",
+            "hargaBeli": 0,
+            "poinKebahagiaan": 0
+        },
+        {
+            "id": "NEED-S-001",
+            "nama": "Tas",
+            "tipe": "sekunder",
+            "hargaBeli": 0,
+            "poinKebahagiaan": 0
+        },
+        {
+            "id": "NEED-S-002",
+            "nama": "Sepeda",
+            "tipe": "sekunder",
+            "hargaBeli": 0,
+            "poinKebahagiaan": 0
+        },
+        {
+            "id": "NEED-S-003",
+            "nama": "AlatTulis",
+            "tipe": "sekunder",
+            "hargaBeli": 0,
+            "poinKebahagiaan": 0
+        },
+        {
+            "id": "NEED-S-004",
+            "nama": "Kamera",
+            "tipe": "sekunder",
+            "hargaBeli": 0,
+            "poinKebahagiaan": 0
+        },
+        {
+            "id": "NEED-T-001",
+            "nama": "GameConsole",
+            "tipe": "tersier",
+            "hargaBeli": 0,
+            "poinKebahagiaan": 0
+        },
+        {
+            "id": "NEED-T-002",
+            "nama": "JamTangan",
+            "tipe": "tersier",
+            "hargaBeli": 0,
+            "poinKebahagiaan": 0
+        },
+        {
+            "id": "NEED-T-003",
+            "nama": "WahanaBermain",
+            "tipe": "tersier",
+            "hargaBeli": 0,
+            "poinKebahagiaan": 0
+        },
+        {
+            "id": "NEED-T-004",
+            "nama": "Boneka",
+            "tipe": "tersier",
+            "hargaBeli": 0,
+            "poinKebahagiaan": 0
+        }
+    ],
+    "need_set_bonuses": [
+      {
+        "pattern_code": "THREE_DIFFERENT",
+        "required_count": 3,
+        "points": 4
+      },
+      {
+        "pattern_code": "THREE_SAME",
+        "required_count": 3,
+        "points": 2
+      }
+    ],
+    "collection_missions": [
+        {
+            "id": "MIS-001",
+            "nama": "Target Kebutuhan Boneka",
+            "success_points": 0,
+            "failure_points": -10,
+            "penaltyPoints": 10,
+            "kebutuhanTarget": [
+                {
+                    "order": 1,
+                    "type": "CARD",
+                    "value": "NEED-T-004"
+                }
+            ]
+        },
+        {
+            "id": "MIS-002",
+            "nama": "Target Kebutuhan Jam Tangan",
+            "success_points": 0,
+            "failure_points": -10,
+            "penaltyPoints": 10,
+            "kebutuhanTarget": [
+                {
+                    "order": 1,
+                    "type": "CARD",
+                    "value": "NEED-T-002"
+                }
+            ]
+        },
+        {
+            "id": "MIS-003",
+            "nama": "Target Kebutuhan Wahana Bermain",
+            "success_points": 0,
+            "failure_points": -10,
+            "penaltyPoints": 10,
+            "kebutuhanTarget": [
+                {
+                    "order": 1,
+                    "type": "CARD",
+                    "value": "NEED-T-003"
+                }
+            ]
+        },
+        {
+            "id": "MIS-004",
+            "nama": "Target Kebutuhan Game Console",
+            "success_points": 0,
+            "failure_points": -10,
+            "penaltyPoints": 10,
+            "kebutuhanTarget": [
+                {
+                    "order": 1,
+                    "type": "CARD",
+                    "value": "NEED-T-001"
+                }
+            ]
+        }
+    ],
+    "financial_goals": [
+      {
+        "id": "GOAL-001",
+        "nama": "Rumah",
+        "hargaBeli": 35,
+        "poinKebahagiaan": 35
+      },
+      {
+        "id": "GOAL-002",
+        "nama": "Mobil",
+        "hargaBeli": 32,
+        "poinKebahagiaan": 30
+      },
+      {
+        "id": "GOAL-003",
+        "nama": "Tamasya",
+        "hargaBeli": 30,
+        "poinKebahagiaan": 28
+      },
+      {
+        "id": "GOAL-004",
+        "nama": "KebunBinatang",
+        "hargaBeli": 28,
+        "poinKebahagiaan": 25
+      },
+      {
+        "id": "GOAL-005",
+        "nama": "BersamaKeluarga",
+        "hargaBeli": 25,
+        "poinKebahagiaan": 20
+      }
+    ],
+    "narratives": [],
+    "donation_rank_points": [
+      { "rank": 1, "points": 7 },
+      { "rank": 2, "points": 5 },
+      { "rank": 3, "points": 2 }
+    ],
+    "gold_points_by_qty": [
+      { "qty": 1, "points": 3 },
+      { "qty": 2, "points": 5 },
+      { "qty": 3, "points": 8 },
+      { "qty": 4, "points": 12 }
+    ],
+    "gold_prices": [
+      {
+        "price_code": "GOLD-1",
+        "qty": 1,
+        "unit_price": 5,
+        "card_qty": 2
+      },
+      {
+        "price_code": "GOLD-2",
+        "qty": 1,
+        "unit_price": 6,
+        "card_qty": 2
+      },
+      {
+        "price_code": "GOLD-3",
+        "qty": 1,
+        "unit_price": 7,
+        "card_qty": 1
+      },
+      {
+        "price_code": "GOLD-4",
+        "qty": 1,
+        "unit_price": 8,
+        "card_qty": 1
+      }
+    ],
+    "pension_rank_points": [
+      { "rank": 1, "points": 5 },
+      { "rank": 2, "points": 3 },
+      { "rank": 3, "points": 1 }
+    ],
+    "tie_breakers": [
+      { "tie_breaker_code": "TB-1", "tie_number": 1, "card_qty": 1 },
+      { "tie_breaker_code": "TB-2", "tie_number": 2, "card_qty": 1 },
+      { "tie_breaker_code": "TB-3", "tie_number": 3, "card_qty": 1 },
+      { "tie_breaker_code": "TB-4", "tie_number": 4, "card_qty": 1 }
+    ],
+    "sharia_loans": [
+      {
+        "loan_code": "LOAN-001",
+        "item_name": "Pinjaman Modal",
+        "principal": 10,
+        "installment": 10,
+        "duration_days": 99,
+        "penalty_points": 15,
+        "card_qty": 8
+      }
+    ],
+    "insurance_products": [
+      {
+        "product_code": "INS-001",
+        "item_name": "Asuransi Multi Risiko",
+        "premium": 1,
+        "usage_limit": 1,
+        "card_qty": 4
+      }
+    ],
+    "life_risks": []
+  }
+}

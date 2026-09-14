@@ -77,10 +77,10 @@ public partial class GameState
 
     public bool AdvancePeduliDonasiTurn()
     {
-        if (turn < playerCount)
+        if (!IsLastPlayerInTurnOrder(turn))
         {
-            turn++;
-            movesLeft = 2;
+            turn = GetNextPlayerInTurnOrder(turn);
+            movesLeft = ActionsPerTurn;
             return false;
         }
 

@@ -31,11 +31,17 @@ public partial class ChoiceController
         var amountHappiness = DataManager.Instance.tujuanFinansialDict[selectedChoice].poinKebahagiaan;
         GameState.Instance.ChangeHappiness(amountHappiness);
         view.UpdateHappiness(GameState.Instance.Happiness);
+        PostTujuanFinansialEvent(GameState.Instance.turn, selectedChoice, -amount, amountHappiness);
 
         string resultText = "Membeli tujuan finansial " + selectedChoice + " seharga " + (-amount) + " koin dengan poin kebahagiaan " + amountHappiness + "\n";
         int aksiKe = GameState.Instance.tfAksiKe;
         GameState.Instance.tfAksiKe++;
         Debug.Log("tfAksiKe: " + GameState.Instance.tfAksiKe);
+
+        if (PlayNpcStaticDialogThen("TujuanFinansial", resultText, CompleteTujuanFinansialFlow))
+        {
+            return;
+        }
 
         if (Narasi("TujuanFinansial", aksiKe, () =>
         {
@@ -84,8 +90,14 @@ public partial class ChoiceController
                 GameState.Instance.ChangeCoins(-GameState.Instance.SavingText);
                 view.UpdateCoins(GameState.Instance.Coins);
                 view.UpdateSaving(GameState.Instance.Saving);
+                PostMenabungEvent(GameState.Instance.turn, GameState.Instance.SavingText);
                 
                 string savingText = "Menabung " + GameState.Instance.SavingText + " koin\n";
+                if (PlayNpcStaticDialogThen("Menabung", savingText, ContinueAfterMenabung))
+                {
+                    break;
+                }
+
                 ShowSystemDialogThen(savingText, ContinueAfterMenabung);
                 break;
             default:
@@ -119,6 +131,9 @@ public partial class ChoiceController
 
     private void ContinueAfterMenabung()
     {
+        int previousTurn = GameState.Instance.turn;
+        PostAkhirGiliranIfDayWillAdvance(previousTurn);
+
         GameState.Instance.ConsumeMoveWithoutTurnProgress();
         view.UpdateDay(GameState.Instance.day);
         view.UpdatePlayerTurn(GameState.Instance.turn);

@@ -3,8 +3,8 @@ using System.Collections.Generic;
 
 public partial class GameState
 {
-    private const int MaxTotalBahanPerPlayer = 6;
-    private const int MaxSameBahanPerPlayer = 3;
+    private int weeklyBahanPriceDelta;
+    private int weeklyBahanPriceWeek;
 
     // Runtime inventory for bahan and kebutuhan collected by players.
     private void InitializeInventory()
@@ -246,12 +246,12 @@ public partial class GameState
 
     public bool IsBahanTotalAtLimit(int player)
     {
-        return GetTotalBahanCount(player) >= MaxTotalBahanPerPlayer;
+        return GetTotalBahanCount(player) >= MaxIngredientTotal;
     }
 
     public bool IsBahanAtLimit(int player, string nama)
     {
-        return GetBahanCount(player, nama) >= MaxSameBahanPerPlayer;
+        return GetBahanCount(player, nama) >= MaxSameIngredient;
     }
 
     public bool CanAddBahan(int player, string nama)
@@ -267,5 +267,43 @@ public partial class GameState
         }
 
         return !IsBahanAtLimit(player, nama);
+    }
+
+    // Temporary weekly modifier from Risiko Kehidupan for ingredient prices.
+    public void SetMingguanPerubahanHargaBahan(int delta)
+    {
+        weeklyBahanPriceDelta = delta;
+        weeklyBahanPriceWeek = GetCurrentWeekIndex();
+    }
+
+    public int GetMingguanPerubahanHargaBahan()
+    {
+        if (GetCurrentWeekIndex() != weeklyBahanPriceWeek)
+        {
+            return 0;
+        }
+
+        return weeklyBahanPriceDelta;
+    }
+
+    public int GetHargaBahanEfektif(string bahanName)
+    {
+        if (DataManager.Instance == null || DataManager.Instance.bahanDict == null)
+        {
+            return 0;
+        }
+
+        if (!DataManager.Instance.bahanDict.TryGetValue(bahanName, out BahanMakananData bahanData))
+        {
+            return 0;
+        }
+
+        int harga = bahanData.hargaBeli + GetMingguanPerubahanHargaBahan();
+        return Mathf.Max(0, harga);
+    }
+
+    private int GetCurrentWeekIndex()
+    {
+        return ((day - 1) / 7) + 1;
     }
 }

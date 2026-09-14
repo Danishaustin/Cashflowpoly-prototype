@@ -20,7 +20,7 @@ Berisi DataManager, GameState, dan LoginManager
 
 - **LoginManager**
 
-  Kode untuk mengatur autentikasi
+  Kode untuk mengatur autentikasi ke Narafin API, menyimpan session token, dan menjadi facade untuk login/register/sign-out.
 
 ## Controller
 

@@ -1,0 +1,78 @@
+{
+    "dialogKarakter": [
+        {
+            "id": "test2_kebutuhan",
+            "prerequisite": [
+                {
+                    "uang": 5,
+                    "kebahagiaan": 0,
+                    "tabungan": 0,
+                    "emas": 0,
+                    "kartuPinjaman": 0,
+                    "mingguKe": 0,
+                    "hariKe": 0,
+                    "asuransiDimiliki": false,
+                    "bahanDimiliki": [],
+                    "kebutuhanDimiliki": [],
+                    "tujuanFinansialDimiliki": [],
+                    "masakanDijual": []
+                }
+            ],
+            "aksi": "Kebutuhan",
+            "aksiValue": 0,
+            "npcName": "Penjual Kebutuhan",
+            "npcSprite": "penjual_kebutuhan",
+            "lines": [
+                {
+                    "speaker": "NPC",
+                    "text": "Paket Test 2: kebutuhan apa yang mau kamu beli?"
+                },
+                {
+                    "speaker": "PLAYER",
+                    "text": "Saya cek dulu mana yang paling penting."
+                },
+                {
+                    "speaker": "PLAYER",
+                    "text": ""
+                },
+                {
+                    "speaker": "PLAYER",
+                    "text": ""
+                }
+            ]
+        },
+        {
+            "id": "test2_menabung",
+            "prerequisite": [
+                {
+                    "uang": 8,
+                    "kebahagiaan": 0,
+                    "tabungan": 0,
+                    "emas": 0,
+                    "kartuPinjaman": 0,
+                    "mingguKe": 0,
+                    "hariKe": 0,
+                    "asuransiDimiliki": false,
+                    "bahanDimiliki": [],
+                    "kebutuhanDimiliki": [],
+                    "tujuanFinansialDimiliki": [],
+                    "masakanDijual": []
+                }
+            ],
+            "aksi": "Menabung",
+            "aksiValue": 0,
+            "npcName": "Penjaga Bank",
+            "npcSprite": "penjaga_bank",
+            "lines": [
+                {
+                    "speaker": "NPC",
+                    "text": "Menabung sedikit demi sedikit tetap membuat tujuanmu bergerak."
+                },
+                {
+                    "speaker": "PLAYER",
+                    "text": "Baik, saya sisihkan uang saya sekarang."
+                }
+            ]
+        }
+    ]
+}

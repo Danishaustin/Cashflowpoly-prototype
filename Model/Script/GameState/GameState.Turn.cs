@@ -4,24 +4,23 @@ public partial class GameState
     public void NextDay()
     {
         day++;
-        turn = 1;
-        movesLeft = 2;
+        turn = GetFirstPlayerInTurnOrder();
+        movesLeft = ActionsPerTurn;
+        NormalizeDayAfterAdvance();
+
         if (day >= finishDay)
         {
             isGameOver = true;
             return;
-        }
-        while (day % 7 == 0)
-        {
-            day++;
         }
     }
 
     public void SetDay(int targetDay)
     {
         day = targetDay < 1 ? 1 : targetDay;
-        turn = 1;
-        movesLeft = 2;
+        turn = GetFirstPlayerInTurnOrder();
+        movesLeft = ActionsPerTurn;
+        NormalizeDayAfterAdvance();
         isGameOver = day >= finishDay;
     }
 
@@ -39,15 +38,15 @@ public partial class GameState
         }
         if (movesLeft <= 0)
         {
-            if (turn == playerCount)
+            if (IsLastPlayerInTurnOrder(turn))
             {
-                turn = 1;
+                turn = GetFirstPlayerInTurnOrder();
                 NextDay();
                 return;
             }
 
-            turn++;
-            movesLeft = 2;
+            turn = GetNextPlayerInTurnOrder(turn);
+            movesLeft = ActionsPerTurn;
         }
     }
 
@@ -66,34 +65,43 @@ public partial class GameState
             return;
         }
 
-        if (turn == playerCount)
+        if (IsLastPlayerInTurnOrder(turn))
         {
-            turn = 1;
+            turn = GetFirstPlayerInTurnOrder();
             NextDay();
             return;
         }
 
-        turn++;
-        movesLeft = 2;
+        turn = GetNextPlayerInTurnOrder(turn);
+        movesLeft = ActionsPerTurn;
     }
 
     public bool IsJumatBerkah()
     {
-        if (day % 7 == 5)
-        {
-            return true;
-        }
-
-        return false;
+        return FridayEnabled && GetDayOfWeek(day) == 5;
     }
 
     public bool IsInvestasiEmasDay()
     {
-        return day % 7 == 6;
+        return SaturdayEnabled && GetDayOfWeek(day) == 6;
     }
 
     public bool IsGameOver()
     {
         return isGameOver;
+    }
+
+    private void NormalizeDayAfterAdvance()
+    {
+        while (!SundayEnabled && GetDayOfWeek(day) == 7 && day < finishDay)
+        {
+            day++;
+        }
+    }
+
+    private static int GetDayOfWeek(int value)
+    {
+        int mod = (value - 1) % 7;
+        return mod < 0 ? mod + 8 : mod + 1;
     }
 }

@@ -1,0 +1,338 @@
+// Use DBML to define your database structure
+// Docs: https://dbml.dbdiagram.io/docs
+// Physical Data Model - Cashflowpoly
+
+Table users {
+  id uuid [primary key]
+  username varchar(50) [not null, unique]
+  password_hash varchar(255) [not null, note: 'Store hashed password only, never plain password']
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table players {
+  id uuid [primary key]
+  user_id uuid [not null]
+  name varchar(8) [not null]
+}
+
+Table game_sessions {
+  id uuid [primary key]
+  user_id uuid [not null]
+  player_count integer [not null, note: 'Allowed value: 3 or 4']
+  day integer [not null, default: 1]
+  turn integer [not null, default: 1]
+  moves_left integer [not null, default: 2]
+  finish_day integer [not null, default: 13]
+  is_game_over boolean [not null, default: false]
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table session_players {
+  id uuid [primary key]
+  session_id uuid [not null]
+  player_id uuid [not null]
+  player_index integer [not null, note: 'Player order inside session, 1 to 4']
+  name varchar(8) [not null, note: 'Snapshot of player name when session starts']
+  coins integer [not null, default: 20]
+  happiness integer [not null, default: 0]
+  saving integer [not null, default: 0]
+
+  indexes {
+    (session_id, player_index) [unique]
+  }
+}
+
+Table bahan_makanan {
+  id varchar(80) [primary key]
+  nama varchar(80) [not null]
+  harga_beli integer [not null]
+}
+
+Table resep {
+  id varchar(80) [primary key]
+  nama varchar(80) [not null]
+  harga_jual integer [not null]
+  poin_kebahagiaan integer [not null]
+}
+
+Table resep_bahan {
+  resep_id varchar(80) [not null]
+  bahan_id varchar(80) [not null]
+  jumlah integer [not null, default: 1]
+
+  indexes {
+    (resep_id, bahan_id) [pk]
+  }
+}
+
+Table kebutuhan {
+  id varchar(80) [primary key]
+  nama varchar(80) [not null]
+  tipe varchar(30) [not null, note: 'primer, sekunder, or tersier']
+}
+
+Table tujuan_finansial {
+  id varchar(80) [primary key]
+  nama varchar(80) [not null]
+  harga_beli integer [not null]
+  poin_kebahagiaan integer [not null]
+}
+
+Table target_kebutuhan {
+  id varchar(120) [primary key]
+  nama varchar(120) [not null]
+  poin_kebahagiaan_berhasil integer [not null]
+  poin_kebahagiaan_gagal integer [not null, note: 'Stored as negative value']
+}
+
+Table target_kebutuhan_items {
+  target_kebutuhan_id varchar(120) [not null]
+  urutan integer [not null, note: '1 to 3']
+  jenis_target varchar(20) [not null, note: 'tipe or nama']
+  value varchar(80) [not null]
+
+  indexes {
+    (target_kebutuhan_id, urutan) [pk]
+  }
+}
+
+Table narasi {
+  id varchar(120) [primary key]
+  narasi_1 text [not null]
+  narasi_2 text
+  narasi_3 text
+}
+
+Table narasi_prerequisite_aksi {
+  id uuid [primary key]
+  narasi_id varchar(120) [not null]
+  aksi varchar(80) [not null]
+  value integer [not null, note: '0 means default narrative for that action']
+
+  indexes {
+    (aksi, value)
+  }
+}
+
+Table quest {
+  id varchar(120) [primary key]
+  title varchar(120) [not null]
+  description text
+  aksi varchar(80) [not null]
+  target integer [not null]
+}
+
+Table player_bahan {
+  session_player_id uuid [not null]
+  bahan_id varchar(80) [not null]
+  jumlah integer [not null, default: 0]
+
+  indexes {
+    (session_player_id, bahan_id) [pk]
+  }
+}
+
+Table player_kebutuhan {
+  session_player_id uuid [not null]
+  kebutuhan_id varchar(80) [not null]
+  tipe varchar(30) [not null]
+}
+
+Table player_target_kebutuhan {
+  session_player_id uuid [not null]
+  target_kebutuhan_id varchar(120) [not null]
+  is_completed boolean [not null, default: false]
+  is_failed boolean [not null, default: false]
+  reward_applied boolean [not null, default: false]
+
+  indexes {
+    (session_player_id, target_kebutuhan_id) [pk]
+  }
+}
+
+Table player_tujuan_finansial {
+  session_player_id uuid [not null]
+  tujuan_finansial_id varchar(80) [not null]
+  purchased_at_day integer [not null]
+
+  indexes {
+    (session_player_id, tujuan_finansial_id) [pk]
+  }
+}
+
+Table player_quest_progress {
+  session_player_id uuid [not null]
+  quest_id varchar(120) [not null]
+  progress integer [not null, default: 0]
+  target integer [not null]
+  is_completed boolean [not null, default: false]
+  is_reward_claimed boolean [not null, default: false]
+
+  indexes {
+    (session_player_id, quest_id) [pk]
+  }
+}
+
+Table player_action_counters {
+  session_player_id uuid [not null]
+  aksi varchar(80) [not null]
+  count integer [not null, default: 0]
+
+  indexes {
+    (session_player_id, aksi) [pk]
+  }
+}
+
+Table player_peduli_donasi {
+  session_player_id uuid [primary key]
+  total_donasi integer [not null, default: 0]
+}
+
+Table peduli_donasi_events {
+  id uuid [primary key]
+  session_id uuid [not null]
+  event_ke integer [not null]
+  day integer [not null]
+
+  indexes {
+    (session_id, event_ke) [unique]
+  }
+}
+
+Table peduli_donasi_rankings {
+  event_id uuid [not null]
+  rank integer [not null]
+  session_player_id uuid [not null]
+  total_donasi integer [not null]
+
+  indexes {
+    (event_id, rank) [pk]
+  }
+}
+
+Ref game_sessions_user: game_sessions.user_id > users.id
+Ref players_user: players.user_id > users.id
+Ref session_players_session: session_players.session_id > game_sessions.id
+Ref session_players_player: session_players.player_id > players.id
+
+Ref resep_bahan_resep: resep_bahan.resep_id > resep.id
+Ref resep_bahan_bahan: resep_bahan.bahan_id > bahan_makanan.id
+Ref target_kebutuhan_items_target: target_kebutuhan_items.target_kebutuhan_id > target_kebutuhan.id
+Ref narasi_prerequisite_narasi: narasi_prerequisite_aksi.narasi_id > narasi.id
+
+Ref player_bahan_player: player_bahan.session_player_id > session_players.id
+Ref player_bahan_bahan: player_bahan.bahan_id > bahan_makanan.id
+Ref player_kebutuhan_player: player_kebutuhan.session_player_id > session_players.id
+Ref player_kebutuhan_kebutuhan: player_kebutuhan.kebutuhan_id > kebutuhan.id
+Ref player_target_player: player_target_kebutuhan.session_player_id > session_players.id
+Ref player_target_master: player_target_kebutuhan.target_kebutuhan_id > target_kebutuhan.id
+Ref player_tujuan_player: player_tujuan_finansial.session_player_id > session_players.id
+Ref player_tujuan_master: player_tujuan_finansial.tujuan_finansial_id > tujuan_finansial.id
+Ref player_quest_player: player_quest_progress.session_player_id > session_players.id
+Ref player_quest_master: player_quest_progress.quest_id > quest.id
+Ref player_counter_player: player_action_counters.session_player_id > session_players.id
+Ref player_donasi_player: player_peduli_donasi.session_player_id > session_players.id
+Ref donasi_events_session: peduli_donasi_events.session_id > game_sessions.id
+Ref donasi_rankings_event: peduli_donasi_rankings.event_id > peduli_donasi_events.id
+Ref donasi_rankings_player: peduli_donasi_rankings.session_player_id > session_players.id
+
+Records users(id, username, password_hash, created_at, updated_at) {
+  'user_001', 'brian', '$2a$12$hashed_password_example', '2026-06-07 10:00:00', '2026-06-07 10:00:00'
+}
+
+Records players(id, user_id, name) {
+  'player_profile_001', 'user_001', 'Doni'
+  'player_profile_002', 'user_001', 'Sari'
+  'player_profile_003', 'user_001', 'Bima'
+}
+
+Records game_sessions(id, user_id, player_count, day, turn, moves_left, finish_day, is_game_over, created_at, updated_at) {
+  'session_001', 'user_001', 3, 1, 1, 2, 13, false, '2026-06-07 10:20:00', '2026-06-07 10:20:00'
+}
+
+Records session_players(id, session_id, player_id, player_index, name, coins, happiness, saving) {
+  'session_player_001', 'session_001', 'player_profile_001', 1, 'Doni', 20, 0, 0
+  'session_player_002', 'session_001', 'player_profile_002', 2, 'Sari', 20, 0, 0
+  'session_player_003', 'session_001', 'player_profile_003', 3, 'Bima', 20, 0, 0
+}
+
+Records bahan_makanan(id, nama, harga_beli) {
+  'Nasi', 'Nasi', 2
+  'Telur', 'Telur', 3
+  'Ayam', 'Ayam', 5
+}
+
+Records resep(id, nama, harga_jual, poin_kebahagiaan) {
+  'NasiGoreng', 'Nasi Goreng', 8, 2
+}
+
+Records resep_bahan(resep_id, bahan_id, jumlah) {
+  'NasiGoreng', 'Nasi', 1
+  'NasiGoreng', 'Telur', 1
+}
+
+Records kebutuhan(id, nama, tipe) {
+  'Buku', 'Buku', 'primer'
+  'Tas', 'Tas', 'sekunder'
+  'Boneka', 'Boneka', 'tersier'
+}
+
+Records tujuan_finansial(id, nama, harga_beli, poin_kebahagiaan) {
+  'Celengan', 'Celengan', 15, 3
+}
+
+Records target_kebutuhan(id, nama, poin_kebahagiaan_berhasil, poin_kebahagiaan_gagal) {
+  'target_primer_sekunder_boneka', 'Kebutuhan Seimbang', 5, -3
+}
+
+Records target_kebutuhan_items(target_kebutuhan_id, urutan, jenis_target, value) {
+  'target_primer_sekunder_boneka', 1, 'tipe', 'primer'
+  'target_primer_sekunder_boneka', 2, 'tipe', 'sekunder'
+  'target_primer_sekunder_boneka', 3, 'nama', 'Boneka'
+}
+
+Records narasi(id, narasi_1, narasi_2, narasi_3) {
+  'narasi_beli_kebutuhan_default', 'Kamu membeli kebutuhan.', 'Semoga pilihanmu bermanfaat.', null
+}
+
+Records narasi_prerequisite_aksi(id, narasi_id, aksi, value) {
+  'narasi_req_001', 'narasi_beli_kebutuhan_default', 'Kebutuhan', 0
+}
+
+Records quest(id, title, description, aksi, target) {
+  'jual_3_masakan', 'Pedagang Baru', 'Jual 3 masakan kepada pembeli.', 'JualMasakan', 3
+}
+
+Records player_bahan(session_player_id, bahan_id, jumlah) {
+  'session_player_001', 'Nasi', 1
+}
+
+Records player_kebutuhan(session_player_id, kebutuhan_id, tipe) {
+  'session_player_001', 'Buku', 'primer'
+}
+
+Records player_target_kebutuhan(session_player_id, target_kebutuhan_id, is_completed, is_failed, reward_applied) {
+  'session_player_001', 'target_primer_sekunder_boneka', false, false, false
+}
+
+Records player_quest_progress(session_player_id, quest_id, progress, target, is_completed, is_reward_claimed) {
+  'session_player_001', 'jual_3_masakan', 1, 3, false, false
+}
+
+Records player_action_counters(session_player_id, aksi, count) {
+  'session_player_001', 'JualMasakan', 1
+}
+
+Records player_peduli_donasi(session_player_id, total_donasi) {
+  'session_player_001', 5
+}
+
+Records peduli_donasi_events(id, session_id, event_ke, day) {
+  'donasi_event_001', 'session_001', 1, 5
+}
+
+Records peduli_donasi_rankings(event_id, rank, session_player_id, total_donasi) {
+  'donasi_event_001', 1, 'session_player_001', 5
+}

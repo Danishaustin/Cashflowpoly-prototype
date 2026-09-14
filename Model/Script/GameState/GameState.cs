@@ -6,11 +6,6 @@ public partial class GameState : MonoBehaviour
     // Singleton
     public static GameState Instance { get; private set; }
 
-    // Initial Player Stats
-    private const int InitialCoins = 20;
-    private const int InitialHappiness = 0;
-    private const int InitialSaving = 0;
-
     // Player Turn
     public int turn = 1;
     public int playerCount = 3;
@@ -83,7 +78,10 @@ public partial class GameState : MonoBehaviour
         }
 
         Instance = this;
+        InitializeRulesetActions();
         InitializePlayerStats();
+        ResetPlayerTurnOrder();
+        movesLeft = ActionsPerTurn;
         InitializePinjamanSyariahCards();
         InitializeInvestasiEmas();
         InitializePeduliDonasi();

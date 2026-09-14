@@ -12,10 +12,59 @@ Saat ini project menyimpan data dalam 3 bentuk:
 
 Jika memakai database, pisahkan data menjadi:
 
+- **User Account Data**: data akun untuk login.
 - **Master Data**: data statis yang jarang berubah.
 - **Game Session Data**: data satu permainan berjalan.
 - **Player Session Data**: data tiap player dalam satu permainan.
 - **Progress Data**: inventory, quest progress, dan counter aksi.
+
+## User Account Data
+
+Data akun digunakan untuk login/register sebelum pemain memulai game.
+
+> Catatan keamanan: jangan menyimpan password asli dalam database. Simpan password dalam bentuk hash, misalnya `password_hash`, dan proses hashing dilakukan di backend.
+
+### `users`
+
+| Field | Type | Keterangan |
+|---|---|---|
+| `id` | string/guid | ID unik user |
+| `username` | string | Username untuk login, harus unik |
+| `password_hash` | string | Hasil hash dari password, bukan password asli |
+| `created_at` | datetime | Waktu akun dibuat |
+| `updated_at` | datetime | Waktu akun terakhir diubah |
+
+Contoh:
+
+```json
+{
+  "id": "user_001",
+  "username": "brian",
+  "password_hash": "$2a$12$hashed_password_example",
+  "created_at": "2026-06-07T10:00:00Z",
+  "updated_at": "2026-06-07T10:00:00Z"
+}
+```
+
+### `players`
+
+Menyimpan daftar profil player yang dimiliki oleh satu user. Data ini bisa dipakai ulang saat user membuat game session baru.
+
+| Field | Type | Keterangan |
+|---|---|---|
+| `id` | string/guid | ID unik player |
+| `user_id` | string/guid | Relasi ke `users.id`, pemilik player |
+| `name` | string | Nama player |
+
+Contoh:
+
+```json
+{
+  "id": "player_profile_001",
+  "user_id": "user_001",
+  "name": "Doni"
+}
+```
 
 ## Master Data
 
@@ -233,6 +282,7 @@ Game session adalah satu permainan baru dari Home sampai game selesai.
 | Field | Type | Keterangan |
 |---|---|---|
 | `id` | string/guid | ID unik permainan |
+| `user_id` | string/guid | Relasi ke `users.id`, pemilik session |
 | `player_count` | int | Jumlah player, 3 atau 4 |
 | `day` | int | Hari saat ini |
 | `turn` | int | Player yang sedang aktif |
@@ -254,8 +304,9 @@ Menyimpan data tiap player dalam satu game session.
 |---|---|---|
 | `id` | string/guid | ID unik player dalam session |
 | `session_id` | string/guid | Relasi ke `game_sessions.id` |
+| `player_id` | string/guid | Relasi ke `players.id` |
 | `player_index` | int | Nomor player, 1 sampai 4 |
-| `name` | string | Nama player dari Home |
+| `name` | string | Snapshot nama player saat session dibuat |
 | `coins` | int | Coin player, initial 20 |
 | `happiness` | int | Happiness player, initial 0 |
 | `saving` | int | Tabungan player, initial 0 |
@@ -265,6 +316,7 @@ Contoh initial state:
 ```json
 {
   "session_id": "session_001",
+  "player_id": "player_profile_001",
   "player_index": 1,
   "name": "Doni",
   "coins": 20,
@@ -498,6 +550,10 @@ Jika memakai database, data ini menjadi bagian dari `game_sessions` dan `session
 ## Relasi Singkat
 
 ```text
+users
+  -> players
+  -> game_sessions
+
 game_sessions
   -> session_players
       -> player_bahan
@@ -509,6 +565,9 @@ game_sessions
       -> player_peduli_donasi
   -> peduli_donasi_events
       -> peduli_donasi_rankings
+
+players
+  -> session_players
 
 quest
   -> player_quest_progress

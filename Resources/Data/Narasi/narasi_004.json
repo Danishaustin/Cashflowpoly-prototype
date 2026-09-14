@@ -1,0 +1,37 @@
+{
+    "dialogKarakter": [
+        {
+            "id": "Tes",
+            "prerequisite": [
+                {
+                    "uang": 0,
+                    "kebahagiaan": 0,
+                    "tabungan": 0,
+                    "emas": 0,
+                    "kartuPinjaman": 0,
+                    "mingguKe": 0,
+                    "hariKe": 0,
+                    "asuransiDimiliki": false,
+                    "bahanDimiliki": [],
+                    "kebutuhanDimiliki": [],
+                    "tujuanFinansialDimiliki": [],
+                    "masakanDijual": []
+                }
+            ],
+            "aksi": "",
+            "aksiValue": 0,
+            "npcName": "",
+            "npcSprite": "",
+            "lines": [
+                {
+                    "speaker": "NPC",
+                    "text": ""
+                },
+                {
+                    "speaker": "PLAYER",
+                    "text": ""
+                }
+            ]
+        }
+    ]
+}

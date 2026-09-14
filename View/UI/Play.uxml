@@ -9,8 +9,9 @@
             <ui:Label tabindex="-1" text="Minggu: 1" parse-escape-sequences="true" display-tooltip-when-elided="true" name="WeekCounter" style="font-size: 30%; height: 26%; white-space: nowrap; -unity-text-align: middle-left; -unity-font: url(&quot;project://database/Assets/Resources/Sprite/300Mind/2D%20Game%20UI%20Kit/Fonts/Ariston%20Comic%20Font.ttf?fileID=12800000&amp;guid=e28e9ad7f0a79f14d8c01971d5416eba&amp;type=3#Ariston Comic Font&quot;); -unity-font-definition: initial; -unity-font-style: bold; width: 60%;" />
             <ui:Label tabindex="-1" text="Senin" parse-escape-sequences="true" display-tooltip-when-elided="true" name="DayNameCounter" style="font-size: 30%; height: 26%; white-space: nowrap; -unity-text-align: upper-left; -unity-font: url(&quot;project://database/Assets/Resources/Sprite/300Mind/2D%20Game%20UI%20Kit/Fonts/Ariston%20Comic%20Font.ttf?fileID=12800000&amp;guid=e28e9ad7f0a79f14d8c01971d5416eba&amp;type=3#Ariston Comic Font&quot;); -unity-font-definition: initial; -unity-font-style: bold; width: 60%;" />
         </ui:VisualElement>
-        <ui:Button text="Day 6" parse-escape-sequences="true" display-tooltip-when-elided="true" name="DebugSetDayButton" class="debug-set-day-button" style="display: flex;" />
+        <ui:Button text="Day 6" parse-escape-sequences="true" display-tooltip-when-elided="true" name="DebugSetDayButton" class="debug-set-day-button" style="display: none;" />
         <ui:VisualElement name="PlayerContainer" class="player-container character" />
+        <ui:VisualElement name="NPCContainer" class="npc-container character npc-character" style="display: flex;" />
         <ui:VisualElement name="TextContainer" style="flex-grow: 1; position: absolute; width: 100%; height: 30%; bottom: 0; background-image: none; background-color: rgba(255, 255, 255, 0); display: flex;">
             <ui:VisualElement name="TextBox" style="flex-grow: 1; background-color: rgba(255, 255, 255, 0); padding-top: 100px; padding-right: 100px; padding-bottom: 75px; padding-left: 100px; background-image: url(&quot;project://database/Assets/View/UI/Sprites/UIElement/Textbox.png?fileID=21300000&amp;guid=39a3da82e9dbad0409b1fc1f1a9a482c&amp;type=3#Textbox&quot;); -unity-background-scale-mode: stretch-to-fill; -unity-background-image-tint-color: rgb(255, 255, 255); flex-shrink: 0; -unity-slice-scale: 1px; -unity-slice-left: 0; -unity-slice-top: 0; -unity-slice-right: 0; -unity-slice-bottom: 0;">
                 <ui:Label tabindex="-1" text="Pedagang Pasar" parse-escape-sequences="true" display-tooltip-when-elided="true" name="NameTag" style="-unity-font: url(&quot;project://database/Assets/Resources/Sprite/300Mind/2D%20Game%20UI%20Kit/Fonts/Ariston%20Comic%20Font.ttf?fileID=12800000&amp;guid=e28e9ad7f0a79f14d8c01971d5416eba&amp;type=3#Ariston Comic Font&quot;); -unity-font-definition: initial; font-size: 60%; text-overflow: ellipsis; -unity-text-overflow-position: end; white-space: nowrap; position: absolute; top: 2%; left: 10%; width: 240px; overflow: hidden;" />
@@ -110,32 +111,41 @@
                 <ui:VisualElement class="risk-panel-header">
                     <ui:Label tabindex="-1" text="Risiko Kehidupan" parse-escape-sequences="true" display-tooltip-when-elided="true" class="risk-panel-title" />
                 </ui:VisualElement>
-                <ui:VisualElement name="RisikoSetupContent" class="risk-content">
+                <ui:VisualElement name="RisikoSetupContent" class="risk-content risk-setup-content">
                     <ui:Toggle label="Investasi Emas" name="RisikoInvestasiEmasToggle" class="risk-toggle" />
-                    <ui:Toggle label="Perubahan Jumlah Coin Pemain" name="RisikoCoinToggle" class="risk-toggle" />
-                    <ui:VisualElement name="RisikoCoinInputContainer" style="flex-grow: 0; flex-direction: row; justify-content: center; height: 14%; display: none;">
-                        <ui:Button text="&lt;" parse-escape-sequences="true" display-tooltip-when-elided="true" name="DecreaseButtonRisikoCoin" class="choice-button" style="width: 15%;" />
-                        <ui:Label tabindex="-1" text="0" parse-escape-sequences="true" display-tooltip-when-elided="true" name="RisikoCoinChangeText" class="text" style="width: 30%;" />
-                        <ui:Button text="&gt;" parse-escape-sequences="true" display-tooltip-when-elided="true" name="IncreaseButtonRisikoCoin" class="choice-button" style="width: 15%;" />
+                    <ui:Toggle label="Bayar Uang Ke Bank" name="RisikoBayarBankSetupToggle" class="risk-toggle" />
+                    <ui:VisualElement name="RisikoCoinInputContainer" class="risk-number-input-row" style="display: none;">
+                        <ui:Button text="&lt;" parse-escape-sequences="true" display-tooltip-when-elided="true" name="DecreaseButtonRisikoCoin" class="choice-button risk-number-button" style="width: 13%;" />
+                        <ui:Label tabindex="-1" text="1" parse-escape-sequences="true" display-tooltip-when-elided="true" name="RisikoCoinChangeText" class="risk-number-text" style="width: 24%;" />
+                        <ui:Button text="&gt;" parse-escape-sequences="true" display-tooltip-when-elided="true" name="IncreaseButtonRisikoCoin" class="choice-button risk-number-button" style="width: 13%;" />
                     </ui:VisualElement>
-                    <ui:Toggle label="Dampak Sepekan" name="RisikoDampakSepekanToggle" class="risk-toggle" />
-                    <ui:VisualElement name="RisikoDampakInputContainer" style="flex-grow: 0; flex-direction: column; justify-content: center; height: 28%; display: none;">
-                        <ui:VisualElement style="flex-grow: 0; flex-direction: row; justify-content: center; height: 50%;">
-                            <ui:Button text="&lt;" parse-escape-sequences="true" display-tooltip-when-elided="true" name="DecreaseButtonRisikoHarga" class="choice-button" style="width: 15%;" />
-                            <ui:Label tabindex="-1" text="0" parse-escape-sequences="true" display-tooltip-when-elided="true" name="RisikoHargaChangeText" class="text" style="width: 30%;" />
-                            <ui:Button text="&gt;" parse-escape-sequences="true" display-tooltip-when-elided="true" name="IncreaseButtonRisikoHarga" class="choice-button" style="width: 15%;" />
-                        </ui:VisualElement>
-                        <ui:VisualElement style="flex-grow: 0; flex-direction: row; justify-content: center; height: 50%;">
-                            <ui:Toggle label="Harga Bahan" name="RisikoHargaBahanToggle" class="risk-toggle risk-sub-toggle" />
-                            <ui:Toggle label="Harga Kebutuhan" name="RisikoHargaKebutuhanToggle" class="risk-toggle risk-sub-toggle" />
-                        </ui:VisualElement>
+                    <ui:Toggle label="Semua Pemain" name="RisikoSemuaPemainToggle" class="risk-toggle risk-sub-toggle" />
+                    <ui:Toggle label="Dapat Hadiah" name="RisikoDapatCoinToggle" class="risk-toggle" />
+                    <ui:VisualElement name="RisikoDapatCoinInputContainer" class="risk-number-input-row" style="display: none;">
+                        <ui:Button text="&lt;" parse-escape-sequences="true" display-tooltip-when-elided="true" name="DecreaseButtonRisikoDapatCoin" class="choice-button risk-number-button" style="width: 13%;" />
+                        <ui:Label tabindex="-1" text="1" parse-escape-sequences="true" display-tooltip-when-elided="true" name="RisikoDapatCoinText" class="risk-number-text" style="width: 24%;" />
+                        <ui:Button text="&gt;" parse-escape-sequences="true" display-tooltip-when-elided="true" name="IncreaseButtonRisikoDapatCoin" class="choice-button risk-number-button" style="width: 13%;" />
+                    </ui:VisualElement>
+                    <ui:Toggle label="Dari Tiap Pemain" name="RisikoDariTiapPemainToggle" class="risk-toggle risk-sub-toggle" />
+                    <ui:Toggle label="Perubahan Harga" name="RisikoPerubahanHargaToggle" class="risk-toggle" />
+                    <ui:VisualElement name="RisikoDampakInputContainer" class="risk-number-input-row" style="display: none;">
+                        <ui:Button text="&lt;" parse-escape-sequences="true" display-tooltip-when-elided="true" name="DecreaseButtonRisikoHarga" class="choice-button risk-number-button" style="width: 13%;" />
+                        <ui:Label tabindex="-1" text="0" parse-escape-sequences="true" display-tooltip-when-elided="true" name="RisikoHargaChangeText" class="risk-number-text" style="width: 24%;" />
+                        <ui:Button text="&gt;" parse-escape-sequences="true" display-tooltip-when-elided="true" name="IncreaseButtonRisikoHarga" class="choice-button risk-number-button" style="width: 13%;" />
                     </ui:VisualElement>
                 </ui:VisualElement>
                 <ui:VisualElement name="RisikoCoinDecisionContent" class="risk-content" style="display: none;">
                     <ui:Label tabindex="-1" text="Keputusan Player: Player 1" parse-escape-sequences="true" display-tooltip-when-elided="true" name="RisikoDecisionPlayerText" class="risk-decision-player-text" />
                     <ui:Toggle label="Menggunakan Kartu Asuransi" name="RisikoUseAsuransiToggle" class="risk-toggle" />
-                    <ui:Toggle label="Bayar Uang Ke Bank" name="RisikoBayarBankToggle" class="risk-toggle" />
-                    <ui:Toggle label="Tidak Memiliki Uang Cukup" name="RisikoTidakCukupToggle" class="risk-toggle" />
+                    <ui:Toggle label="Bayar" name="RisikoBayarBankToggle" class="risk-toggle" />
+                    <ui:Toggle label="Jual Kebutuhan" name="RisikoJualKebutuhanToggle" class="risk-toggle" />
+                    <ui:Toggle label="Jual Emas" name="RisikoJualEmasToggle" class="risk-toggle" />
+                    <ui:VisualElement name="RisikoJualEmasInputContainer" class="risk-number-input-row" style="display: none;">
+                        <ui:Button text="&lt;" parse-escape-sequences="true" display-tooltip-when-elided="true" name="DecreaseButtonRisikoJualEmas" class="choice-button risk-number-button" style="width: 13%;" />
+                        <ui:Label tabindex="-1" text="1" parse-escape-sequences="true" display-tooltip-when-elided="true" name="RisikoJualEmasText" class="risk-number-text" style="width: 24%;" />
+                        <ui:Button text="&gt;" parse-escape-sequences="true" display-tooltip-when-elided="true" name="IncreaseButtonRisikoJualEmas" class="choice-button risk-number-button" style="width: 13%;" />
+                    </ui:VisualElement>
+                    <ui:Toggle label="Pinjaman Syariah" name="RisikoPinjamanSyariahToggle" class="risk-toggle" />
                 </ui:VisualElement>
                 <ui:VisualElement style="flex-grow: 0; height: 14%; width: auto; flex-direction: row; justify-content: center;">
                     <ui:Button text="Next" parse-escape-sequences="true" display-tooltip-when-elided="true" name="NextButtonRisikoKehidupan" class="choice-button" style="width: 30%;" />
@@ -261,6 +271,19 @@
                 <ui:Button parse-escape-sequences="true" display-tooltip-when-elided="true" name="ResumePauseButton" class="pause-panel-icon-button pause-resume-button" />
                 <ui:Button parse-escape-sequences="true" display-tooltip-when-elided="true" name="RestartPauseButton" class="pause-panel-icon-button pause-restart-button" />
                 <ui:Button parse-escape-sequences="true" display-tooltip-when-elided="true" name="HomePauseButton" class="pause-panel-icon-button pause-home-button" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+        <ui:VisualElement name="GuideOverlay" class="guide-overlay" style="display: none;">
+            <ui:VisualElement name="GuidePanel" class="guide-panel">
+                <ui:VisualElement name="GuideHeader" class="guide-header">
+                    <ui:Label tabindex="-1" text="Guide" parse-escape-sequences="true" display-tooltip-when-elided="true" name="GuideCounter" class="guide-counter" style="display: none;" />
+                    <ui:Label tabindex="-1" text="Panduan Awal" parse-escape-sequences="true" display-tooltip-when-elided="true" name="GuideTitle" class="guide-title" />
+                </ui:VisualElement>
+                <ui:VisualElement name="GuideImageFrame" class="guide-image-frame">
+                    <ui:Label tabindex="-1" text="Placeholder Image" parse-escape-sequences="true" display-tooltip-when-elided="true" name="GuideImageLabel" class="guide-image-label" />
+                </ui:VisualElement>
+                <ui:Label tabindex="-1" text="Placeholder text" parse-escape-sequences="true" display-tooltip-when-elided="true" name="GuideBodyText" class="guide-body-text" />
+                <ui:Button text="Next" parse-escape-sequences="true" display-tooltip-when-elided="true" name="GuideNextButton" class="choice-button guide-next-button" />
             </ui:VisualElement>
         </ui:VisualElement>
     </ui:VisualElement>

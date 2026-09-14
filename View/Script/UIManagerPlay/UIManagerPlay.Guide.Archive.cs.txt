@@ -1,0 +1,187 @@
+// Archived guide implementation.
+// This file is intentionally saved as .cs.txt so Unity does not compile it.
+// Restore by copying the content back into UIManagerPlay.Guide.cs and wiring the startup call again.
+
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.UIElements;
+
+public partial class UIManagerPlay
+{
+    private const int GuideSlideCount = 11;
+    private const int GuidePanelTransitionDelayMs = 100;
+    private const int GuidePanelHideDelayMs = 420;
+
+    private readonly List<GuideSlideData> guideSlides = new();
+
+    private sealed class GuideSlideData
+    {
+        public string Title;
+        public string Body;
+        public string ImageLabel;
+        public string ImageClass;
+    }
+
+    private void InitializeGuideSlides()
+    {
+        guideSlides.Clear();
+        guideSlides.Add(new GuideSlideData
+        {
+            Title = "Panduan Permainan Awal",
+            Body = "Permainan diawali dengan membagikan kartu Tie-Breaker kepada setiap pemain.",
+            ImageLabel = "Kartu Tie-Breaker"
+        });
+        guideSlides.Add(new GuideSlideData
+        {
+            Body = "Giliran pemain ditentukan melalui kartu Tie-Breaker. Pemilik Tie-Breaker #1 akan menjadi pemain pertama, diikuti oleh pemilik Tie-Breaker #2, dan seterusnya.",
+            ImageLabel = "Placeholder Image"
+        });
+        guideSlides.Add(new GuideSlideData
+        {
+            Body = "Posisi pemain dapat diatur berdasarkan urutan pemain dengan mengikuti arah jarum jam agar memudahkan jalannya permainan.",
+            ImageLabel = "Placeholder Image"
+        });
+        guideSlides.Add(new GuideSlideData
+        {
+            Body = "Tiap pemain mendapatkan 2 Token Aksi Pemain dengan gambar karakter yang sesuai kartu Tie-Breaker pemain.",
+            ImageLabel = "Placeholder Image"
+        });
+        guideSlides.Add(new GuideSlideData
+        {
+            Body = "Tiap pemain mendapatkan 1 Lembar Layar Pemain sesuai dengan karakter Tie-Breaker pemain untuk merahasiakan jumlah koin masing-masing.",
+            ImageLabel = "Placeholder Image"
+        });
+        guideSlides.Add(new GuideSlideData
+        {
+            Body = "Masing-masing pemain mendapatkan 20 koin awal dan 1 Kartu Bahan Masakan yang diambil secara acak dari tumpukan Kartu Bahan Masakan.",
+            ImageLabel = "InitialBahan",
+        });
+        guideSlides.Add(new GuideSlideData
+        {
+            Body = "Pemain wajib membayar harga Kartu Bahan Masakan yang didapat sesuai harga ke bank ",
+            ImageLabel = "Placeholder Image"
+        });
+        guideSlides.Add(new GuideSlideData
+        {
+            Body = "Bagikan Kartu Target Kebutuhan kepada tiap pemain secara acak. Pemain wajib membeli 3 Kartu Aneka Kebutuhan yang tertera sebelum akhir permainan. Kebutuhan Tersier yang dibeli harus sesuai gambar, sedangkan Primer & Sekunder bebas.",
+            ImageLabel = "Placeholder Image"
+        });
+        guideSlides.Add(new GuideSlideData
+        {
+            Body = "Balikkan Kartu Tie-Breaker menjadi Asuransi. Di awal permainan, tiap pemain mendapatkan 1 Kartu Asuransi secara gratis",
+            ImageLabel = "Placeholder Image"
+        });
+        guideSlides.Add(new GuideSlideData
+        {
+            Body = "Bagikan 1 Kartu Emas serta 1 Kartu Pinjaman Syariah sebagai utang yang perlu dibayar sebelum akhir permainan.",
+            ImageLabel = "Placeholder Image"
+        });
+        guideSlides.Add(new GuideSlideData
+        {
+            Title = "Siap Bermain",
+            Body = "Itu saja persiapan untuk awal permainan. Panduan detail dapat dilihat melalui tombol di kanan atas. Tekan Start untuk memulai permainan dan menjalankan aksi pemain.",
+        });
+    }
+
+    private void ShowGuidePanel()
+    {
+        if (guideOverlay == null || guidePanel == null || guideSlides.Count == 0)
+        {
+            return;
+        }
+
+        guideIndex = 0;
+        ApplyGuideSlide(guideIndex);
+
+        guideOverlay.style.display = DisplayStyle.Flex;
+        guideOverlay.BringToFront();
+        guidePanel.RemoveFromClassList("show-guide-panel");
+        guidePanel.schedule.Execute(() =>
+        {
+            guidePanel.AddToClassList("show-guide-panel");
+        }).StartingIn(GuidePanelTransitionDelayMs);
+    }
+
+    private void OnGuideNextClicked(ClickEvent evt)
+    {
+        if (guideSlides.Count == 0)
+        {
+            return;
+        }
+
+        if (guideIndex >= guideSlides.Count - 1)
+        {
+            HideGuidePanel();
+            if (guideOverlay != null)
+            {
+                guideOverlay.schedule.Execute(() =>
+                {
+                    ShowInitialBahanChoice();
+                }).StartingIn(GuidePanelHideDelayMs);
+            }
+            return;
+        }
+
+        guideIndex++;
+        ApplyGuideSlide(guideIndex);
+    }
+
+    private void ApplyGuideSlide(int slideIndex)
+    {
+        if (slideIndex < 0 || slideIndex >= guideSlides.Count)
+        {
+            return;
+        }
+
+        GuideSlideData slide = guideSlides[slideIndex];
+
+        if (guideCounter != null)
+        {
+            guideCounter.text = "" +(slideIndex + 1) + " / " + GuideSlideCount;
+        }
+
+        if (guideTitle != null)
+        {
+            guideTitle.text = slide.Title;
+        }
+
+        if (guideImageLabel != null)
+        {
+            guideImageLabel.text = slide.ImageLabel;
+        }
+
+        if (guideBodyText != null)
+        {
+            guideBodyText.text = slide.Body;
+        }
+
+        if (guideImageFrame != null)
+        {
+            guideImageFrame.RemoveFromClassList("guide-image-initial-bahan");
+            guideImageFrame.RemoveFromClassList("guide-image-initial-target");
+            if (!string.IsNullOrWhiteSpace(slide.ImageClass))
+            {
+                guideImageFrame.AddToClassList(slide.ImageClass);
+            }
+        }
+
+        if (guideNextButton != null)
+        {
+            guideNextButton.text = slideIndex == guideSlides.Count - 1 ? "Start" : "Next";
+        }
+    }
+
+    private void HideGuidePanel()
+    {
+        if (guideOverlay == null || guidePanel == null)
+        {
+            return;
+        }
+
+        guidePanel.RemoveFromClassList("show-guide-panel");
+        guideOverlay.schedule.Execute(() =>
+        {
+            guideOverlay.style.display = DisplayStyle.None;
+        }).StartingIn(GuidePanelHideDelayMs);
+    }
+}

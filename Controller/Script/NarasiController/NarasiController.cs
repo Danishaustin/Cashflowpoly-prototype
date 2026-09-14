@@ -9,7 +9,6 @@ public partial class NarasiController : MonoBehaviour
 
     private List<NarasiData> narasiList;
     private List<DialogKarakterData> dialogKarakterList;
-    private Dictionary<int, HashSet<string>> playedDialogs;
     private Coroutine currentNarasiCoroutine;
     private bool isNarasiCacheReady;
 
@@ -18,6 +17,10 @@ public partial class NarasiController : MonoBehaviour
         Instance = this;
         narasiList = new List<NarasiData>();
         dialogKarakterList = new List<DialogKarakterData>();
-        playedDialogs = new Dictionary<int, HashSet<string>>();
+    }
+
+    private int GetActivePlayerTurn()
+    {
+        return GameState.Instance != null ? GameState.Instance.turn : 1;
     }
 }

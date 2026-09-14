@@ -1,223 +1,263 @@
 {
-  "dialogKarakter": [
-    {
-      "id": "mentor_bahan_default",
-      "prerequisite": [
+    "dialogKarakter": [
         {
-          "aksi": "BahanMasakan",
-          "aksiValue": 0,
-          "uang": 0,
-          "kebahagiaan": 0,
-          "tabungan": 0,
-          "emas": 0,
-          "kartuPinjaman": 0,
-          "mingguKe": 0,
-          "hariKe": 0,
-          "asuransiDimiliki": false,
-          "bahanDimiliki": [],
-          "kebutuhanDimiliki": [],
-          "tujuanFinansialDimiliki": [],
-          "masakanDijual": []
-        }
-      ],
-      "steps": [
-        {
-          "namaKarakter": "Mentor",
-          "spritePath": "",
-          "menghadapKanan": false,
-          "aksiKarakter": "Kemunculan",
-          "dialog": [
-            "Membeli bahan adalah langkah awal untuk menyiapkan masakan."
-          ]
+            "id": "static_bahan_masakan",
+            "prerequisite": [
+                {
+                    "uang": 20,
+                    "kebahagiaan": 0,
+                    "tabungan": 0,
+                    "emas": 0,
+                    "kartuPinjaman": 0,
+                    "mingguKe": 0,
+                    "hariKe": 0,
+                    "asuransiDimiliki": false,
+                    "bahanDimiliki": [
+                        "Kayu"
+                    ],
+                    "kebutuhanDimiliki": [],
+                    "tujuanFinansialDimiliki": [],
+                    "masakanDijual": []
+                }
+            ],
+            "aksi": "BahanMasakan",
+            "aksiValue": 0,
+            "npcName": "Penjual Bahan",
+            "npcSprite": "penjual_bahan",
+            "lines": [
+                {
+                    "speaker": "NPC",
+                    "text": "Mau beli bahan apa hari ini?"
+                },
+                {
+                    "speaker": "PLAYER",
+                    "text": "Saya ambil bahan yang cocok untuk resep saya."
+                },
+                {
+                    "speaker": "NPC",
+                    "text": "Baik, silakan bayar di kasir."
+                }
+            ]
         },
         {
-          "namaKarakter": "Mentor",
-          "spritePath": "",
-          "menghadapKanan": false,
-          "aksiKarakter": "PergantianEkspresi",
-          "dialog": [
-            "Pilih bahan yang sesuai dengan resep yang ingin kamu jual nanti."
-          ]
-        }
-      ]
-    },
-    {
-      "id": "mentor_bahan_nasi_dua",
-      "prerequisite": [
-        {
-          "aksi": "Ending",
-          "aksiValue": 0,
-          "uang": 20,
-          "kebahagiaan": 30,
-          "tabungan": 16,
-          "emas": 2,
-          "kartuPinjaman": 0,
-          "mingguKe": 0,
-          "hariKe": 0,
-          "asuransiDimiliki": false,
-          "bahanDimiliki": [
-            "Nasi",
-            "Daging"
-          ],
-          "kebutuhanDimiliki": [
-            "Primer",
-            "Boneka"
-          ],
-          "tujuanFinansialDimiliki": [
-            "Rumah",
-            "Mobil"
-          ],
-          "masakanDijual": [
-            "LontongBalap",
-            "RujakCingur"
-          ]
-        }
-      ],
-      "steps": [
-        {
-          "namaKarakter": "Mentor",
-          "spritePath": "",
-          "menghadapKanan": false,
-          "aksiKarakter": "PergantianEkspresi",
-          "dialog": [
-            "Stok nasimu mulai cukup untuk beberapa resep."
-          ]
+            "id": "static_bahan_masakan2",
+            "prerequisite": [
+                {
+                    "uang": 10,
+                    "kebahagiaan": 0,
+                    "tabungan": 0,
+                    "emas": 0,
+                    "kartuPinjaman": 0,
+                    "mingguKe": 0,
+                    "hariKe": 0,
+                    "asuransiDimiliki": false,
+                    "bahanDimiliki": [],
+                    "kebutuhanDimiliki": [],
+                    "tujuanFinansialDimiliki": [],
+                    "masakanDijual": []
+                }
+            ],
+            "aksi": "BahanMasakan",
+            "aksiValue": 0,
+            "npcName": "Penjual Bahan",
+            "npcSprite": "penjual_bahan",
+            "lines": [
+                {
+                    "speaker": "NPC",
+                    "text": "Mau beli bahan apa hari ini?"
+                },
+                {
+                    "speaker": "PLAYER",
+                    "text": "Saya ambil bahan yang cocok untuk resep saya."
+                },
+                {
+                    "speaker": "NPC",
+                    "text": "Baik, silakan bayar di kasir."
+                }
+            ]
         },
         {
-          "namaKarakter": "Pedagang",
-          "spritePath": "",
-          "menghadapKanan": true,
-          "aksiKarakter": "Kemunculan",
-          "dialog": [
-            "Coba pikirkan masakan yang paling menguntungkan."
-          ]
-        }
-      ]
-    },
-    {
-      "id": "mentor_jual_masakan_kedua_stat_cukup",
-      "prerequisite": [
-        {
-          "aksi": "JualMasakan",
-          "aksiValue": 2,
-          "uang": 10,
-          "kebahagiaan": 0,
-          "tabungan": 0,
-          "emas": 0,
-          "kartuPinjaman": 0,
-          "mingguKe": 0,
-          "hariKe": 0,
-          "asuransiDimiliki": false,
-          "bahanDimiliki": [],
-          "kebutuhanDimiliki": [],
-          "tujuanFinansialDimiliki": [],
-          "masakanDijual": []
-        }
-      ],
-      "steps": [
-        {
-          "namaKarakter": "Mentor",
-          "spritePath": "",
-          "menghadapKanan": false,
-          "aksiKarakter": "PergantianEkspresi",
-          "dialog": [
-            "Kamu mulai terbiasa menjual masakan."
-          ]
+            "id": "static_kebutuhan",
+            "prerequisite": [
+                {
+                    "uang": 0,
+                    "kebahagiaan": 10,
+                    "tabungan": 0,
+                    "emas": 0,
+                    "kartuPinjaman": 0,
+                    "mingguKe": 0,
+                    "hariKe": 0,
+                    "asuransiDimiliki": false,
+                    "bahanDimiliki": [],
+                    "kebutuhanDimiliki": [],
+                    "tujuanFinansialDimiliki": [],
+                    "masakanDijual": []
+                }
+            ],
+            "aksi": "Kebutuhan",
+            "aksiValue": 0,
+            "npcName": "Penjual Kebutuhan",
+            "npcSprite": "penjual_kebutuhan",
+            "lines": [
+                {
+                    "speaker": "NPC",
+                    "text": "Kebutuhan apa yang kamu cari?"
+                },
+                {
+                    "speaker": "PLAYER",
+                    "text": "Saya ingin beli kebutuhan yang paling penting dulu."
+                },
+                {
+                    "speaker": "NPC",
+                    "text": "Bagus, pastikan kebutuhan primer terpenuhi."
+                }
+            ]
         },
         {
-          "namaKarakter": "Mentor",
-          "spritePath": "",
-          "menghadapKanan": false,
-          "aksiKarakter": "PergantianEkspresi",
-          "dialog": [
-            "Perhatikan bahan yang tersisa supaya usahamu tetap berjalan."
-          ]
-        }
-      ]
-    },
-    {
-      "id": "mentor_kebutuhan_default",
-      "prerequisite": [
-        {
-          "aksi": "Kebutuhan",
-          "aksiValue": 0,
-          "uang": 0,
-          "kebahagiaan": 0,
-          "tabungan": 0,
-          "emas": 0,
-          "kartuPinjaman": 0,
-          "mingguKe": 0,
-          "hariKe": 0,
-          "asuransiDimiliki": false,
-          "bahanDimiliki": [],
-          "kebutuhanDimiliki": [],
-          "tujuanFinansialDimiliki": [],
-          "masakanDijual": []
-        }
-      ],
-      "steps": [
-        {
-          "namaKarakter": "Mentor",
-          "spritePath": "",
-          "menghadapKanan": true,
-          "aksiKarakter": "Kemunculan",
-          "dialog": [
-            "Kebutuhan yang kamu beli akan membantu memenuhi target pemain."
-          ]
+            "id": "static_jual_masakan",
+            "prerequisite": [
+                {
+                    "uang": 0,
+                    "kebahagiaan": 0,
+                    "tabungan": 0,
+                    "emas": 0,
+                    "kartuPinjaman": 0,
+                    "mingguKe": 0,
+                    "hariKe": 0,
+                    "asuransiDimiliki": false,
+                    "bahanDimiliki": [],
+                    "kebutuhanDimiliki": [],
+                    "tujuanFinansialDimiliki": [],
+                    "masakanDijual": [
+                        "LontongBalap"
+                    ]
+                }
+            ],
+            "aksi": "JualMasakan",
+            "aksiValue": 0,
+            "npcName": "Pembeli Masakan",
+            "npcSprite": "pembeli_masakan",
+            "lines": [
+                {
+                    "speaker": "NPC",
+                    "text": "Masakanmu kelihatan enak, saya beli ya?"
+                },
+                {
+                    "speaker": "PLAYER",
+                    "text": "Silakan, ini pesanan yang saya jual."
+                },
+                {
+                    "speaker": "NPC",
+                    "text": "Terima kasih, ini bayaranmu."
+                }
+            ]
         },
         {
-          "namaKarakter": "Mentor",
-          "spritePath": "",
-          "menghadapKanan": true,
-          "aksiKarakter": "PergantianEkspresi",
-          "dialog": [
-            "Coba seimbangkan kebutuhan primer, sekunder, dan barang spesifik yang diminta."
-          ]
-        }
-      ]
-    },
-    {
-      "id": "mentor_kebutuhan_primer_terpenuhi",
-      "prerequisite": [
-        {
-          "aksi": "Kebutuhan",
-          "aksiValue": 0,
-          "uang": 0,
-          "kebahagiaan": 0,
-          "tabungan": 0,
-          "emas": 0,
-          "kartuPinjaman": 0,
-          "mingguKe": 0,
-          "hariKe": 0,
-          "asuransiDimiliki": false,
-          "bahanDimiliki": [],
-          "kebutuhanDimiliki": [
-            "primer"
-          ],
-          "tujuanFinansialDimiliki": [],
-          "masakanDijual": []
-        }
-      ],
-      "steps": [
-        {
-          "namaKarakter": "Mentor",
-          "spritePath": "",
-          "menghadapKanan": true,
-          "aksiKarakter": "Kemunculan",
-          "dialog": [
-            "Kebutuhan primer sudah mulai terpenuhi."
-          ]
+            "id": "static_menabung",
+            "prerequisite": [
+                {
+                    "uang": 0,
+                    "kebahagiaan": 0,
+                    "tabungan": 5,
+                    "emas": 0,
+                    "kartuPinjaman": 0,
+                    "mingguKe": 0,
+                    "hariKe": 0,
+                    "asuransiDimiliki": false,
+                    "bahanDimiliki": [],
+                    "kebutuhanDimiliki": [],
+                    "tujuanFinansialDimiliki": [],
+                    "masakanDijual": []
+                }
+            ],
+            "aksi": "Menabung",
+            "aksiValue": 0,
+            "npcName": "Penjaga Bank",
+            "npcSprite": "penjaga_bank",
+            "lines": [
+                {
+                    "speaker": "NPC",
+                    "text": "Mau menabung berapa koin?"
+                },
+                {
+                    "speaker": "PLAYER",
+                    "text": "Saya simpan sebagian koin dulu."
+                },
+                {
+                    "speaker": "NPC",
+                    "text": "Baik, tabunganmu sudah saya catat."
+                }
+            ]
         },
         {
-          "namaKarakter": "Mentor",
-          "spritePath": "",
-          "menghadapKanan": true,
-          "aksiKarakter": "PergantianEkspresi",
-          "dialog": [
-            "Jangan lupa lihat target kebutuhan pemain sebelum membeli barang berikutnya."
-          ]
+            "id": "static_tujuan_finansial",
+            "prerequisite": [
+                {
+                    "uang": 0,
+                    "kebahagiaan": 0,
+                    "tabungan": 0,
+                    "emas": 0,
+                    "kartuPinjaman": 0,
+                    "mingguKe": 2,
+                    "hariKe": 0,
+                    "asuransiDimiliki": false,
+                    "bahanDimiliki": [],
+                    "kebutuhanDimiliki": [],
+                    "tujuanFinansialDimiliki": [],
+                    "masakanDijual": []
+                }
+            ],
+            "aksi": "TujuanFinansial",
+            "aksiValue": 0,
+            "npcName": "Penjaga Bank",
+            "npcSprite": "penjaga_bank",
+            "lines": [
+                {
+                    "speaker": "NPC",
+                    "text": "Kamu ingin membeli tujuan finansial yang mana?"
+                },
+                {
+                    "speaker": "PLAYER",
+                    "text": "Saya pilih yang paling sesuai kemampuan sekarang."
+                },
+                {
+                    "speaker": "NPC",
+                    "text": "Baik, transaksi akan saya proses."
+                }
+            ]
+        },
+        {
+            "id": "static_dialog_baru_001",
+            "prerequisite": [
+                {
+                    "uang": 0,
+                    "kebahagiaan": 0,
+                    "tabungan": 0,
+                    "emas": 0,
+                    "kartuPinjaman": 0,
+                    "mingguKe": 0,
+                    "hariKe": 0,
+                    "asuransiDimiliki": false,
+                    "bahanDimiliki": [],
+                    "kebutuhanDimiliki": [],
+                    "tujuanFinansialDimiliki": [],
+                    "masakanDijual": []
+                }
+            ],
+            "aksi": "BahanMasakan",
+            "aksiValue": 0,
+            "npcName": "",
+            "npcSprite": "penjual_bahan",
+            "lines": [
+                {
+                    "speaker": "NPC",
+                    "text": "Tes"
+                },
+                {
+                    "speaker": "PLAYER",
+                    "text": "Testes"
+                }
+            ]
         }
-      ]
-    }
-  ]
+    ]
 }

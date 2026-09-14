@@ -1,30 +1,39 @@
+﻿using System.Collections.Generic;
 using UnityEngine;
-using System.Collections.Generic;
-using System.IO;
 
 public class DataManager : MonoBehaviour
 {
     public static DataManager Instance;
 
-    public Dictionary<string, ResepData> resepDict {get; private set;}
-    public Dictionary<string, BahanMakananData> bahanDict {get; private set;}
-    public Dictionary<string, KebutuhanData> kebutuhanDict {get; private set;}
-    public Dictionary<string, TujuanFinansialData> tujuanFinansialDict {get; private set;}
-    public Dictionary<string, NarasiData> narasiDict {get; private set;}
-    public Dictionary<string, DialogKarakterData> dialogKarakterDict {get; private set;}
-    public Dictionary<string, QuestData> questDict {get; private set;}
-    public Dictionary<string, TargetKebutuhanData> targetKebutuhanDict {get; private set;}
-    public List<TargetKebutuhanData> targetKebutuhanList {get; private set;}
+    public Dictionary<string, ResepData> resepDict { get; private set; }
+    public Dictionary<string, BahanMakananData> bahanDict { get; private set; }
+    public Dictionary<string, KebutuhanData> kebutuhanDict { get; private set; }
+    public Dictionary<string, TujuanFinansialData> tujuanFinansialDict { get; private set; }
+    public Dictionary<string, NarasiData> narasiDict { get; private set; }
+    public Dictionary<string, DialogKarakterData> dialogKarakterDict { get; private set; }
+    public Dictionary<string, QuestData> questDict { get; private set; }
+    public Dictionary<string, TargetKebutuhanData> targetKebutuhanDict { get; private set; }
+    public List<TargetKebutuhanData> targetKebutuhanList { get; private set; }
 
     public bool IsDialogKarakterLoaded { get; private set; }
     public string DialogKarakterLoadStatus { get; private set; }
 
-    void Awake()
+    private void Awake()
     {
+        if (Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+
         if (Instance == null)
+        {
             Instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
 
         InitializeData();
+        NarasiSessionContext.ApplyTo(this);
     }
 
     private void InitializeData()
@@ -32,127 +41,139 @@ public class DataManager : MonoBehaviour
         TextAsset jsonResep = Resources.Load<TextAsset>("Data/resep");
         var resepDatabase = JsonUtility.FromJson<ResepDatabase>(jsonResep.text);
 
-        resepDict = new();
-        foreach (var r in resepDatabase.resep)
-            resepDict[r.nama] = r;
+        resepDict = new Dictionary<string, ResepData>();
+        foreach (var resep in resepDatabase.resep)
+        {
+            resepDict[resep.nama] = resep;
+        }
 
         TextAsset jsonBahan = Resources.Load<TextAsset>("Data/bahan");
         var bahanDatabase = JsonUtility.FromJson<BahanMakananDatabase>(jsonBahan.text);
 
-        bahanDict = new();
-        foreach (var b in bahanDatabase.bahan)
-            bahanDict[b.nama] = b;
+        bahanDict = new Dictionary<string, BahanMakananData>();
+        foreach (var bahan in bahanDatabase.bahan)
+        {
+            bahanDict[bahan.nama] = bahan;
+        }
 
         TextAsset jsonKebutuhan = Resources.Load<TextAsset>("Data/kebutuhan");
         var kebutuhanDatabase = JsonUtility.FromJson<KebutuhanDatabase>(jsonKebutuhan.text);
 
-        kebutuhanDict = new();
-        foreach (var k in kebutuhanDatabase.kebutuhan)
-            kebutuhanDict[k.nama] = k;
+        kebutuhanDict = new Dictionary<string, KebutuhanData>();
+        foreach (var kebutuhan in kebutuhanDatabase.kebutuhan)
+        {
+            kebutuhanDict[kebutuhan.nama] = kebutuhan;
+        }
 
         TextAsset jsonTujuanFinansial = Resources.Load<TextAsset>("Data/tujuanFinansial");
         var tujuanFinansialDatabase = JsonUtility.FromJson<TujuanFinansialDatabase>(jsonTujuanFinansial.text);
-        
-        tujuanFinansialDict = new();
 
-        foreach (var t in tujuanFinansialDatabase.tujuanFinansial)
-            tujuanFinansialDict[t.nama] = t;
+        tujuanFinansialDict = new Dictionary<string, TujuanFinansialData>();
+        foreach (var tujuan in tujuanFinansialDatabase.tujuanFinansial)
+        {
+            tujuanFinansialDict[tujuan.nama] = tujuan;
+        }
 
         TextAsset jsonNarasi = Resources.Load<TextAsset>("Data/narasi");
         var narasiDatabase = JsonUtility.FromJson<NarasiDatabase>(jsonNarasi.text);
 
-        narasiDict = new();
+        narasiDict = new Dictionary<string, NarasiData>();
+        foreach (var narasi in narasiDatabase.narasi)
+        {
+            narasiDict[narasi.nama] = narasi;
+        }
 
-        foreach (var n in narasiDatabase.narasi)
-            narasiDict[n.nama] = n;
-
-        LoadExternalDialogKarakter();
+        LoadDialogKarakter();
 
         TextAsset jsonQuest = Resources.Load<TextAsset>("Data/quest");
         var questDatabase = JsonUtility.FromJson<QuestDatabase>(jsonQuest.text);
 
-        questDict = new();
-
-        foreach (var q in questDatabase.quest)
-            questDict[q.id] = q;
+        questDict = new Dictionary<string, QuestData>();
+        foreach (var quest in questDatabase.quest)
+        {
+            questDict[quest.id] = quest;
+        }
 
         TextAsset jsonTargetKebutuhan = Resources.Load<TextAsset>("Data/targetKebutuhan");
         var targetKebutuhanDatabase = JsonUtility.FromJson<TargetKebutuhanDatabase>(jsonTargetKebutuhan.text);
 
-        targetKebutuhanDict = new();
-        targetKebutuhanList = new();
+        targetKebutuhanDict = new Dictionary<string, TargetKebutuhanData>();
+        targetKebutuhanList = new List<TargetKebutuhanData>();
 
-        foreach (var tk in targetKebutuhanDatabase.targetKebutuhan)
+        foreach (var targetKebutuhan in targetKebutuhanDatabase.targetKebutuhan)
         {
-            targetKebutuhanDict[tk.id] = tk;
-            targetKebutuhanList.Add(tk);
+            targetKebutuhanDict[targetKebutuhan.id] = targetKebutuhan;
+            targetKebutuhanList.Add(targetKebutuhan);
         }
-
     }
 
-    private void LoadExternalDialogKarakter()
+    private void LoadDialogKarakter()
     {
-        dialogKarakterDict = new();
+        dialogKarakterDict = new Dictionary<string, DialogKarakterData>();
         IsDialogKarakterLoaded = false;
         DialogKarakterLoadStatus = string.Empty;
 
-        string externalPath = GetExternalDialogKarakterPath();
-        
-        if (!File.Exists(externalPath))
+        TextAsset jsonDialogKarakter = Resources.Load<TextAsset>("Data/dialogKarakter");
+        if (jsonDialogKarakter == null)
         {
-            DialogKarakterLoadStatus = "⚠ DialogKarakter.json tidak ditemukan: " + externalPath;
+            DialogKarakterLoadStatus = "WARN: dialogKarakter.json tidak ditemukan di Resources/Data.";
             Debug.LogWarning(DialogKarakterLoadStatus);
             return;
         }
 
         try
         {
-            string jsonText = File.ReadAllText(externalPath);
-            var dialogKarakterDatabase = JsonUtility.FromJson<DialogKarakterDatabase>(jsonText);
-
-            if (dialogKarakterDatabase == null || dialogKarakterDatabase.dialogKarakter == null)
+            var database = JsonUtility.FromJson<DialogKarakterDatabase>(jsonDialogKarakter.text);
+            if (database == null || database.dialogKarakter == null)
             {
-                DialogKarakterLoadStatus = "⚠ Format dialogKarakter.json tidak valid";
-                Debug.LogWarning(DialogKarakterLoadStatus + ": " + externalPath);
+                DialogKarakterLoadStatus = "WARN: Format dialogKarakter.json tidak valid";
+                Debug.LogWarning(DialogKarakterLoadStatus);
                 return;
             }
 
-            foreach (var d in dialogKarakterDatabase.dialogKarakter)
+            foreach (var dialog in database.dialogKarakter)
             {
-                if (d != null && !string.IsNullOrWhiteSpace(d.id))
+                if (dialog != null && !string.IsNullOrWhiteSpace(dialog.id))
                 {
-                    dialogKarakterDict[d.id] = d;
+                    dialogKarakterDict[dialog.id] = dialog;
                 }
             }
 
             IsDialogKarakterLoaded = true;
-            DialogKarakterLoadStatus = "✓ DialogKarakter berhasil dimuat (" + dialogKarakterDict.Count + " dialog)";
-            Debug.Log(DialogKarakterLoadStatus + " dari: " + externalPath);
+            DialogKarakterLoadStatus = "OK: DialogKarakter berhasil dimuat (" + dialogKarakterDict.Count + " dialog)";
+            Debug.Log(DialogKarakterLoadStatus);
         }
         catch (System.Exception ex)
         {
-            DialogKarakterLoadStatus = "✗ Error: " + ex.Message;
-            Debug.LogError(DialogKarakterLoadStatus + " dari: " + externalPath);
+            DialogKarakterLoadStatus = "ERROR: " + ex.Message;
+            Debug.LogError(DialogKarakterLoadStatus);
         }
     }
 
-    private string GetExternalDialogKarakterPath()
+    public void OverrideDialogKarakter(DialogKarakterDatabase database, string sourceName)
     {
-        #if UNITY_ANDROID && !UNITY_EDITOR
-            // Android: Baca dari /data/data/com.DefaultCompany.Cashflowpoly/files/dialogKarakter.json
-            string path = Path.Combine(Application.persistentDataPath, "dialogKarakter.json");
-            Debug.Log("Android path: " + path);
-            return path;
-        #else
-            // PC/Editor: Baca dari folder files/ di sebelah Assets
-            string appPath = Application.dataPath;
-            string appDirectory = Path.HasExtension(appPath) 
-                ? Path.GetDirectoryName(appPath) 
-                : appPath;
-            
-            string path = Path.Combine(appDirectory, "files", "dialogKarakter.json");
-            Debug.Log("PC path: " + path);
-            return path;
-        #endif
+        dialogKarakterDict = new Dictionary<string, DialogKarakterData>();
+        IsDialogKarakterLoaded = false;
+        DialogKarakterLoadStatus = string.Empty;
+
+        if (database == null || database.dialogKarakter == null)
+        {
+            DialogKarakterLoadStatus = "WARN: Data narasi " + sourceName + " tidak valid.";
+            Debug.LogWarning(DialogKarakterLoadStatus);
+            return;
+        }
+
+        foreach (DialogKarakterData dialog in database.dialogKarakter)
+        {
+            if (dialog != null && !string.IsNullOrWhiteSpace(dialog.id))
+            {
+                dialogKarakterDict[dialog.id] = dialog;
+            }
+        }
+
+        IsDialogKarakterLoaded = true;
+        DialogKarakterLoadStatus = "OK: Narasi " + sourceName + " dimuat (" + dialogKarakterDict.Count + " dialog)";
+        Debug.Log(DialogKarakterLoadStatus);
     }
 }
+

@@ -1,0 +1,230 @@
+{
+    "dialogKarakter": [
+        {
+            "id": "static_bahan_masakan",
+            "prerequisite": [
+                {
+                    "uang": 20,
+                    "kebahagiaan": 0,
+                    "tabungan": 0,
+                    "emas": 0,
+                    "kartuPinjaman": 0,
+                    "mingguKe": 0,
+                    "hariKe": 0,
+                    "asuransiDimiliki": false,
+                    "bahanDimiliki": [
+                        "Kayu"
+                    ],
+                    "kebutuhanDimiliki": [],
+                    "tujuanFinansialDimiliki": [],
+                    "masakanDijual": []
+                }
+            ],
+            "aksi": "BahanMasakan",
+            "aksiValue": 0,
+            "npcName": "Penjual Bahan",
+            "npcSprite": "penjual_bahan",
+            "lines": [
+                {
+                    "speaker": "NPC",
+                    "text": "Mau beli bahan apa hari ini?"
+                },
+                {
+                    "speaker": "PLAYER",
+                    "text": "Saya ambil bahan yang cocok untuk resep saya."
+                },
+                {
+                    "speaker": "NPC",
+                    "text": "Baik, silakan bayar di kasir."
+                }
+            ]
+        },
+        {
+            "id": "static_bahan_masakan2",
+            "prerequisite": [
+                {
+                    "uang": 10,
+                    "kebahagiaan": 0,
+                    "tabungan": 0,
+                    "emas": 0,
+                    "kartuPinjaman": 0,
+                    "mingguKe": 0,
+                    "hariKe": 0,
+                    "asuransiDimiliki": false,
+                    "bahanDimiliki": [],
+                    "kebutuhanDimiliki": [],
+                    "tujuanFinansialDimiliki": [],
+                    "masakanDijual": []
+                }
+            ],
+            "aksi": "BahanMasakan",
+            "aksiValue": 0,
+            "npcName": "Penjual Bahan",
+            "npcSprite": "penjual_bahan",
+            "lines": [
+                {
+                    "speaker": "NPC",
+                    "text": "Mau beli bahan apa hari ini?"
+                },
+                {
+                    "speaker": "PLAYER",
+                    "text": "Saya ambil bahan yang cocok untuk resep saya."
+                },
+                {
+                    "speaker": "NPC",
+                    "text": "Baik, silakan bayar di kasir."
+                }
+            ]
+        },
+        {
+            "id": "static_kebutuhan",
+            "prerequisite": [
+                {
+                    "uang": 0,
+                    "kebahagiaan": 10,
+                    "tabungan": 0,
+                    "emas": 0,
+                    "kartuPinjaman": 0,
+                    "mingguKe": 0,
+                    "hariKe": 0,
+                    "asuransiDimiliki": false,
+                    "bahanDimiliki": [],
+                    "kebutuhanDimiliki": [],
+                    "tujuanFinansialDimiliki": [],
+                    "masakanDijual": []
+                }
+            ],
+            "aksi": "Kebutuhan",
+            "aksiValue": 0,
+            "npcName": "Penjual Kebutuhan",
+            "npcSprite": "penjual_kebutuhan",
+            "lines": [
+                {
+                    "speaker": "NPC",
+                    "text": "Kebutuhan apa yang kamu cari?"
+                },
+                {
+                    "speaker": "PLAYER",
+                    "text": "Saya ingin beli kebutuhan yang paling penting dulu."
+                },
+                {
+                    "speaker": "NPC",
+                    "text": "Bagus, pastikan kebutuhan primer terpenuhi."
+                }
+            ]
+        },
+        {
+            "id": "static_jual_masakan",
+            "prerequisite": [
+                {
+                    "uang": 0,
+                    "kebahagiaan": 0,
+                    "tabungan": 0,
+                    "emas": 0,
+                    "kartuPinjaman": 0,
+                    "mingguKe": 0,
+                    "hariKe": 0,
+                    "asuransiDimiliki": false,
+                    "bahanDimiliki": [],
+                    "kebutuhanDimiliki": [],
+                    "tujuanFinansialDimiliki": [],
+                    "masakanDijual": [
+                        "LontongBalap"
+                    ]
+                }
+            ],
+            "aksi": "JualMasakan",
+            "aksiValue": 0,
+            "npcName": "Pembeli Masakan",
+            "npcSprite": "pembeli_masakan",
+            "lines": [
+                {
+                    "speaker": "NPC",
+                    "text": "Masakanmu kelihatan enak, saya beli ya?"
+                },
+                {
+                    "speaker": "PLAYER",
+                    "text": "Silakan, ini pesanan yang saya jual."
+                },
+                {
+                    "speaker": "NPC",
+                    "text": "Terima kasih, ini bayaranmu."
+                }
+            ]
+        },
+        {
+            "id": "static_menabung",
+            "prerequisite": [
+                {
+                    "uang": 0,
+                    "kebahagiaan": 0,
+                    "tabungan": 5,
+                    "emas": 0,
+                    "kartuPinjaman": 0,
+                    "mingguKe": 0,
+                    "hariKe": 0,
+                    "asuransiDimiliki": false,
+                    "bahanDimiliki": [],
+                    "kebutuhanDimiliki": [],
+                    "tujuanFinansialDimiliki": [],
+                    "masakanDijual": []
+                }
+            ],
+            "aksi": "Menabung",
+            "aksiValue": 0,
+            "npcName": "Penjaga Bank",
+            "npcSprite": "penjaga_bank",
+            "lines": [
+                {
+                    "speaker": "NPC",
+                    "text": "Mau menabung berapa koin?"
+                },
+                {
+                    "speaker": "PLAYER",
+                    "text": "Saya simpan sebagian koin dulu."
+                },
+                {
+                    "speaker": "NPC",
+                    "text": "Baik, tabunganmu sudah saya catat."
+                }
+            ]
+        },
+        {
+            "id": "static_tujuan_finansial",
+            "prerequisite": [
+                {
+                    "uang": 0,
+                    "kebahagiaan": 0,
+                    "tabungan": 0,
+                    "emas": 0,
+                    "kartuPinjaman": 0,
+                    "mingguKe": 2,
+                    "hariKe": 0,
+                    "asuransiDimiliki": false,
+                    "bahanDimiliki": [],
+                    "kebutuhanDimiliki": [],
+                    "tujuanFinansialDimiliki": [],
+                    "masakanDijual": []
+                }
+            ],
+            "aksi": "TujuanFinansial",
+            "aksiValue": 0,
+            "npcName": "Penjaga Bank",
+            "npcSprite": "penjaga_bank",
+            "lines": [
+                {
+                    "speaker": "NPC",
+                    "text": "Kamu ingin membeli tujuan finansial yang mana?"
+                },
+                {
+                    "speaker": "PLAYER",
+                    "text": "Saya pilih yang paling sesuai kemampuan sekarang."
+                },
+                {
+                    "speaker": "NPC",
+                    "text": "Baik, transaksi akan saya proses."
+                }
+            ]
+        }
+    ]
+}

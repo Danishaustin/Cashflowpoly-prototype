@@ -2,29 +2,165 @@
     <Style src="project://database/Assets/View/Style/Style.uss?fileID=7433441132597879392&amp;guid=6a04f36ef1b13d040b685f2bcfb82809&amp;type=3#Style" />
     <ui:VisualElement name="MainContainer" style="flex-grow: 1;">
         <ui:VisualElement name="HomeContainer" class="main-container" style="background-image: none; background-color: rgb(22, 52, 42); display: flex;">
-            <ui:VisualElement name="Navbar" class="navbar" style="height: 25%;">
-                <ui:Button parse-escape-sequences="true" display-tooltip-when-elided="true" name="ProfileButton" class="profile-button" />
-                <ui:Button text="Quest" parse-escape-sequences="true" display-tooltip-when-elided="true" name="QuestButton" class="home-button quest-button" style="display: none;" />
+            <ui:VisualElement name="Navbar" class="navbar">
+                <ui:Button text="Add Player" parse-escape-sequences="true" display-tooltip-when-elided="true" name="AddPlayerButton" class="home-button navbar-button" style="display: flex;" />
+                <ui:Button text="Sign Out" parse-escape-sequences="true" display-tooltip-when-elided="true" name="SignOutButton" class="home-button navbar-button" />
             </ui:VisualElement>
             <ui:VisualElement name="Body" style="flex-grow: 1; width: 100%; flex-direction: column; height: 100%; justify-content: flex-start;">
                 <ui:VisualElement name="TitleBody" style="flex-grow: 1; justify-content: flex-start; align-items: center; height: 50%;">
                     <ui:Label tabindex="-1" text="Label" parse-escape-sequences="true" display-tooltip-when-elided="true" name="Icon" style="background-image: url(&quot;project://database/Assets/cashflowpoly.jpg?fileID=21300000&amp;guid=0e0acc7ada4218d4c927a1329fb22c53&amp;type=3#cashflowpoly&quot;); width: 150px; height: 120px; border-top-left-radius: 25px; border-top-right-radius: 25px; border-bottom-right-radius: 25px; border-bottom-left-radius: 25px;" />
                     <ui:Label tabindex="-1" text="Cashflowpoly" parse-escape-sequences="true" display-tooltip-when-elided="true" name="Title" class="home-title" />
                 </ui:VisualElement>
-                <ui:VisualElement name="MenuBody" style="flex-grow: 1; align-items: center; justify-content: flex-start; height: 100%; padding-top: 2%;">
+                <ui:VisualElement name="MenuBody" style="flex-grow: 1; align-items: center; justify-content: flex-start; height: 100%; padding-top: 5%;">
                     <ui:Button text="Play" parse-escape-sequences="true" display-tooltip-when-elided="true" name="PlayButton" class="home-button" />
-                    <ui:Button text="Edit Ruleset" parse-escape-sequences="true" display-tooltip-when-elided="true" name="EditRulesetButton" class="home-button" />
+                    <ui:Button text="Edit" parse-escape-sequences="true" display-tooltip-when-elided="true" name="EditButton" class="home-button" />
                     <ui:Button text="Exit" parse-escape-sequences="true" display-tooltip-when-elided="true" name="ExitButton" class="home-button" />
                 </ui:VisualElement>
             </ui:VisualElement>
         </ui:VisualElement>
-        <ui:VisualElement name="QuestContainer" class="quest-page">
+        <ui:VisualElement name="AddPlayerContainer" class="quest-page">
             <ui:VisualElement style="flex-grow: 1; height: 100%; width: 100%; background-color: rgb(22, 52, 42); justify-content: flex-start;">
-                <ui:VisualElement name="Navbar" style="flex-grow: 1; padding-top: 2%; padding-right: 10%; padding-left: 10%; height: 25%;">
-                    <ui:Button text="Back" parse-escape-sequences="true" display-tooltip-when-elided="true" name="BackQuestButton" class="home-button quest-button" />
+                <ui:VisualElement name="Navbar" class="navbar">
+                    <ui:Button text="Back" parse-escape-sequences="true" display-tooltip-when-elided="true" name="BackAddPlayerButton" class="home-button" />
                 </ui:VisualElement>
-                <ui:VisualElement name="Body" style="flex-grow: 1; height: 100%; justify-content: center;">
-                    <ui:Label tabindex="-1" text="No Quest Yet" parse-escape-sequences="true" display-tooltip-when-elided="true" style="justify-content: flex-start; align-items: center; -unity-font: url(&quot;project://database/Assets/Resources/Sprite/300Mind/2D%20Game%20UI%20Kit/Fonts/Ariston%20Comic%20Font.ttf?fileID=12800000&amp;guid=e28e9ad7f0a79f14d8c01971d5416eba&amp;type=3#Ariston Comic Font&quot;); -unity-font-definition: initial; -unity-font-style: bold; font-size: 100px; color: rgb(24, 192, 0); -unity-text-align: upper-center;" />
+                <ui:VisualElement name="Body" class="add-player-body">
+                    <ui:VisualElement name="AddPlayerForm" class="add-player-form" style="width: 100%; height: 100%; justify-content: space-around;">
+                        <ui:Label tabindex="-1" text="Register Player" parse-escape-sequences="true" display-tooltip-when-elided="true" name="AddPlayerTitle" class="add-player-title" />
+                        <ui:VisualElement name="AddPlayerInputContainer" class="add-player-input-container">
+                            <ui:Label tabindex="-1" text="Username" parse-escape-sequences="true" display-tooltip-when-elided="true" name="AddPlayerUsernameLabel" class="label-field" style="font-size: 50%;" />
+                            <ui:TextField picking-mode="Ignore" name="AddPlayerUsernameInput" class="input-field" style="font-size: 60%;" />
+                            <ui:Label tabindex="-1" text="Password" parse-escape-sequences="true" display-tooltip-when-elided="true" name="AddPlayerPasswordLabel" class="label-field" style="font-size: 50%;" />
+                            <ui:TextField picking-mode="Ignore" name="AddPlayerPasswordInput" password="true" class="input-field" style="font-size: 60%;" />
+                        </ui:VisualElement>
+                        <ui:Button text="Register" parse-escape-sequences="true" display-tooltip-when-elided="true" name="AddPlayerRegisterButton" class="home-button" />
+                        <ui:Label tabindex="-1" parse-escape-sequences="true" display-tooltip-when-elided="true" name="AddPlayerValidationText" style="height: 40px; width: 400px; -unity-text-align: middle-center; color: rgb(190, 40, 40); font-size: 24px; white-space: normal; margin-top: 10px;" />
+                    </ui:VisualElement>
+                </ui:VisualElement>
+                <ui:VisualElement name="AddPlayerLoadingOverlay" class="auth-loading-overlay" style="display: none;">
+                    <ui:VisualElement class="auth-loading-card">
+                        <ui:VisualElement name="AddPlayerLoadingSpinner" class="auth-loading-spinner" />
+                        <ui:Label tabindex="-1" text="Mendaftarkan player..." parse-escape-sequences="true" display-tooltip-when-elided="true" name="AddPlayerLoadingText" class="auth-loading-text" />
+                    </ui:VisualElement>
+                </ui:VisualElement>
+            </ui:VisualElement>
+        </ui:VisualElement>
+        <ui:VisualElement name="EditContainer" class="edit-page">
+            <ui:VisualElement name="Navbar" class="navbar">
+                <ui:Button text="Back" parse-escape-sequences="true" display-tooltip-when-elided="true" name="BackEditButton" class="home-button navbar-button" />
+            </ui:VisualElement>
+            <ui:VisualElement name="Body" class="edit-body">
+                <ui:VisualElement name="EditMenuCard" class="edit-menu-card">
+                    <ui:Label tabindex="-1" text="Edit Menu" parse-escape-sequences="true" display-tooltip-when-elided="true" name="EditMenuTitle" class="edit-menu-title" />
+                    <ui:Button text="Edit Narasi" parse-escape-sequences="true" display-tooltip-when-elided="true" name="EditNarasiButton" class="home-button edit-menu-button" />
+                    <ui:Button text="Edit Asset" parse-escape-sequences="true" display-tooltip-when-elided="true" name="EditAssetButton" class="home-button edit-menu-button" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+        </ui:VisualElement>
+        <ui:VisualElement name="EditPemilihanNarasiContainer" class="edit-narasi-select-page">
+            <ui:VisualElement name="Navbar" class="navbar">
+                <ui:Button text="Back" parse-escape-sequences="true" display-tooltip-when-elided="true" name="BackEditPemilihanNarasiButton" class="home-button navbar-button" />
+            </ui:VisualElement>
+            <ui:VisualElement name="Body" class="edit-narasi-select-body">
+                <ui:VisualElement name="EditNarasiSelectCard" class="edit-narasi-select-card">
+                    <ui:Label tabindex="-1" text="Pilih Narasi" parse-escape-sequences="true" display-tooltip-when-elided="true" name="EditNarasiSelectTitle" class="edit-menu-title" />
+                    <ui:Label tabindex="-1" text="Paket Narasi" parse-escape-sequences="true" display-tooltip-when-elided="true" class="edit-field-label" />
+                    <ui:DropdownField name="EditNarasiPackDropdown" class="edit-narasi-pack-dropdown" />
+                    <ui:VisualElement name="EditNarasiPackActions" class="edit-action-row">
+                        <ui:Button text="+ New" parse-escape-sequences="true" display-tooltip-when-elided="true" name="EditNarasiPackNewButton" class="home-button edit-narasi-pack-new-button" />
+                        <ui:Button text="Delete" parse-escape-sequences="true" display-tooltip-when-elided="true" name="EditNarasiPackDeleteButton" class="home-button edit-narasi-pack-new-button edit-delete-button" />
+                    </ui:VisualElement>
+                </ui:VisualElement>
+            </ui:VisualElement>
+            <ui:Button text="Next" parse-escape-sequences="true" display-tooltip-when-elided="true" name="NextEditPemilihanNarasiButton" class="home-button edit-narasi-select-next-button" />
+        </ui:VisualElement>
+        <ui:VisualElement name="EditNarasiContainer" class="edit-narasi-page">
+            <ui:VisualElement name="Navbar" class="navbar edit-narasi-navbar">
+                <ui:Button text="Back" parse-escape-sequences="true" display-tooltip-when-elided="true" name="BackEditNarasiButton" class="home-button navbar-button" />
+            </ui:VisualElement>
+            <ui:VisualElement name="Body" class="edit-narasi-body">
+                <ui:Label tabindex="-1" text="Edit Narasi" parse-escape-sequences="true" display-tooltip-when-elided="true" name="EditNarasiTitle" class="edit-narasi-title" />
+                <ui:VisualElement name="EditNarasiWorkspace" class="edit-narasi-workspace">
+                    <ui:VisualElement name="EditNarasiListPanel" class="edit-narasi-list-panel">
+                        <ui:VisualElement name="EditNarasiActivePackHeader" class="edit-narasi-active-pack-header">
+                            <ui:Label tabindex="-1" text="Nama Narasi" parse-escape-sequences="true" display-tooltip-when-elided="true" class="edit-section-title edit-narasi-active-pack-label" />
+                            <ui:TextField name="EditNarasiActivePackNameInput" class="input-field edit-text-input edit-narasi-active-pack-input" />
+                        </ui:VisualElement>
+                        <ui:Label tabindex="-1" text="Daftar Dialog" parse-escape-sequences="true" display-tooltip-when-elided="true" class="edit-section-title" />
+                        <ui:DropdownField name="EditNarasiDialogDropdown" class="edit-dialog-dropdown" />
+                        <ui:VisualElement name="EditNarasiDialogActions" class="edit-action-row edit-dialog-action-row">
+                            <ui:Button text="+ New" parse-escape-sequences="true" display-tooltip-when-elided="true" name="EditNarasiNewButton" class="home-button edit-small-button" />
+                            <ui:Button text="Delete" parse-escape-sequences="true" display-tooltip-when-elided="true" name="EditNarasiDeleteButton" class="home-button edit-small-button edit-delete-button" />
+                        </ui:VisualElement>
+                    </ui:VisualElement>
+                    <ui:VisualElement name="EditNarasiDetailPanel" class="edit-narasi-detail-panel">
+                        <ui:ScrollView name="EditNarasiScrollView" class="edit-narasi-scroll">
+                            <ui:VisualElement name="EditNarasiBasicSection" class="edit-section-card">
+                                <ui:Label tabindex="-1" text="Basic Info" parse-escape-sequences="true" display-tooltip-when-elided="true" class="edit-section-title" />
+                                <ui:Label tabindex="-1" text="Dialog ID" parse-escape-sequences="true" display-tooltip-when-elided="true" class="edit-field-label" />
+                                <ui:TextField name="EditNarasiIdInput" class="input-field edit-text-input" />
+                                <ui:Label tabindex="-1" text="Action Type" parse-escape-sequences="true" display-tooltip-when-elided="true" class="edit-field-label" />
+                                <ui:DropdownField name="EditNarasiActionTypeInput" class="edit-basic-dropdown" />
+                                <ui:Label tabindex="-1" text="Aksi Value" parse-escape-sequences="true" display-tooltip-when-elided="true" class="edit-field-label" />
+                                <ui:IntegerField name="EditNarasiAksiValueInput" class="edit-number-input" />
+                                <ui:Label tabindex="-1" text="NPC Name" parse-escape-sequences="true" display-tooltip-when-elided="true" class="edit-field-label" />
+                                <ui:TextField name="EditNarasiNpcNameInput" class="input-field edit-text-input" />
+                                <ui:Label tabindex="-1" text="NPC Sprite" parse-escape-sequences="true" display-tooltip-when-elided="true" class="edit-field-label" />
+                                <ui:DropdownField name="EditNarasiNpcSpriteInput" class="edit-basic-dropdown" />
+                                <ui:VisualElement name="EditNarasiNpcSpritePreview" class="edit-npc-sprite-preview" style="width: 250px; height: 250px;" />
+                            </ui:VisualElement>
+                            <ui:VisualElement name="EditNarasiLinesSection" class="edit-section-card">
+                                <ui:Label tabindex="-1" text="Dialog Lines" parse-escape-sequences="true" display-tooltip-when-elided="true" class="edit-section-title" />
+                                <ui:VisualElement name="EditNarasiLineRow1" class="edit-line-row">
+                                    <ui:Button text="X" parse-escape-sequences="true" display-tooltip-when-elided="true" name="EditNarasiLineRemove1" class="edit-line-remove-button" />
+                                    <ui:DropdownField name="EditNarasiLineSpeaker1" value="NPC" class="edit-speaker-dropdown" />
+                                    <ui:TextField multiline="true" name="EditNarasiLineText1" class="edit-line-text" />
+                                </ui:VisualElement>
+                                <ui:VisualElement name="EditNarasiLineRow2" class="edit-line-row">
+                                    <ui:Button text="X" parse-escape-sequences="true" display-tooltip-when-elided="true" name="EditNarasiLineRemove2" class="edit-line-remove-button" />
+                                    <ui:DropdownField name="EditNarasiLineSpeaker2" value="PLAYER" class="edit-speaker-dropdown" />
+                                    <ui:TextField multiline="true" name="EditNarasiLineText2" class="edit-line-text" />
+                                </ui:VisualElement>
+                                <ui:Button text="+ Add Line" parse-escape-sequences="true" display-tooltip-when-elided="true" name="EditNarasiAddLineButton" class="home-button edit-small-button" />
+                            </ui:VisualElement>
+                            <ui:VisualElement name="EditNarasiPrerequisiteSection" class="edit-section-card">
+                                <ui:Label tabindex="-1" text="Prerequisite" parse-escape-sequences="true" display-tooltip-when-elided="true" class="edit-section-title" />
+                                <ui:Label tabindex="-1" text="Isi syarat bahan, kebutuhan, tujuan finansial, masakan terjual dengan nama item dan pisahkan koma. Contoh: Buku, Sepatu, Makanan" parse-escape-sequences="true" display-tooltip-when-elided="true" class="edit-prerequisite-hint" />
+                                <ui:VisualElement name="EditNarasiPrerequisiteGrid" class="edit-prerequisite-grid">
+                                    <ui:VisualElement class="edit-prerequisite-column">
+                                        <ui:Label tabindex="-1" text="Minimal Koin&#10;" parse-escape-sequences="true" display-tooltip-when-elided="true" class="edit-field-label" />
+                                        <ui:IntegerField name="EditNarasiMinCoinInput" class="edit-number-input" />
+                                        <ui:Label tabindex="-1" text="Minimal Kebahagiaan" parse-escape-sequences="true" display-tooltip-when-elided="true" class="edit-field-label" />
+                                        <ui:IntegerField name="EditNarasiMinHappinessInput" class="edit-number-input" />
+                                        <ui:Label tabindex="-1" text="Minimal Tabungan" parse-escape-sequences="true" display-tooltip-when-elided="true" class="edit-field-label" />
+                                        <ui:IntegerField name="EditNarasiMinSavingInput" class="edit-number-input" />
+                                        <ui:Label tabindex="-1" text="Minimal Emas" parse-escape-sequences="true" display-tooltip-when-elided="true" class="edit-field-label" />
+                                        <ui:IntegerField name="EditNarasiMinGoldInput" class="edit-number-input" />
+                                    </ui:VisualElement>
+                                    <ui:VisualElement class="edit-prerequisite-column">
+                                        <ui:Label tabindex="-1" text="Jumlah Kartu Pinjaman" parse-escape-sequences="true" display-tooltip-when-elided="true" class="edit-field-label" />
+                                        <ui:IntegerField name="EditNarasiLoanCardInput" class="edit-number-input" />
+                                        <ui:Label tabindex="-1" text="Minggu" parse-escape-sequences="true" display-tooltip-when-elided="true" class="edit-field-label" />
+                                        <ui:IntegerField name="EditNarasiWeekInput" class="edit-number-input" />
+                                        <ui:Label tabindex="-1" text="Hari Ke-" parse-escape-sequences="true" display-tooltip-when-elided="true" class="edit-field-label" />
+                                        <ui:IntegerField name="EditNarasiDayInput" class="edit-number-input" />
+                                        <ui:Toggle text="  Has Insurance" name="EditNarasiHasInsuranceToggle" class="edit-toggle" style="align-items: flex-end;" />
+                                    </ui:VisualElement>
+                                </ui:VisualElement>
+                                <ui:Label tabindex="-1" text="Syarat Bahan" parse-escape-sequences="true" display-tooltip-when-elided="true" class="edit-field-label" />
+                                <ui:TextField name="EditNarasiRequiredBahanInput" class="input-field edit-text-input" />
+                                <ui:Label tabindex="-1" text="Syarat Kebutuhan" parse-escape-sequences="true" display-tooltip-when-elided="true" class="edit-field-label" />
+                                <ui:TextField name="EditNarasiRequiredKebutuhanInput" class="input-field edit-text-input" />
+                                <ui:Label tabindex="-1" text="Syarat Tujuan Finansial" parse-escape-sequences="true" display-tooltip-when-elided="true" class="edit-field-label" />
+                                <ui:TextField name="EditNarasiRequiredTujuanFinansialInput" class="input-field edit-text-input" />
+                                <ui:Label tabindex="-1" text="Syarat Masakan Terjual" parse-escape-sequences="true" display-tooltip-when-elided="true" class="edit-field-label" />
+                                <ui:TextField name="EditNarasiRequiredMasakanInput" class="input-field edit-text-input" />
+                            </ui:VisualElement>
+                        </ui:ScrollView>
+                        <ui:VisualElement name="EditNarasiFooter" class="edit-narasi-footer">
+                            <ui:Button text="Reset" parse-escape-sequences="true" display-tooltip-when-elided="true" name="EditNarasiResetButton" class="home-button edit-footer-button" />
+                            <ui:Button text="Save" parse-escape-sequences="true" display-tooltip-when-elided="true" name="EditNarasiSaveButton" class="home-button edit-footer-button" />
+                        </ui:VisualElement>
+                    </ui:VisualElement>
                 </ui:VisualElement>
             </ui:VisualElement>
         </ui:VisualElement>
@@ -41,14 +177,42 @@
                 </ui:VisualElement>
             </ui:VisualElement>
             <ui:VisualElement name="LowerContainer" style="flex-grow: 1; width: 100%; height: 100%; align-items: center; padding-top: 5%; flex-direction: column;">
-                <ui:Button text="Login" parse-escape-sequences="true" display-tooltip-when-elided="true" name="LoginButton" class="home-button" style="width: 400px;" />
-                <ui:Button text="Register" parse-escape-sequences="true" display-tooltip-when-elided="true" name="RegisterButton" class="home-button" style="width: 400px;" />
-                <ui:Label tabindex="-1" text="" parse-escape-sequences="true" display-tooltip-when-elided="true" name="AuthValidationText" style="height: 40px; width: 400px; -unity-text-align: middle-center; color: rgb(190, 40, 40); font-size: 24px; white-space: normal; margin-top: 10px;" />
+                <ui:Button text="Login" parse-escape-sequences="true" display-tooltip-when-elided="true" name="LoginButton" class="home-button" />
+                <ui:Button text="Register" parse-escape-sequences="true" display-tooltip-when-elided="true" name="RegisterButton" class="home-button" />
+            </ui:VisualElement>
+            <ui:VisualElement name="AuthLoadingOverlay" class="auth-loading-overlay" style="display: none;">
+                <ui:VisualElement class="auth-loading-card">
+                    <ui:VisualElement name="AuthLoadingSpinner" class="auth-loading-spinner" />
+                    <ui:Label tabindex="-1" text="Memproses..." parse-escape-sequences="true" display-tooltip-when-elided="true" name="AuthLoadingText" class="auth-loading-text" />
+                </ui:VisualElement>
             </ui:VisualElement>
         </ui:VisualElement>
+        <ui:VisualElement name="SessionSetupContainer" class="session-setup-page">
+            <ui:VisualElement name="Navbar" class="navbar">
+                <ui:Button text="Back" parse-escape-sequences="true" display-tooltip-when-elided="true" name="BackSessionSetupButton" class="home-button navbar-button" />
+            </ui:VisualElement>
+            <ui:VisualElement name="Body" class="session-setup-body">
+                <ui:VisualElement name="SessionSetupForm" class="session-setup-form" style="height: 700px; justify-content: space-around;">
+                    <ui:Label tabindex="-1" text="Setup Session" parse-escape-sequences="true" display-tooltip-when-elided="true" name="SessionSetupTitle" class="session-setup-title" />
+                    <ui:VisualElement name="SessionSetupInputContainer" class="session-setup-input-container">
+                        <ui:Label tabindex="-1" text="Session Name" parse-escape-sequences="true" display-tooltip-when-elided="true" name="SessionNameLabel" class="label-field" style="font-size: 44px;" />
+                        <ui:TextField picking-mode="Ignore" name="SessionNameInput" class="input-field session-setup-input" style="font-size: 44px;" />
+                        <ui:Label tabindex="-1" text="Ruleset" parse-escape-sequences="true" display-tooltip-when-elided="true" name="RulesetLabel" class="label-field" style="font-size: 44px;" />
+                        <ui:VisualElement name="RulesetSelectorRow" class="ruleset-selector-row">
+                            <ui:DropdownField name="RulesetModeDropdown" value="Mahir" class="input-field session-setup-input ruleset-mode-dropdown" style="font-size: 34px; height: 70px;" />
+                            <ui:DropdownField name="RulesetDropdown" class="input-field session-setup-input ruleset-dropdown" style="font-size: 36px;" />
+                        </ui:VisualElement>
+                        <ui:Label tabindex="-1" text="Narasi" parse-escape-sequences="true" display-tooltip-when-elided="true" name="NarasiPackLabel" class="label-field" style="font-size: 44px;" />
+                        <ui:DropdownField name="NarasiPackDropdown" value="Default" class="input-field session-setup-input ruleset-dropdown" style="font-size: 36px;" />
+                    </ui:VisualElement>
+                    <ui:Label tabindex="-1" parse-escape-sequences="true" display-tooltip-when-elided="true" name="SessionSetupValidationText" class="session-setup-validation" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+            <ui:Button text="Next" parse-escape-sequences="true" display-tooltip-when-elided="true" name="NextSessionSetupButton" class="home-button session-setup-next-button" />
+        </ui:VisualElement>
         <ui:VisualElement name="PlayContainer" class="play-page" style="opacity: 1;">
-            <ui:VisualElement name="Navbar" class="navbar" style="height: 25%; flex-direction: row;">
-                <ui:Button text="Back" parse-escape-sequences="true" display-tooltip-when-elided="true" name="BackPlayButton" class="home-button quest-button" />
+            <ui:VisualElement name="Navbar" class="navbar">
+                <ui:Button text="Back" parse-escape-sequences="true" display-tooltip-when-elided="true" name="BackPlayButton" class="home-button navbar-button" />
             </ui:VisualElement>
             <ui:VisualElement name="Body" style="flex-grow: 1; width: 100%; flex-direction: column; height: 100%; justify-content: flex-start;">
                 <ui:VisualElement name="MenuBody" style="flex-grow: 1; height: 100%; padding-top: 0; align-items: center;">
@@ -60,34 +224,47 @@
                         <ui:VisualElement name="PlayerNamesContainer" style="flex-grow: 0; width: 500px; height: 80%;">
                             <ui:VisualElement name="PlayerNameGroup1" style="flex-grow: 0; height: 25%;">
                                 <ui:Label tabindex="-1" text="Player 1" parse-escape-sequences="true" display-tooltip-when-elided="true" class="label-field" style="font-size: 40px;" />
-                                <ui:TextField picking-mode="Ignore" name="PlayerNameInput1" max-length="8" class="input-field" style="font-size: 32px; height: 58px;" />
+                                <ui:TextField name="PlayerNameInput1" class="input-field" style="font-size: 32px; height: 58px;" />
                             </ui:VisualElement>
                             <ui:VisualElement name="PlayerNameGroup2" style="flex-grow: 0; height: 25%;">
                                 <ui:Label tabindex="-1" text="Player 2" parse-escape-sequences="true" display-tooltip-when-elided="true" class="label-field" style="font-size: 40px;" />
-                                <ui:TextField picking-mode="Ignore" name="PlayerNameInput2" max-length="8" class="input-field" style="font-size: 32px; height: 58px;" />
+                                <ui:TextField name="PlayerNameInput2" class="input-field" style="font-size: 32px; height: 58px;" />
                             </ui:VisualElement>
                             <ui:VisualElement name="PlayerNameGroup3" style="flex-grow: 0; height: 25%;">
                                 <ui:Label tabindex="-1" text="Player 3" parse-escape-sequences="true" display-tooltip-when-elided="true" class="label-field" style="font-size: 40px;" />
-                                <ui:TextField picking-mode="Ignore" name="PlayerNameInput3" max-length="8" class="input-field" style="font-size: 32px; height: 58px;" />
+                                <ui:TextField name="PlayerNameInput3" class="input-field" style="font-size: 32px; height: 58px;" />
                             </ui:VisualElement>
                             <ui:VisualElement name="PlayerNameGroup4" style="flex-grow: 0; height: 25%; display: none;">
                                 <ui:Label tabindex="-1" text="Player 4" parse-escape-sequences="true" display-tooltip-when-elided="true" class="label-field" style="font-size: 40px;" />
-                                <ui:TextField picking-mode="Ignore" name="PlayerNameInput4" max-length="8" class="input-field" style="font-size: 32px; height: 58px;" />
+                                <ui:TextField name="PlayerNameInput4" class="input-field" style="font-size: 32px; height: 58px;" />
                             </ui:VisualElement>
                         </ui:VisualElement>
                     </ui:VisualElement>
-                    <ui:Label tabindex="-1" text="" parse-escape-sequences="true" display-tooltip-when-elided="true" name="PlayValidationText" style="height: 50px; width: 80%; -unity-text-align: middle-center; color: rgb(190, 40, 40); font-size: 28px; white-space: normal;" />
-                    <ui:Label tabindex="-1" text="" parse-escape-sequences="true" display-tooltip-when-elided="true" name="DialogKarakterStatusText" style="height: 40px; width: 80%; -unity-text-align: middle-center; color: rgb(100, 100, 100); font-size: 20px; white-space: normal; margin-top: 5px;" />
+                    <ui:Label tabindex="-1" parse-escape-sequences="true" display-tooltip-when-elided="true" name="PlayValidationText" style="height: 50px; width: 80%; -unity-text-align: middle-center; color: rgb(190, 40, 40); font-size: 28px; white-space: normal;" />
+                    <ui:Label tabindex="-1" parse-escape-sequences="true" display-tooltip-when-elided="true" name="DialogKarakterStatusText" style="height: 40px; width: 80%; -unity-text-align: middle-center; color: rgb(100, 100, 100); font-size: 20px; white-space: normal; margin-top: 5px;" />
                     <ui:Button text="Play" parse-escape-sequences="true" display-tooltip-when-elided="true" name="Play2Button" class="home-button" style="height: 15%;" />
+                </ui:VisualElement>
+                <ui:VisualElement name="PlayerNameSuggestionsOverlay" class="player-suggestions-overlay" style="display: none;">
+                    <ui:VisualElement name="PlayerNameSuggestionsPanel" class="player-suggestions-panel">
+                        <ui:Button text="Player 1" parse-escape-sequences="true" display-tooltip-when-elided="true" name="PlayerSuggestionButton1" class="player-suggestion-button" style="display: none;" />
+                        <ui:Button text="Player 2" parse-escape-sequences="true" display-tooltip-when-elided="true" name="PlayerSuggestionButton2" class="player-suggestion-button" style="display: none;" />
+                        <ui:Button text="Player 3" parse-escape-sequences="true" display-tooltip-when-elided="true" name="PlayerSuggestionButton3" class="player-suggestion-button" style="display: none;" />
+                        <ui:Button text="Player 4" parse-escape-sequences="true" display-tooltip-when-elided="true" name="PlayerSuggestionButton4" class="player-suggestion-button" style="display: none;" />
+                    </ui:VisualElement>
                 </ui:VisualElement>
             </ui:VisualElement>
         </ui:VisualElement>
-        <ui:VisualElement name="ProfileContainer" style="flex-grow: 1; position: absolute; width: 100%; height: 100%; flex-direction: row-reverse; display: flex;">
-            <ui:VisualElement name="Scrim" class="scrim" style="translate: 0 0;" />
-            <ui:VisualElement name="ProfilePage" class="profile-page">
-                <ui:VisualElement name="Body" style="flex-grow: 1; justify-content: flex-start; align-items: center; padding-top: 10px; padding-right: 10px; padding-bottom: 10px; padding-left: 10px;">
-                    <ui:Button text="Sign Out" parse-escape-sequences="true" display-tooltip-when-elided="true" name="SignOutButton" class="home-button" style="height: 100px;" />
-                </ui:VisualElement>
+        <ui:VisualElement name="PlayLoadingOverlay" class="play-loading-overlay" style="display: none;">
+            <ui:VisualElement class="play-loading-card">
+                <ui:VisualElement name="PlayLoadingSpinner" class="play-loading-spinner" />
+                <ui:Label tabindex="-1" text="Memuat permainan..." parse-escape-sequences="true" display-tooltip-when-elided="true" name="PlayLoadingText" class="play-loading-text" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+        <ui:VisualElement name="ErrorPopupOverlay" class="error-popup-overlay" style="display: none;">
+            <ui:VisualElement name="ErrorPopupCard" class="error-popup-card">
+                <ui:Label tabindex="-1" text="Terjadi Kesalahan" parse-escape-sequences="true" display-tooltip-when-elided="true" name="ErrorPopupTitle" class="error-popup-title" />
+                <ui:Label tabindex="-1" text="Proses gagal. Coba lagi." parse-escape-sequences="true" display-tooltip-when-elided="true" name="ErrorPopupMessage" class="error-popup-message" />
+                <ui:Button text="OK" parse-escape-sequences="true" display-tooltip-when-elided="true" name="ErrorPopupOkButton" class="home-button error-popup-button" />
             </ui:VisualElement>
         </ui:VisualElement>
     </ui:VisualElement>

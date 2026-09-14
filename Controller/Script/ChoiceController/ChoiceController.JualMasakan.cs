@@ -34,11 +34,17 @@ public partial class ChoiceController
         GameState.Instance.ChangeHappiness(amountHappiness);
         view.UpdateCoins(GameState.Instance.Coins);
         view.UpdateHappiness(GameState.Instance.Happiness);
+        PostJualMasakanEvent(GameState.Instance.turn, selectedChoice, listBahan, amountCoins);
 
         string resultText = "Menjual " + selectedChoice + " menghasilkan " + amountCoins + " koin\n";
         int aksiKe = GameState.Instance.jmAksiKe;
         GameState.Instance.jmAksiKe++;
         Debug.Log("jmAksiKe: " + GameState.Instance.jmAksiKe);
+
+        if (PlayNpcStaticDialogThen("JualMasakan", resultText, ShowRisikoKehidupanAfterJualMasakan))
+        {
+            return;
+        }
 
         if (Narasi("JualMasakan", aksiKe, () =>
         {

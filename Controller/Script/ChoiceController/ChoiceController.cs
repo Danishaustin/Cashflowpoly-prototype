@@ -70,6 +70,12 @@ public partial class ChoiceController : MonoBehaviour
 
     private void HandleChoice1(string selectedChoice)
     {
+        if (GameState.Instance != null && !GameState.Instance.IsActionEnabled(selectedChoice))
+        {
+            ShowSystemDialogThen("Aksi ini tidak tersedia pada ruleset saat ini.\n", () => view.ShowChoice("Choice1"));
+            return;
+        }
+
         switch (selectedChoice)
         {
             case "BahanMasakan":

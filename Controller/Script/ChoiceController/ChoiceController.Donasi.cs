@@ -42,6 +42,8 @@ public partial class ChoiceController
                 GameState.Instance.CatatPeduliDonasi(GameState.Instance.SavingText);
                 GameState.Instance.ChangeCoins(-GameState.Instance.SavingText);
                 view.UpdateCoins(GameState.Instance.Coins);
+                PostJumatBerkahEvent(peduliDonasiPlayer, peduliDonasiAmount);
+                PostAkhirGiliranForDayEndIfLastPlayer(peduliDonasiPlayer);
                 bool isPeduliDonasiSelesai = GameState.Instance.AdvancePeduliDonasiTurn();
                 view.UpdateDay(GameState.Instance.day);
                 view.UpdatePlayerTurn(GameState.Instance.turn);
@@ -72,7 +74,9 @@ public partial class ChoiceController
 
     private void ContinueAfterSkipPeduliDonasiNoCoins()
     {
+        int peduliDonasiPlayer = GameState.Instance.turn;
         GameState.Instance.CatatPeduliDonasi(0);
+        PostAkhirGiliranForDayEndIfLastPlayer(peduliDonasiPlayer);
         bool isPeduliDonasiSelesai = GameState.Instance.AdvancePeduliDonasiTurn();
 
         view.UpdateDay(GameState.Instance.day);

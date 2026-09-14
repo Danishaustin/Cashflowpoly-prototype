@@ -17,8 +17,8 @@
           "value": "Boneka"
         }
       ],
-      "poinKebahagiaanBerhasil": 5,
-      "poinKebahagiaanGagal": -3
+      "poinKebahagiaanBerhasil": 0,
+      "poinKebahagiaanGagal": -10
     },
     {
       "id": "target_primer_sekunder_jamtangan",
@@ -37,8 +37,8 @@
           "value": "JamTangan"
         }
       ],
-      "poinKebahagiaanBerhasil": 6,
-      "poinKebahagiaanGagal": -4
+      "poinKebahagiaanBerhasil": 0,
+      "poinKebahagiaanGagal": -10
     },
     {
       "id": "target_primer_sekunder_wahanabermain",
@@ -57,8 +57,8 @@
           "value": "WahanaBermain"
         }
       ],
-      "poinKebahagiaanBerhasil": 4,
-      "poinKebahagiaanGagal": -2
+      "poinKebahagiaanBerhasil": 0,
+      "poinKebahagiaanGagal": -10
     },
     {
       "id": "target_primer_sekunder_gameconsole",
@@ -77,8 +77,8 @@
           "value": "GameConsole"
         }
       ],
-      "poinKebahagiaanBerhasil": 7,
-      "poinKebahagiaanGagal": -5
+      "poinKebahagiaanBerhasil": 0,
+      "poinKebahagiaanGagal": -10
     }
   ]
 }

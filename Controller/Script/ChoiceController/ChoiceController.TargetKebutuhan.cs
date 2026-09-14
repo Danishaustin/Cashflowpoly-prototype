@@ -15,6 +15,7 @@ public partial class ChoiceController
         if (DataManager.Instance == null || DataManager.Instance.targetKebutuhanDict == null)
         {
             Debug.LogWarning("Data target kebutuhan belum siap.");
+            view.CompleteOpeningSetup();
             view.ShowPlayerContainer();
             return;
         }
@@ -46,9 +47,10 @@ public partial class ChoiceController
             }
 
             targetKebutuhanSelectionOrder.Clear();
-            GameState.Instance.SetTurnAndMoves(1, 2);
+            GameState.Instance.SetTurnAndMoves(1, GameState.Instance.ActionsPerTurn);
             view.UpdatePlayerTurn(GameState.Instance.turn);
             view.UpdatePlayerStats();
+            view.CompleteOpeningSetup();
             view.ShowPlayerContainer();
             return;
         }

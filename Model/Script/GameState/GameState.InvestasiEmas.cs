@@ -41,10 +41,10 @@ public partial class GameState
 
     public bool AdvanceInvestasiEmasTurn()
     {
-        if (turn < playerCount)
+        if (!IsLastPlayerInTurnOrder(turn))
         {
-            turn++;
-            movesLeft = 2;
+            turn = GetNextPlayerInTurnOrder(turn);
+            movesLeft = ActionsPerTurn;
             return false;
         }
 

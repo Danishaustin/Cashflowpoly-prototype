@@ -1,3 +1,4 @@
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -77,7 +78,9 @@ public partial class UIManagerPlay
                     return;
                 }
                 HideDialogContainer();
+                HideAllChoiceContainers();
                 UpdateMainChoiceButtonStates();
+                choiceContainers["Choice1"].style.display = DisplayStyle.Flex;
                 choiceContainers["Choice1"].AddToClassList("show-choice");
                 break;
             case "BahanMasakan":
@@ -113,6 +116,7 @@ public partial class UIManagerPlay
                 choiceContainers["ChoiceKL"].AddToClassList("show-choice");
                 break;
             case "PinjamanSyariah":
+                UpdatePinjamanSyariahButtonStates();
                 choiceContainers["ChoicePS"].AddToClassList("show-choice");
                 break;
             case "HargaEmas":
@@ -124,6 +128,7 @@ public partial class UIManagerPlay
                     string playerName = PlayerPrefs.GetString("PlayerName_" + GameState.Instance.turn, "Player " + GameState.Instance.turn);
                     emasActionDecisionText.text = "Keputusan " + playerName;
                 }
+                UpdateInvestasiEmasActionButtonStates();
                 choiceContainers["ChoiceEmasAction"].AddToClassList("show-choice");
                 break;
             case "JumlahEmas":
@@ -175,7 +180,7 @@ public partial class UIManagerPlay
             return;
         }
 
-        bool canBuyAsuransi = !GameState.Instance.AsuransiDimiliki;
+        bool canBuyAsuransi = GameState.Instance.InsuranceEnabled && !GameState.Instance.AsuransiDimiliki;
         asuransiButton.SetEnabled(canBuyAsuransi);
     }
 
@@ -190,10 +195,102 @@ public partial class UIManagerPlay
         bahanMasakanButton.SetEnabled(canBuyBahan);
     }
 
+    private void UpdatePinjamanSyariahButtonStates()
+    {
+        if (choiceContainers == null || GameState.Instance == null || !choiceContainers.ContainsKey("ChoicePS") || choiceContainers["ChoicePS"] == null)
+        {
+            return;
+        }
+
+        bool canUseLoanFeature = GameState.Instance.LoanEnabled;
+        foreach (Button button in choiceContainers["ChoicePS"].Query<Button>().ToList())
+        {
+            if (button == null)
+            {
+                continue;
+            }
+
+            if (button.name != null && button.name.StartsWith("Back", System.StringComparison.OrdinalIgnoreCase))
+            {
+                button.SetEnabled(true);
+                continue;
+            }
+
+            button.SetEnabled(canUseLoanFeature);
+        }
+    }
+
+    private void UpdateInvestasiEmasActionButtonStates()
+    {
+        if (choiceContainers == null || GameState.Instance == null || !choiceContainers.ContainsKey("ChoiceEmasAction") || choiceContainers["ChoiceEmasAction"] == null)
+        {
+            return;
+        }
+
+        foreach (Button button in choiceContainers["ChoiceEmasAction"].Query<Button>().ToList())
+        {
+            if (button == null)
+            {
+                continue;
+            }
+
+            if (button.name != null && button.name.StartsWith("Back", System.StringComparison.OrdinalIgnoreCase))
+            {
+                button.SetEnabled(true);
+                continue;
+            }
+
+            bool canUseButton = true;
+            if (string.Equals(button.name, "BeliEmasInvestasi", System.StringComparison.OrdinalIgnoreCase))
+            {
+                canUseButton = GameState.Instance.GoldTradeAllowBuy;
+            }
+            else if (string.Equals(button.name, "JualEmasInvestasi", System.StringComparison.OrdinalIgnoreCase))
+            {
+                canUseButton = GameState.Instance.GoldTradeAllowSell;
+            }
+
+            button.SetEnabled(canUseButton);
+        }
+    }
+
     private void UpdateMainChoiceButtonStates()
     {
         UpdateAsuransiButtonState();
         UpdateBahanMasakanButtonState();
+
+        if (choiceContainers == null || !choiceContainers.ContainsKey("Choice1") || choiceContainers["Choice1"] == null)
+        {
+            return;
+        }
+
+        foreach (Button button in choiceContainers["Choice1"].Query<Button>().ToList())
+        {
+            if (button == null)
+            {
+                continue;
+            }
+
+            bool isEnabledByRuleset = GameState.Instance == null || GameState.Instance.IsActionEnabled(button.name);
+            bool isEnabledByRuntime = true;
+
+            if (string.Equals(button.name, "Asuransi", System.StringComparison.OrdinalIgnoreCase))
+            {
+                isEnabledByRuntime = GameState.Instance != null
+                    && GameState.Instance.InsuranceEnabled
+                    && !GameState.Instance.AsuransiDimiliki;
+            }
+            else if (string.Equals(button.name, "PinjamanSyariah", System.StringComparison.OrdinalIgnoreCase))
+            {
+                isEnabledByRuntime = GameState.Instance != null && GameState.Instance.LoanEnabled;
+            }
+            else if (string.Equals(button.name, "BahanMasakan", System.StringComparison.OrdinalIgnoreCase))
+            {
+                isEnabledByRuntime = GameState.Instance != null && !GameState.Instance.IsBahanTotalAtLimit(GameState.Instance.turn);
+            }
+
+            button.SetEnabled(isEnabledByRuleset && isEnabledByRuntime);
+        }
     }
 
     public void ShowTujuanFinansialConfirmation()

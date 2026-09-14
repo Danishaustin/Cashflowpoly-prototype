@@ -5,10 +5,12 @@ public partial class ChoiceController
     // Handles Kerja Lepas reward.
     private void HandleChoiceKL()
     {
-        GameState.Instance.ChangeCoins(1);
+        int income = GameState.Instance != null ? GameState.Instance.FreelanceIncome : 1;
+        GameState.Instance.ChangeCoins(income);
         view.UpdateCoins(GameState.Instance.Coins);
+        PostKerjaLepasEvent(GameState.Instance.turn, income);
 
-        string resultText = "Bekerja lepas mendapatkan 1 koin\n";
+        string resultText = "Bekerja lepas mendapatkan " + income + " koin\n";
         int aksiKe = GameState.Instance.klAksiKe;
         GameState.Instance.klAksiKe++;
         Debug.Log("klAksiKe: " + GameState.Instance.klAksiKe);

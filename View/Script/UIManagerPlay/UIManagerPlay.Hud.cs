@@ -53,6 +53,7 @@ public partial class UIManagerPlay
     public void UpdatePlayerTurn(int turn)
     {
         playerTurn.text = "Player " + turn;
+        RefreshPlayerContainerForTurn(turn);
         UpdateNameTag();
         UpdateMainChoiceButtonStates();
         if (inventoryPanel != null && inventoryPanel.style.display == UnityEngine.UIElements.DisplayStyle.Flex)

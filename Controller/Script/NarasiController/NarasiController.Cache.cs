@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 public partial class NarasiController
@@ -11,14 +11,13 @@ public partial class NarasiController
             return true;
         }
 
-        if (DataManager.Instance == null || DataManager.Instance.narasiDict == null)
+        if (DataManager.Instance == null)
         {
-            Debug.LogWarning("Data narasi belum siap.");
+            Debug.LogWarning("DataManager belum siap.");
             return false;
         }
 
         BuildNarasiCache();
-        BuildDialogKarakterCache();
         isNarasiCacheReady = true;
         return true;
     }
@@ -26,38 +25,32 @@ public partial class NarasiController
     private void BuildNarasiCache()
     {
         narasiList.Clear();
-
-        foreach (var n in DataManager.Instance.narasiDict.Values)
-        {
-            if (n.prerequisiteAksi == null || n.prerequisiteAksi.Count == 0)
-            {
-                continue;
-            }
-
-            narasiList.Add(n);
-        }
-    }
-
-    private void BuildDialogKarakterCache()
-    {
         dialogKarakterList.Clear();
 
-        if (DataManager.Instance.dialogKarakterDict == null)
+        if (DataManager.Instance.narasiDict != null)
         {
-            return;
+            foreach (var n in DataManager.Instance.narasiDict.Values)
+            {
+                if (n.prerequisiteAksi == null || n.prerequisiteAksi.Count == 0)
+                {
+                    continue;
+                }
+
+                narasiList.Add(n);
+            }
         }
 
-        foreach (var d in DataManager.Instance.dialogKarakterDict.Values)
+        if (DataManager.Instance.dialogKarakterDict != null)
         {
-            bool hasPrerequisite = (d.prerequisite != null && d.prerequisite.Count > 0)
-                || (d.prerequisiteAksi != null && d.prerequisiteAksi.Count > 0);
-
-            if (!hasPrerequisite)
+            foreach (var dialog in DataManager.Instance.dialogKarakterDict.Values)
             {
-                continue;
-            }
+                if (dialog == null || string.IsNullOrWhiteSpace(dialog.aksi))
+                {
+                    continue;
+                }
 
-            dialogKarakterList.Add(d);
+                dialogKarakterList.Add(dialog);
+            }
         }
     }
 

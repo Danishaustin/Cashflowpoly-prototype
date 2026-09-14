@@ -15,12 +15,25 @@ public partial class ChoiceController
 
     private void UpdateMove()
     {
+        int previousTurn = GameState.Instance.turn;
+        PostAkhirGiliranIfDayWillAdvance(previousTurn);
+
         GameState.Instance.UseMove();
 
         view.UpdateDay(GameState.Instance.day);
-        view.UpdatePlayerTurn(GameState.Instance.turn);
         view.UpdatePlayerStats();
 
+        if (previousTurn != GameState.Instance.turn)
+        {
+            view.PlayPlayerContainerExitThen(() =>
+            {
+                view.UpdatePlayerTurn(GameState.Instance.turn);
+                ShowNextScheduledChoice();
+            });
+            return;
+        }
+
+        view.UpdatePlayerTurn(GameState.Instance.turn);
         ShowNextScheduledChoice();
     }
 

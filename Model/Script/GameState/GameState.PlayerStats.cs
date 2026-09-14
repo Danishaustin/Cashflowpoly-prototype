@@ -6,7 +6,7 @@ public partial class GameState
     // Per-player coin, happiness, and saving storage.
     private void InitializePlayerStats()
     {
-        playerCount = Mathf.Clamp(PlayerPrefs.GetInt("PlayerCount", playerCount), 3, 4);
+        playerCount = Mathf.Clamp(PlayerPrefs.GetInt("PlayerCount", playerCount), MinPlayers, MaxPlayers);
         turn = Mathf.Clamp(turn, 1, playerCount);
 
         playerCoins = new Dictionary<int, int>();

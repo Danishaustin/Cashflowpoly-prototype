@@ -4,45 +4,62 @@ public partial class UIManagerPlay
 {
     private bool risikoCanUseAsuransi;
     private bool risikoCanPayBank;
+    private bool risikoCanJualKebutuhan;
+    private bool risikoCanJualEmas;
+    private bool risikoCanPinjamanSyariah;
+    private int risikoJualEmasMax = 1;
 
     private void BindRisikoKehidupanElements(VisualElement root)
     {
         risikoSetupContent = root.Q<VisualElement>("RisikoSetupContent");
         risikoCoinDecisionContent = root.Q<VisualElement>("RisikoCoinDecisionContent");
         risikoCoinInputContainer = root.Q<VisualElement>("RisikoCoinInputContainer");
+        risikoDapatCoinInputContainer = root.Q<VisualElement>("RisikoDapatCoinInputContainer");
         risikoDampakInputContainer = root.Q<VisualElement>("RisikoDampakInputContainer");
+        risikoJualEmasInputContainer = root.Q<VisualElement>("RisikoJualEmasInputContainer");
         risikoInvestasiEmasToggle = root.Q<Toggle>("RisikoInvestasiEmasToggle");
-        risikoCoinToggle = root.Q<Toggle>("RisikoCoinToggle");
-        risikoDampakSepekanToggle = root.Q<Toggle>("RisikoDampakSepekanToggle");
-        risikoHargaBahanToggle = root.Q<Toggle>("RisikoHargaBahanToggle");
-        risikoHargaKebutuhanToggle = root.Q<Toggle>("RisikoHargaKebutuhanToggle");
+        risikoBayarBankSetupToggle = root.Q<Toggle>("RisikoBayarBankSetupToggle");
+        risikoSemuaPemainToggle = root.Q<Toggle>("RisikoSemuaPemainToggle");
+        risikoDapatCoinToggle = root.Q<Toggle>("RisikoDapatCoinToggle");
+        risikoDariTiapPemainToggle = root.Q<Toggle>("RisikoDariTiapPemainToggle");
+        risikoPerubahanHargaToggle = root.Q<Toggle>("RisikoPerubahanHargaToggle");
         risikoUseAsuransiToggle = root.Q<Toggle>("RisikoUseAsuransiToggle");
         risikoBayarBankToggle = root.Q<Toggle>("RisikoBayarBankToggle");
-        risikoTidakCukupToggle = root.Q<Toggle>("RisikoTidakCukupToggle");
+        risikoJualKebutuhanToggle = root.Q<Toggle>("RisikoJualKebutuhanToggle");
+        risikoJualEmasToggle = root.Q<Toggle>("RisikoJualEmasToggle");
+        risikoPinjamanSyariahToggle = root.Q<Toggle>("RisikoPinjamanSyariahToggle");
 
         risikoInvestasiEmasToggle?.RegisterValueChangedCallback(_ => RefreshRisikoKehidupanToggleState());
-        risikoCoinToggle?.RegisterValueChangedCallback(_ => RefreshRisikoKehidupanToggleState());
-        risikoDampakSepekanToggle?.RegisterValueChangedCallback(_ => RefreshRisikoKehidupanToggleState());
-        risikoHargaBahanToggle?.RegisterValueChangedCallback(_ => HideRisikoKehidupanWarning());
-        risikoHargaKebutuhanToggle?.RegisterValueChangedCallback(_ => HideRisikoKehidupanWarning());
+        risikoBayarBankSetupToggle?.RegisterValueChangedCallback(_ => RefreshRisikoKehidupanToggleState());
+        risikoDapatCoinToggle?.RegisterValueChangedCallback(_ => RefreshRisikoKehidupanToggleState());
+        risikoPerubahanHargaToggle?.RegisterValueChangedCallback(_ => RefreshRisikoKehidupanToggleState());
+        risikoSemuaPemainToggle?.RegisterValueChangedCallback(_ => HideRisikoKehidupanWarning());
+        risikoDariTiapPemainToggle?.RegisterValueChangedCallback(_ => HideRisikoKehidupanWarning());
         risikoUseAsuransiToggle?.RegisterValueChangedCallback(_ => RefreshRisikoCoinDecisionToggleState());
         risikoBayarBankToggle?.RegisterValueChangedCallback(_ => RefreshRisikoCoinDecisionToggleState());
-        risikoTidakCukupToggle?.RegisterValueChangedCallback(_ => RefreshRisikoCoinDecisionToggleState());
+        risikoJualKebutuhanToggle?.RegisterValueChangedCallback(_ => RefreshRisikoCoinDecisionToggleState());
+        risikoJualEmasToggle?.RegisterValueChangedCallback(_ => RefreshRisikoCoinDecisionToggleState());
+        risikoPinjamanSyariahToggle?.RegisterValueChangedCallback(_ => RefreshRisikoCoinDecisionToggleState());
     }
 
     public void ResetRisikoKehidupanPanel()
     {
         ShowRisikoSetupContent();
         risikoInvestasiEmasToggle?.SetValueWithoutNotify(false);
-        risikoCoinToggle?.SetValueWithoutNotify(false);
-        risikoDampakSepekanToggle?.SetValueWithoutNotify(false);
-        risikoHargaBahanToggle?.SetValueWithoutNotify(false);
-        risikoHargaKebutuhanToggle?.SetValueWithoutNotify(false);
+        risikoBayarBankSetupToggle?.SetValueWithoutNotify(false);
+        risikoSemuaPemainToggle?.SetValueWithoutNotify(false);
+        risikoDapatCoinToggle?.SetValueWithoutNotify(false);
+        risikoDariTiapPemainToggle?.SetValueWithoutNotify(false);
+        risikoPerubahanHargaToggle?.SetValueWithoutNotify(false);
         risikoUseAsuransiToggle?.SetValueWithoutNotify(false);
         risikoBayarBankToggle?.SetValueWithoutNotify(false);
-        risikoTidakCukupToggle?.SetValueWithoutNotify(false);
-        UpdateRisikoCoinChangeText(0);
+        risikoJualKebutuhanToggle?.SetValueWithoutNotify(false);
+        risikoJualEmasToggle?.SetValueWithoutNotify(false);
+        risikoPinjamanSyariahToggle?.SetValueWithoutNotify(false);
+        UpdateRisikoCoinChangeText(1);
+        UpdateRisikoDapatCoinText(1);
         UpdateRisikoHargaChangeText(0);
+        SetRisikoJualEmasRange(1, 1);
         HideRisikoKehidupanWarning();
         RefreshRisikoKehidupanToggleState();
     }
@@ -52,6 +69,16 @@ public partial class UIManagerPlay
         if (risikoCoinChangeText != null)
         {
             risikoCoinChangeText.text = amount.ToString();
+        }
+
+        HideRisikoKehidupanWarning();
+    }
+
+    public void UpdateRisikoDapatCoinText(int amount)
+    {
+        if (risikoDapatCoinText != null)
+        {
+            risikoDapatCoinText.text = amount.ToString();
         }
 
         HideRisikoKehidupanWarning();
@@ -67,38 +94,69 @@ public partial class UIManagerPlay
         HideRisikoKehidupanWarning();
     }
 
-    public bool IsRisikoKehidupanInputValid(int coinChange, int hargaChange, out string warningText)
+    public void SetRisikoJualEmasRange(int amount, int maxAmount)
+    {
+        risikoJualEmasMax = UnityEngine.Mathf.Max(1, maxAmount);
+        int clampedAmount = UnityEngine.Mathf.Clamp(amount, 1, risikoJualEmasMax);
+        if (risikoJualEmasText != null)
+        {
+            risikoJualEmasText.text = clampedAmount.ToString();
+        }
+
+        HideRisikoKehidupanWarning();
+    }
+
+    public int GetRisikoJualEmasAmount()
+    {
+        if (risikoJualEmasText == null || string.IsNullOrWhiteSpace(risikoJualEmasText.text))
+        {
+            return 1;
+        }
+
+        if (!int.TryParse(risikoJualEmasText.text, out int amount))
+        {
+            return 1;
+        }
+
+        return UnityEngine.Mathf.Clamp(amount, 1, risikoJualEmasMax);
+    }
+
+    public void ChangeRisikoJualEmasAmount(int delta)
+    {
+        int next = GetRisikoJualEmasAmount() + delta;
+        SetRisikoJualEmasRange(next, risikoJualEmasMax);
+    }
+
+    public bool IsRisikoKehidupanInputValid(int bayarBankAmount, int dapatCoinAmount, int hargaChange, out string warningText)
     {
         bool investasiSelected = risikoInvestasiEmasToggle != null && risikoInvestasiEmasToggle.value;
-        bool coinSelected = risikoCoinToggle != null && risikoCoinToggle.value;
-        bool dampakSelected = risikoDampakSepekanToggle != null && risikoDampakSepekanToggle.value;
+        bool bayarBankSelected = risikoBayarBankSetupToggle != null && risikoBayarBankSetupToggle.value;
+        bool dapatCoinSelected = risikoDapatCoinToggle != null && risikoDapatCoinToggle.value;
+        bool perubahanHargaSelected = risikoPerubahanHargaToggle != null && risikoPerubahanHargaToggle.value;
 
-        if (!investasiSelected && !coinSelected && !dampakSelected)
+        if (!investasiSelected && !bayarBankSelected && !dapatCoinSelected && !perubahanHargaSelected)
         {
             warningText = "Pilih salah satu risiko terlebih dahulu.";
             return false;
         }
 
-        if (coinSelected && coinChange == 0)
+        if (bayarBankSelected && bayarBankAmount <= 0)
         {
-            warningText = "Isi perubahan coin selain 0.";
+            warningText = "Nominal Bayar ke Bank harus lebih dari 0.";
             return false;
         }
 
-        if (dampakSelected)
+        if (dapatCoinSelected && dapatCoinAmount <= 0)
         {
-            bool hargaBahanSelected = risikoHargaBahanToggle != null && risikoHargaBahanToggle.value;
-            bool hargaKebutuhanSelected = risikoHargaKebutuhanToggle != null && risikoHargaKebutuhanToggle.value;
+            warningText = "Nominal Dapat Coin harus lebih dari 0.";
+            return false;
+        }
 
+        if (perubahanHargaSelected)
+        {
             if (hargaChange == 0)
             {
                 warningText = "Isi perubahan harga selain 0.";
-                return false;
-            }
-
-            if (!hargaBahanSelected && !hargaKebutuhanSelected)
-            {
-                warningText = "Pilih Harga Bahan atau Harga Kebutuhan.";
                 return false;
             }
         }
@@ -114,16 +172,38 @@ public partial class UIManagerPlay
 
     public bool IsRisikoCoinSelected()
     {
-        return risikoCoinToggle != null && risikoCoinToggle.value;
+        return risikoBayarBankSetupToggle != null && risikoBayarBankSetupToggle.value;
+    }
+
+    public bool IsRisikoSemuaPemainSelected()
+    {
+        return risikoSemuaPemainToggle != null && risikoSemuaPemainToggle.value;
+    }
+
+    public bool IsRisikoDapatCoinSelected()
+    {
+        return risikoDapatCoinToggle != null && risikoDapatCoinToggle.value;
+    }
+
+    public bool IsRisikoDariTiapPemainSelected()
+    {
+        return risikoDariTiapPemainToggle != null && risikoDariTiapPemainToggle.value;
+    }
+
+    public bool IsRisikoPerubahanHargaSelected()
+    {
+        return risikoPerubahanHargaToggle != null && risikoPerubahanHargaToggle.value;
     }
 
     public bool IsRisikoCoinDecisionInputValid(out string warningText)
     {
         bool useAsuransi = risikoUseAsuransiToggle != null && risikoUseAsuransiToggle.value;
         bool bayarBank = risikoBayarBankToggle != null && risikoBayarBankToggle.value;
-        bool tidakCukup = risikoTidakCukupToggle != null && risikoTidakCukupToggle.value;
+        bool jualKebutuhan = risikoJualKebutuhanToggle != null && risikoJualKebutuhanToggle.value;
+        bool jualEmas = risikoJualEmasToggle != null && risikoJualEmasToggle.value;
+        bool pinjamanSyariah = risikoPinjamanSyariahToggle != null && risikoPinjamanSyariahToggle.value;
 
-        if (!useAsuransi && !bayarBank && !tidakCukup)
+        if (!useAsuransi && !bayarBank && !jualKebutuhan && !jualEmas && !pinjamanSyariah)
         {
             warningText = "Pilih keputusan untuk player ini.";
             return false;
@@ -143,10 +223,55 @@ public partial class UIManagerPlay
         return risikoBayarBankToggle != null && risikoBayarBankToggle.value;
     }
 
-    public void ShowRisikoCoinDecisionContent(string playerName, bool canUseAsuransi, bool canPayBank)
+    public bool IsRisikoJualKebutuhanSelected()
+    {
+        return risikoJualKebutuhanToggle != null && risikoJualKebutuhanToggle.value;
+    }
+
+    public bool IsRisikoJualEmasSelected()
+    {
+        return risikoJualEmasToggle != null && risikoJualEmasToggle.value;
+    }
+
+    public bool IsRisikoPinjamanSyariahSelected()
+    {
+        return risikoPinjamanSyariahToggle != null && risikoPinjamanSyariahToggle.value;
+    }
+
+    public bool IsRisikoJualEmasInputValid(int maxEmas, out string warningText)
+    {
+        int amount = GetRisikoJualEmasAmount();
+        if (maxEmas <= 0)
+        {
+            warningText = "Emas tidak cukup untuk dijual.";
+            return false;
+        }
+
+        if (amount < 1 || amount > maxEmas)
+        {
+            warningText = "Jumlah emas harus antara 1 sampai " + maxEmas + ".";
+            return false;
+        }
+
+        warningText = string.Empty;
+        return true;
+    }
+
+    public void ShowRisikoCoinDecisionContent(
+        string playerName,
+        bool canUseAsuransi,
+        bool canPayBank,
+        bool canJualKebutuhan,
+        bool canJualEmas,
+        bool canPinjamanSyariah,
+        int maxJualEmas)
     {
         risikoCanUseAsuransi = canUseAsuransi;
         risikoCanPayBank = canPayBank;
+        risikoCanJualKebutuhan = canJualKebutuhan;
+        risikoCanJualEmas = canJualEmas;
+        risikoCanPinjamanSyariah = canPinjamanSyariah;
+        SetRisikoJualEmasRange(1, maxJualEmas);
 
         if (risikoSetupContent != null)
         {
@@ -165,11 +290,15 @@ public partial class UIManagerPlay
 
         risikoUseAsuransiToggle?.SetValueWithoutNotify(false);
         risikoBayarBankToggle?.SetValueWithoutNotify(false);
-        risikoTidakCukupToggle?.SetValueWithoutNotify(false);
+        risikoJualKebutuhanToggle?.SetValueWithoutNotify(false);
+        risikoJualEmasToggle?.SetValueWithoutNotify(false);
+        risikoPinjamanSyariahToggle?.SetValueWithoutNotify(false);
 
         risikoUseAsuransiToggle?.SetEnabled(canUseAsuransi);
         risikoBayarBankToggle?.SetEnabled(canPayBank);
-        risikoTidakCukupToggle?.SetEnabled(true);
+        risikoJualKebutuhanToggle?.SetEnabled(canJualKebutuhan);
+        risikoJualEmasToggle?.SetEnabled(canJualEmas);
+        risikoPinjamanSyariahToggle?.SetEnabled(canPinjamanSyariah);
 
         HideRisikoKehidupanWarning();
         RefreshRisikoCoinDecisionToggleState();
@@ -213,24 +342,49 @@ public partial class UIManagerPlay
     private void RefreshRisikoKehidupanToggleState()
     {
         bool investasiSelected = risikoInvestasiEmasToggle != null && risikoInvestasiEmasToggle.value;
-        bool coinSelected = risikoCoinToggle != null && risikoCoinToggle.value;
-        bool dampakSelected = risikoDampakSepekanToggle != null && risikoDampakSepekanToggle.value;
-        bool hasMainSelection = investasiSelected || coinSelected || dampakSelected;
+        bool bayarBankSelected = risikoBayarBankSetupToggle != null && risikoBayarBankSetupToggle.value;
+        bool dapatCoinSelected = risikoDapatCoinToggle != null && risikoDapatCoinToggle.value;
+        bool perubahanHargaSelected = risikoPerubahanHargaToggle != null && risikoPerubahanHargaToggle.value;
+        bool hasMainSelection = investasiSelected || bayarBankSelected || dapatCoinSelected || perubahanHargaSelected;
 
         HideRisikoKehidupanWarning();
 
         risikoInvestasiEmasToggle?.SetEnabled(!hasMainSelection || investasiSelected);
-        risikoCoinToggle?.SetEnabled(!hasMainSelection || coinSelected);
-        risikoDampakSepekanToggle?.SetEnabled(!hasMainSelection || dampakSelected);
+        risikoBayarBankSetupToggle?.SetEnabled(!hasMainSelection || bayarBankSelected);
+        risikoDapatCoinToggle?.SetEnabled(!hasMainSelection || dapatCoinSelected);
+        risikoPerubahanHargaToggle?.SetEnabled(!hasMainSelection || perubahanHargaSelected);
 
         if (risikoCoinInputContainer != null)
         {
-            risikoCoinInputContainer.style.display = coinSelected ? DisplayStyle.Flex : DisplayStyle.None;
+            risikoCoinInputContainer.style.display = bayarBankSelected ? DisplayStyle.Flex : DisplayStyle.None;
+        }
+
+        if (risikoSemuaPemainToggle != null)
+        {
+            risikoSemuaPemainToggle.style.display = bayarBankSelected ? DisplayStyle.Flex : DisplayStyle.None;
+            if (!bayarBankSelected)
+            {
+                risikoSemuaPemainToggle.SetValueWithoutNotify(false);
+            }
+        }
+
+        if (risikoDapatCoinInputContainer != null)
+        {
+            risikoDapatCoinInputContainer.style.display = dapatCoinSelected ? DisplayStyle.Flex : DisplayStyle.None;
+        }
+
+        if (risikoDariTiapPemainToggle != null)
+        {
+            risikoDariTiapPemainToggle.style.display = dapatCoinSelected ? DisplayStyle.Flex : DisplayStyle.None;
+            if (!dapatCoinSelected)
+            {
+                risikoDariTiapPemainToggle.SetValueWithoutNotify(false);
+            }
         }
 
         if (risikoDampakInputContainer != null)
         {
-            risikoDampakInputContainer.style.display = dampakSelected ? DisplayStyle.Flex : DisplayStyle.None;
+            risikoDampakInputContainer.style.display = perubahanHargaSelected ? DisplayStyle.Flex : DisplayStyle.None;
         }
     }
 
@@ -238,12 +392,21 @@ public partial class UIManagerPlay
     {
         bool useAsuransi = risikoUseAsuransiToggle != null && risikoUseAsuransiToggle.value;
         bool bayarBank = risikoBayarBankToggle != null && risikoBayarBankToggle.value;
-        bool tidakCukup = risikoTidakCukupToggle != null && risikoTidakCukupToggle.value;
-        bool hasDecision = useAsuransi || bayarBank || tidakCukup;
+        bool jualKebutuhan = risikoJualKebutuhanToggle != null && risikoJualKebutuhanToggle.value;
+        bool jualEmas = risikoJualEmasToggle != null && risikoJualEmasToggle.value;
+        bool pinjamanSyariah = risikoPinjamanSyariahToggle != null && risikoPinjamanSyariahToggle.value;
+        bool hasDecision = useAsuransi || bayarBank || jualKebutuhan || jualEmas || pinjamanSyariah;
         HideRisikoKehidupanWarning();
 
         risikoUseAsuransiToggle?.SetEnabled((!hasDecision && risikoCanUseAsuransi) || useAsuransi);
         risikoBayarBankToggle?.SetEnabled((!hasDecision && risikoCanPayBank) || bayarBank);
-        risikoTidakCukupToggle?.SetEnabled(!hasDecision || tidakCukup);
+        risikoJualKebutuhanToggle?.SetEnabled((!hasDecision && risikoCanJualKebutuhan) || jualKebutuhan);
+        risikoJualEmasToggle?.SetEnabled((!hasDecision && risikoCanJualEmas) || jualEmas);
+        risikoPinjamanSyariahToggle?.SetEnabled((!hasDecision && risikoCanPinjamanSyariah) || pinjamanSyariah);
+
+        if (risikoJualEmasInputContainer != null)
+        {
+            risikoJualEmasInputContainer.style.display = jualEmas ? DisplayStyle.Flex : DisplayStyle.None;
+        }
     }
 }

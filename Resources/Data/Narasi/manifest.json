@@ -1,0 +1,24 @@
+{
+    "narasiPacks": [
+        {
+            "id": "narasi_001",
+            "name": "Narasi 001",
+            "file": "narasi_001"
+        },
+        {
+            "id": "narasi_002",
+            "name": "Narasi Tes UGS",
+            "file": "narasi_002"
+        },
+        {
+            "id": "narasi_003",
+            "name": "Narasi Tes Yay",
+            "file": "narasi_003"
+        },
+        {
+            "id": "narasi_004",
+            "name": "Narasi 004",
+            "file": "narasi_004"
+        }
+    ]
+}

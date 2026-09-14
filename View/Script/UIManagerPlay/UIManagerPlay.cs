@@ -76,7 +76,9 @@ public partial class UIManagerPlay : MonoBehaviour
     private Label hargaEmasText;
     private Label jumlahEmasText;
     private Label risikoCoinChangeText;
+    private Label risikoDapatCoinText;
     private Label risikoHargaChangeText;
+    private Label risikoJualEmasText;
     private Label risikoWarningText;
     private Label risikoDecisionPlayerText;
     private Label targetKebutuhanTitle;
@@ -121,6 +123,7 @@ public partial class UIManagerPlay : MonoBehaviour
     private VisualElement mainContainer;
     private VisualElement backgroundTransitionOverlay;
     private VisualElement playerContainer;
+    private VisualElement npcContainer;
     private VisualElement textContainer;
     private VisualElement targetKebutuhanOverlay;
     private VisualElement targetKebutuhanGrid;
@@ -128,15 +131,20 @@ public partial class UIManagerPlay : MonoBehaviour
     private VisualElement risikoSetupContent;
     private VisualElement risikoCoinDecisionContent;
     private VisualElement risikoCoinInputContainer;
+    private VisualElement risikoDapatCoinInputContainer;
     private VisualElement risikoDampakInputContainer;
+    private VisualElement risikoJualEmasInputContainer;
     private Toggle risikoInvestasiEmasToggle;
-    private Toggle risikoCoinToggle;
-    private Toggle risikoDampakSepekanToggle;
-    private Toggle risikoHargaBahanToggle;
-    private Toggle risikoHargaKebutuhanToggle;
+    private Toggle risikoBayarBankSetupToggle;
+    private Toggle risikoSemuaPemainToggle;
+    private Toggle risikoDapatCoinToggle;
+    private Toggle risikoDariTiapPemainToggle;
+    private Toggle risikoPerubahanHargaToggle;
     private Toggle risikoUseAsuransiToggle;
     private Toggle risikoBayarBankToggle;
-    private Toggle risikoTidakCukupToggle;
+    private Toggle risikoJualKebutuhanToggle;
+    private Toggle risikoJualEmasToggle;
+    private Toggle risikoPinjamanSyariahToggle;
     private VisualElement questPanel;
     private VisualElement inventoryInputBlocker;
     private VisualElement inventoryPanel;
@@ -164,6 +172,8 @@ public partial class UIManagerPlay : MonoBehaviour
     private int backgroundTransitionVersion;
     private int ignoredDialogClickFrame = -1;
     private bool hasStartedOpeningChoiceFlow;
+    private Coroutine openingChoiceCoroutine;
+    private bool isOpeningSetupActive = true;
     private bool showOnlyAffordableTujuanFinansial;
 
     void Start()
@@ -195,7 +205,9 @@ public partial class UIManagerPlay : MonoBehaviour
         hargaEmasText = root.Q<Label>("HargaEmasText");
         jumlahEmasText = root.Q<Label>("JumlahEmasText");
         risikoCoinChangeText = root.Q<Label>("RisikoCoinChangeText");
+        risikoDapatCoinText = root.Q<Label>("RisikoDapatCoinText");
         risikoHargaChangeText = root.Q<Label>("RisikoHargaChangeText");
+        risikoJualEmasText = root.Q<Label>("RisikoJualEmasText");
         risikoWarningText = root.Q<Label>("RisikoWarningText");
         risikoDecisionPlayerText = root.Q<Label>("RisikoDecisionPlayerText");
         targetKebutuhanTitle = root.Q<Label>("TargetKebutuhanTitle");
@@ -244,6 +256,7 @@ public partial class UIManagerPlay : MonoBehaviour
         }
 
         playerContainer = root.Q<VisualElement>("PlayerContainer");
+        npcContainer = root.Q<VisualElement>("NPCContainer");
         textContainer = root.Q<VisualElement>("TextContainer");
         targetKebutuhanOverlay = root.Q<VisualElement>("TargetKebutuhanOverlay");
         targetKebutuhanGrid = root.Q<VisualElement>("TargetKebutuhanGrid");
@@ -293,8 +306,12 @@ public partial class UIManagerPlay : MonoBehaviour
             "IncreaseButtonFinalHappiness",
             "DecreaseButtonRisikoCoin",
             "IncreaseButtonRisikoCoin",
+            "DecreaseButtonRisikoDapatCoin",
+            "IncreaseButtonRisikoDapatCoin",
             "DecreaseButtonRisikoHarga",
             "IncreaseButtonRisikoHarga",
+            "DecreaseButtonRisikoJualEmas",
+            "IncreaseButtonRisikoJualEmas",
             "NextButtonRisikoKehidupan",
         };
 
@@ -365,8 +382,7 @@ public partial class UIManagerPlay : MonoBehaviour
         UpdateJualMasakanPage();
         UpdateTujuanFinansialPage();
         SetChoiceBackground("ChoiceInitialBahan");
-
-        Invoke("ShowInitialBahanChoice", .1f);
+        ShowInitialBahanChoice();
     }
 
     void OnDestroy()
@@ -377,6 +393,12 @@ public partial class UIManagerPlay : MonoBehaviour
     void RegisterChoiceGroup(string containerName, VisualElement root)
     {
         var container = root.Q<VisualElement>(containerName);
+        if (container == null)
+        {
+            Debug.LogWarning(containerName + " tidak ditemukan di UXML.");
+            return;
+        }
+
         choiceContainers[containerName] = container;
         var buttons = container.Query<Button>().ToList();
 

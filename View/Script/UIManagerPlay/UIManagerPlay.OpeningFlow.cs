@@ -26,6 +26,8 @@ public partial class UIManagerPlay
             targetKebutuhanOverlay.style.display = DisplayStyle.None;
         }
 
+        HideNpcContainer();
+        UpdatePlayerContainerSprite(GameState.Instance != null ? GameState.Instance.turn : 1);
         playerContainer.style.display = DisplayStyle.Flex;
         playerContainer.schedule.Execute(() =>
         {
@@ -35,11 +37,15 @@ public partial class UIManagerPlay
 
     private void ShowInitialBahanChoice()
     {
-        ShowInitialBahanChoiceForPlayer(1);
+        ShowInitialBahanChoiceForPlayer(GameState.Instance != null
+            ? GameState.Instance.GetFirstPlayerInTurnOrder()
+            : 1);
     }
 
     public void ShowInitialBahanChoiceForPlayer(int player)
     {
+        isOpeningSetupActive = true;
+        CancelOpeningChoiceFlow();
         HideDialogContainer();
         SetChoiceBackground("ChoiceInitialBahan");
 
@@ -73,7 +79,9 @@ public partial class UIManagerPlay
     {
         if (choiceContainers == null || !choiceContainers.ContainsKey("ChoiceInitialBahan"))
         {
-            ShowTargetKebutuhanChoiceForPlayer(1);
+            ShowTargetKebutuhanChoiceForPlayer(GameState.Instance != null
+                ? GameState.Instance.GetFirstPlayerInTurnOrder()
+                : 1);
             return;
         }
 
@@ -82,17 +90,25 @@ public partial class UIManagerPlay
         initialContainer.schedule.Execute(() =>
         {
             initialContainer.style.display = DisplayStyle.None;
-            ShowTargetKebutuhanChoiceForPlayer(1);
+            GameState.Instance?.SetTurnAndMoves(
+                GameState.Instance.GetFirstPlayerInTurnOrder(),
+                GameState.Instance.ActionsPerTurn);
+            ShowTargetKebutuhanChoiceForPlayer(GameState.Instance != null
+                ? GameState.Instance.GetFirstPlayerInTurnOrder()
+                : 1);
         }).StartingIn(420);
     }
 
     private void ShowTargetKebutuhanChoice()
     {
-        ShowTargetKebutuhanChoiceForPlayer(1);
+        ShowTargetKebutuhanChoiceForPlayer(GameState.Instance != null
+            ? GameState.Instance.GetFirstPlayerInTurnOrder()
+            : 1);
     }
 
     public void ShowTargetKebutuhanChoiceForPlayer(int player)
     {
+        isOpeningSetupActive = true;
         HideDialogContainer();
         SetChoiceBackground("ChoiceTargetKebutuhan");
         choiceController?.ResetTargetKebutuhanSelection();
@@ -132,6 +148,11 @@ public partial class UIManagerPlay
 
     private void ShowTextContainer(TransitionEndEvent evt)
     {
+        if (isOpeningSetupActive)
+        {
+            return;
+        }
+
         if (hasStartedOpeningChoiceFlow)
         {
             return;
@@ -140,7 +161,7 @@ public partial class UIManagerPlay
         hasStartedOpeningChoiceFlow = true;
         ShowDialogContainer();
         Dialog(dialog, "Sekarang ngapain ya?");
-        StartCoroutine(WaitForOpeningChoiceClick());
+        openingChoiceCoroutine = StartCoroutine(WaitForOpeningChoiceClick());
     }
 
     private IEnumerator WaitForOpeningChoiceClick()
@@ -165,6 +186,42 @@ public partial class UIManagerPlay
             yield return null;
         }
 
+        yield return TransitionOpeningCharacterToChoice1();
+    }
+
+    private void CancelOpeningChoiceFlow()
+    {
+        if (openingChoiceCoroutine != null)
+        {
+            StopCoroutine(openingChoiceCoroutine);
+            openingChoiceCoroutine = null;
+        }
+
+        HideDialogContainer();
+    }
+
+    public void CompleteOpeningSetup()
+    {
+        isOpeningSetupActive = false;
+        CancelOpeningChoiceFlow();
+    }
+
+    private IEnumerator TransitionOpeningCharacterToChoice1()
+    {
+        HideDialogContainer();
+
+        if (playerContainer != null && playerContainer.ClassListContains("show-character"))
+        {
+            playerContainer.RemoveFromClassList("show-character");
+            yield return new WaitForSeconds(DialogCharacterTransitionDuration);
+        }
+
+        if (playerContainer != null)
+        {
+            playerContainer.style.display = DisplayStyle.None;
+        }
+
+        openingChoiceCoroutine = null;
         ShowChoice1();
     }
 
@@ -172,6 +229,12 @@ public partial class UIManagerPlay
     {
         HideDialogContainer();
         SetChoiceBackground("Choice1");
+        HideAllChoiceContainers();
+        if (choiceContainers == null || !choiceContainers.ContainsKey("Choice1"))
+        {
+            return;
+        }
+
         choiceContainers["Choice1"].style.display = DisplayStyle.Flex;
         choiceContainers["Choice1"].schedule.Execute(() =>
         {

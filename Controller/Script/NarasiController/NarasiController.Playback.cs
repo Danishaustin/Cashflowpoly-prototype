@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -24,32 +24,22 @@ public partial class NarasiController
             return false;
         }
 
+        int activePlayerTurn = GetActivePlayerTurn();
         DialogKarakterData selectedDialogKarakter = GetDialogKarakterByPrerequisite(aksi, aksiKe);
         if (selectedDialogKarakter != null)
         {
-            if (selectedDialogKarakter.steps != null && selectedDialogKarakter.steps.Count > 0)
-            {
-                if (currentNarasiCoroutine != null)
-                {
-                    StopCoroutine(currentNarasiCoroutine);
-                }
-
-                currentNarasiCoroutine = StartCoroutine(PlayDialogKarakterSteps(selectedDialogKarakter, onComplete));
-                return true;
-            }
-
-            var dialogKarakterList = selectedDialogKarakter.dialog?
-                .Where(text => !string.IsNullOrWhiteSpace(text))
+            var dialogLines = selectedDialogKarakter.lines?
+                .Where(line => line != null && !string.IsNullOrWhiteSpace(line.text))
                 .ToList();
 
-            if (dialogKarakterList != null && dialogKarakterList.Count > 0)
+            if (dialogLines != null && dialogLines.Count > 0)
             {
                 if (currentNarasiCoroutine != null)
                 {
                     StopCoroutine(currentNarasiCoroutine);
                 }
 
-                currentNarasiCoroutine = StartCoroutine(PlayDialogKarakter(selectedDialogKarakter, dialogKarakterList, onComplete));
+                currentNarasiCoroutine = StartCoroutine(PlayDialogKarakter(selectedDialogKarakter, dialogLines, activePlayerTurn, onComplete));
                 return true;
             }
         }
@@ -83,49 +73,43 @@ public partial class NarasiController
         return true;
     }
 
-    private IEnumerator PlayDialogKarakterSteps(DialogKarakterData dialogKarakter, System.Action onComplete)
+    private IEnumerator PlayDialogKarakter(
+        DialogKarakterData dialogKarakter,
+        List<DialogKarakterLineData> dialogLines,
+        int activePlayerTurn,
+        System.Action onComplete)
     {
-        foreach (var step in dialogKarakter.steps)
+        string npcName = string.IsNullOrWhiteSpace(dialogKarakter.npcName) ? "NPC" : dialogKarakter.npcName;
+        string playerName = PlayerPrefs.GetString("PlayerName_" + activePlayerTurn, "Player " + activePlayerTurn);
+
+        if (!string.IsNullOrWhiteSpace(dialogKarakter.npcSprite))
         {
-            if (step == null)
-            {
-                continue;
-            }
-
-            view.ApplyDialogKarakter(step);
-
-            var stepDialogList = step.dialog?
-                .Where(text => !string.IsNullOrWhiteSpace(text))
-                .ToList();
-
-            if (stepDialogList != null && stepDialogList.Count > 0)
-            {
-                yield return view.PlayDialogSteps(stepDialogList);
-            }
+            view.UpdateNpcContainerSprite(dialogKarakter.npcSprite);
         }
 
-        MarkDialogPlayed(
-            dialogKarakter.id, 
-            GameState.Instance != null ? GameState.Instance.turn : 0
-        );
+        foreach (DialogKarakterLineData line in dialogLines)
+        {
+            bool isNpcSpeaker = string.Equals(line.speaker, "NPC", System.StringComparison.OrdinalIgnoreCase);
+            if (isNpcSpeaker)
+            {
+                view.HidePlayerDialogContainer();
+                view.ShowNpcContainer();
+                view.SetDialogNameOverride(npcName);
+            }
+            else
+            {
+                view.HideNpcContainer();
+                view.UpdatePlayerContainerSprite(activePlayerTurn);
+                view.ShowPlayerDialogContainer();
+                view.SetDialogNameOverride(playerName);
+            }
 
-        yield return view.DismissAllDialogCharacters();
-        view.ClearDialogNameOverride();
-        currentNarasiCoroutine = null;
-        onComplete?.Invoke();
-    }
+            yield return view.PlayDialogSteps(new List<string> { line.text });
+        }
 
-    private IEnumerator PlayDialogKarakter(DialogKarakterData dialogKarakter, List<string> dialogList, System.Action onComplete)
-    {
-        view.ApplyDialogKarakter(dialogKarakter);
-        yield return view.PlayDialogSteps(dialogList);
-
-        MarkDialogPlayed(
-            dialogKarakter.id, 
-            GameState.Instance != null ? GameState.Instance.turn : 0
-        );
-
-        yield return view.DismissDialogKarakter(dialogKarakter);
+        MarkDialogPlayed(dialogKarakter.id, activePlayerTurn);
+        view.HideNpcContainer();
+        view.HidePlayerDialogContainer();
         view.ClearDialogNameOverride();
         currentNarasiCoroutine = null;
         onComplete?.Invoke();
@@ -140,18 +124,22 @@ public partial class NarasiController
 
     private bool HasPlayedDialog(string dialogId, int player)
     {
-        return playedDialogs.TryGetValue(player, out var dialogs)
-            && dialogs.Contains(dialogId);
+        if (string.IsNullOrWhiteSpace(dialogId) || player < 1)
+        {
+            return false;
+        }
+
+        return PlayerPrefs.GetInt(NarafinSessionScope.GetDialogPlayedKey(dialogId, player), 0) == 1;
     }
 
     private void MarkDialogPlayed(string dialogId, int player)
     {
-        if (!playedDialogs.TryGetValue(player, out var dialogs))
+        if (string.IsNullOrWhiteSpace(dialogId) || player < 1)
         {
-            dialogs = new HashSet<string>();
-            playedDialogs[player] = dialogs;
+            return;
         }
 
-        dialogs.Add(dialogId);
+        PlayerPrefs.SetInt(NarafinSessionScope.GetDialogPlayedKey(dialogId, player), 1);
+        PlayerPrefs.Save();
     }
 }

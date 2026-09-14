@@ -27,7 +27,7 @@ public partial class ChoiceController
         investasiEmasDariRisiko = true;
         investasiEmasRisikoOriginalTurn = GameState.Instance.turn;
         investasiEmasRisikoOriginalMovesLeft = GameState.Instance.movesLeft;
-        GameState.Instance.SetTurnAndMoves(1, 2);
+        GameState.Instance.SetTurnAndMoves(1, GameState.Instance.ActionsPerTurn);
         view.UpdatePlayerTurn(GameState.Instance.turn);
         view.UpdatePlayerStats();
         GameState.Instance.SetHargaEmasText(Mathf.Max(1, GameState.Instance.HargaEmasSaatIni));
@@ -87,12 +87,24 @@ public partial class ChoiceController
         switch (selectedChoice)
         {
             case "BeliEmasInvestasi":
+                if (GameState.Instance != null && !GameState.Instance.GoldTradeAllowBuy)
+                {
+                    ShowInvestasiEmasDialogThen("Ruleset ini tidak mengizinkan beli emas.\n", ShowInvestasiEmasActionChoice);
+                    return;
+                }
+
                 investasiEmasMode = "Beli";
                 GameState.Instance.SetJumlahEmasText(0);
                 view.UpdateJumlahEmasText(GameState.Instance.JumlahEmasText);
                 view.ShowChoice("JumlahEmas");
                 break;
             case "JualEmasInvestasi":
+                if (GameState.Instance != null && !GameState.Instance.GoldTradeAllowSell)
+                {
+                    ShowInvestasiEmasDialogThen("Ruleset ini tidak mengizinkan jual emas.\n", ShowInvestasiEmasActionChoice);
+                    return;
+                }
+
                 investasiEmasMode = "Jual";
                 GameState.Instance.SetJumlahEmasText(0);
                 view.UpdateJumlahEmasText(GameState.Instance.JumlahEmasText);
@@ -178,6 +190,7 @@ public partial class ChoiceController
         GameState.Instance.ChangeCoins(-cost);
         GameState.Instance.ChangeEmas(amount);
         view.UpdateCoins(GameState.Instance.Coins);
+        PostInvestasiEmasEvent(player, "BUY", amount, GameState.Instance.HargaEmasSaatIni, cost);
 
         ShowInvestasiEmasDialogThen(
             GetPlayerName(player) + " membeli " + amount + " emas seharga "
@@ -202,6 +215,7 @@ public partial class ChoiceController
         GameState.Instance.ChangeCoins(income);
         GameState.Instance.ChangeEmas(-amount);
         view.UpdateCoins(GameState.Instance.Coins);
+        PostInvestasiEmasEvent(player, "SELL", amount, GameState.Instance.HargaEmasSaatIni, income);
 
         ShowInvestasiEmasDialogThen(
             GetPlayerName(player) + " menjual " + amount + " emas dan mendapatkan "
@@ -229,6 +243,7 @@ public partial class ChoiceController
             return;
         }
 
+        PostAkhirGiliranForDayEndIfLastPlayer(GameState.Instance.turn);
         bool isInvestasiEmasSelesai = GameState.Instance.AdvanceInvestasiEmasTurn();
         view.UpdateDay(GameState.Instance.day);
         view.UpdatePlayerTurn(GameState.Instance.turn);
@@ -247,7 +262,7 @@ public partial class ChoiceController
     {
         if (GameState.Instance.turn < GameState.Instance.playerCount)
         {
-            GameState.Instance.SetTurnAndMoves(GameState.Instance.turn + 1, 2);
+            GameState.Instance.SetTurnAndMoves(GameState.Instance.turn + 1, GameState.Instance.ActionsPerTurn);
             view.UpdatePlayerTurn(GameState.Instance.turn);
             view.UpdatePlayerStats();
             ShowInvestasiEmasActionChoice();
@@ -255,6 +270,7 @@ public partial class ChoiceController
         }
 
         investasiEmasDariRisiko = false;
+        PostCurrentRisikoKehidupanEvent(risikoOriginalTurn);
         GameState.Instance.SetTurnAndMoves(investasiEmasRisikoOriginalTurn, investasiEmasRisikoOriginalMovesLeft);
         view.UpdatePlayerTurn(GameState.Instance.turn);
         view.UpdatePlayerStats();

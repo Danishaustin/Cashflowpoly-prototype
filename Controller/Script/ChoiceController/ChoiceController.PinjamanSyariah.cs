@@ -7,6 +7,12 @@ public partial class ChoiceController
     // Handles taking and returning Pinjaman Syariah.
     private void HandleChoicePinjamanSyariah(string selectedChoice)
     {
+        if (GameState.Instance != null && !GameState.Instance.LoanEnabled)
+        {
+            ShowSystemDialogThen("Fitur pinjaman syariah tidak tersedia pada ruleset ini.\n", () => view.ShowChoice("Choice1"));
+            return;
+        }
+
         switch (selectedChoice)
         {
             case "AmbilPinjamanSyariah":
@@ -27,6 +33,7 @@ public partial class ChoiceController
         GameState.Instance.ChangeCoins(PinjamanSyariahAmount);
         GameState.Instance.ChangePinjamanSyariahCards(1);
         view.UpdateCoins(GameState.Instance.Coins);
+        PostPinjamanSyariahEvent(GameState.Instance.turn, "BORROW", PinjamanSyariahAmount);
 
         string resultText = "Mengambil pinjaman syariah. Mendapatkan " + PinjamanSyariahAmount
             + " koin dan 1 kartu pinjaman syariah. Kartu saat ini: "
@@ -51,6 +58,7 @@ public partial class ChoiceController
         GameState.Instance.ChangeCoins(-PinjamanSyariahAmount);
         GameState.Instance.ChangePinjamanSyariahCards(-1);
         view.UpdateCoins(GameState.Instance.Coins);
+        PostPinjamanSyariahEvent(GameState.Instance.turn, "RETURN", PinjamanSyariahAmount);
 
         string resultText = "Mengembalikan pinjaman syariah. Membayar " + PinjamanSyariahAmount
             + " koin dan mengurangi 1 kartu pinjaman syariah. Kartu tersisa: "

@@ -64,7 +64,7 @@ Button:active {
 .character {
     background-image: url("project://database/Assets/Screenshot_12-3-2026_135519_static.vecteezy.com-removebg-preview.png?fileID=21300000&guid=fd59a42e74877d04392891d8547925e2&type=3#Screenshot_12-3-2026_135519_static.vecteezy.com-removebg-preview");
     -unity-background-scale-mode: stretch-to-fill;
-    scale: -1 1;
+    scale: 1 1;
     top: auto;
     width: 600px;
     height: 80%;
@@ -72,6 +72,7 @@ Button:active {
     translate: 100% 0;
     position: absolute;
     right: 0;
+    transition-property: translate;
     transition-timing-function: ease-in-sine;
     transition-duration: 0.25s;
 }
@@ -88,6 +89,17 @@ Button:active {
 }
 
 .show-dialog-character-left {
+    translate: 0 0;
+}
+
+.npc-character {
+    left: 0;
+    right: auto;
+    translate: -100% 0;
+    scale: 1 1;
+}
+
+.show-npc-character {
     translate: 0 0;
 }
 
@@ -544,12 +556,22 @@ Button:active {
 .risk-content {
     flex-grow: 1;
     width: 100%;
-    justify-content: center;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: stretch;
+    padding-top: 8px;
+    padding-bottom: 8px;
+    overflow: hidden;
+}
+
+.risk-setup-content {
+    overflow: auto;
 }
 
 .risk-decision-player-text {
     width: 100%;
-    height: 16%;
+    min-height: 56px;
+    margin-bottom: 10px;
     -unity-font: resource('Sprite/300Mind/2D Game UI Kit/Fonts/Ariston Comic Font');
     -unity-font-definition: initial;
     -unity-font-style: bold;
@@ -560,16 +582,17 @@ Button:active {
 }
 
 .risk-toggle {
-    height: 12%;
+    min-height: 52px;
+    height: auto;
     width: 100%;
     -unity-font: resource('Sprite/300Mind/2D Game UI Kit/Fonts/Ariston Comic Font');
     -unity-font-definition: initial;
-    -unity-font-style: bold;
-    font-size: 34px;
+    -unity-font-style: normal;
+    font-size: 36px;
     color: rgb(22, 52, 42);
     -unity-text-align: middle-left;
-    margin-top: 4px;
-    margin-bottom: 4px;
+    margin-top: 2px;
+    margin-bottom: 2px;
 }
 
 .risk-toggle:disabled {
@@ -577,14 +600,15 @@ Button:active {
 }
 
 .risk-sub-toggle {
-    width: 45%;
-    height: 100%;
-    font-size: 28px;
+    width: 100%;
+    min-height: 46px;
+    font-size: 30px;
+    margin-left: 24px;
 }
 
 .risk-warning-text {
     width: 100%;
-    height: 8%;
+    min-height: 36px;
     -unity-font: resource('Sprite/300Mind/2D Game UI Kit/Fonts/Ariston Comic Font');
     -unity-font-definition: initial;
     -unity-font-style: bold;
@@ -592,6 +616,38 @@ Button:active {
     color: rgb(180, 48, 42);
     -unity-text-align: middle-center;
     white-space: normal;
+}
+
+.risk-number-input-row {
+    flex-grow: 0;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    min-height: 52px;
+    margin-top: 2px;
+    margin-bottom: 6px;
+}
+
+.risk-number-button {
+    min-height: 42px;
+    font-size: 36px;
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+.risk-number-text {
+    -unity-font: resource('Sprite/300Mind/2D Game UI Kit/Fonts/Ariston Comic Font');
+    -unity-font-definition: initial;
+    -unity-font-style: bold;
+    font-size: 42px;
+    -unity-text-align: middle-center;
+    background-image: none;
+    background-color: rgb(255, 255, 255);
+    border-top-left-radius: 28px;
+    border-top-right-radius: 28px;
+    border-bottom-right-radius: 28px;
+    border-bottom-left-radius: 28px;
+    min-height: 42px;
 }
 
 .item-choice-list {
@@ -1263,4 +1319,154 @@ Button:active {
 .tf-button {
     -unity-slice-left: 36;
     -unity-slice-right: 36;
+}
+
+.guide-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(14, 24, 20, 0.62);
+}
+
+.guide-panel {
+    width: 84%;
+    height: 82%;
+    max-width: 1180px;
+    max-height: 920px;
+    padding-top: 28px;
+    padding-right: 32px;
+    padding-bottom: 28px;
+    padding-left: 32px;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: stretch;
+    background-color: rgba(250, 247, 236, 0.98);
+    border-top-left-radius: 30px;
+    border-top-right-radius: 30px;
+    border-bottom-left-radius: 30px;
+    border-bottom-right-radius: 30px;
+    border-top-width: 4px;
+    border-right-width: 4px;
+    border-bottom-width: 4px;
+    border-left-width: 4px;
+    border-top-color: rgb(64, 92, 72);
+    border-right-color: rgb(64, 92, 72);
+    border-bottom-color: rgb(64, 92, 72);
+    border-left-color: rgb(64, 92, 72);
+    opacity: 0;
+    translate: 0 -135%;
+    transition-property: translate, opacity;
+    transition-duration: 0.42s;
+    transition-timing-function: ease-out-back;
+}
+
+.show-guide-panel {
+    opacity: 1;
+    translate: 0 0;
+}
+
+.guide-header {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    min-height: 72px;
+    margin-bottom: 18px;
+}
+
+.guide-counter {
+    width: 140px;
+    -unity-font: resource('Sprite/300Mind/2D Game UI Kit/Fonts/Ariston Comic Font');
+    -unity-font-definition: initial;
+    -unity-font-style: bold;
+    font-size: 34px;
+    color: rgb(64, 92, 72);
+    -unity-text-align: middle-left;
+}
+
+.guide-title {
+    flex-grow: 1;
+    -unity-font: resource('Sprite/300Mind/2D Game UI Kit/Fonts/Ariston Comic Font');
+    -unity-font-definition: initial;
+    -unity-font-style: bold;
+    font-size: 58px;
+    color: rgb(22, 52, 42);
+    -unity-text-align: middle-center;
+    white-space: normal;
+}
+
+.guide-image-frame {
+    height: 52%;
+    margin-bottom: 18px;
+    justify-content: center;
+    align-items: center;
+    background-color: rgb(228, 236, 225);
+    border-top-left-radius: 24px;
+    border-top-right-radius: 24px;
+    border-bottom-left-radius: 24px;
+    border-bottom-right-radius: 24px;
+    border-top-width: 3px;
+    border-right-width: 3px;
+    border-bottom-width: 3px;
+    border-left-width: 3px;
+    border-top-color: rgba(64, 92, 72, 0.45);
+    border-right-color: rgba(64, 92, 72, 0.45);
+    border-bottom-color: rgba(64, 92, 72, 0.45);
+    border-left-color: rgba(64, 92, 72, 0.45);
+    -unity-background-scale-mode: scale-to-fit;
+}
+
+.guide-image-label {
+    width: 100%;
+    height: 100%;
+    -unity-font: resource('Sprite/300Mind/2D Game UI Kit/Fonts/Ariston Comic Font');
+    -unity-font-definition: initial;
+    -unity-font-style: bold;
+    font-size: 48px;
+    color: rgb(64, 92, 72);
+    -unity-text-align: middle-center;
+    white-space: normal;
+}
+
+.guide-image-initial-bahan {
+    background-color: rgb(225, 242, 222);
+}
+
+.guide-image-initial-target {
+    background-color: rgb(225, 236, 247);
+}
+
+.guide-body-text {
+    min-height: 120px;
+    margin-bottom: 18px;
+    -unity-font: resource('Sprite/300Mind/2D Game UI Kit/Fonts/Ariston Comic Font');
+    -unity-font-definition: initial;
+    -unity-font-style: bold;
+    font-size: 36px;
+    color: rgb(39, 70, 58);
+    -unity-text-align: middle-center;
+    white-space: normal;
+    height: 20%;
+}
+
+.guide-next-button {
+    width: 220px;
+    height: 84px;
+    align-self: flex-end;
+    margin-right: 6px;
+    margin-bottom: 4px;
+    font-size: 42px;
+}
+
+.player-container {
+    -unity-background-scale-mode: scale-to-fit;
+    background-image: resource('Sprite/Character/Player/player1');
+}
+
+.npc-container {
+    -unity-background-scale-mode: scale-to-fit;
+    background-image: resource('Sprite/Character/NPC/penjual_bahan');
 }

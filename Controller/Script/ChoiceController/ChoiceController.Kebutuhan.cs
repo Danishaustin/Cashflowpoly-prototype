@@ -12,7 +12,7 @@ public partial class ChoiceController
         {
             bool isPrimer = string.Equals(kebutuhanData.tipe, "primer", System.StringComparison.OrdinalIgnoreCase);
             bool hasPrimer = GameState.Instance.HasKebutuhanPrimer(GameState.Instance.turn);
-            if (!isPrimer && !hasPrimer)
+            if (GameState.Instance.RequirePrimaryBeforeOthers && !isPrimer && !hasPrimer)
             {
                 view.AddTextToDialog("Harus membeli kebutuhan primer dulu.\n");
                 view.ShowChoice("Kebutuhan");
@@ -66,11 +66,17 @@ public partial class ChoiceController
                 view.UpdateCoins(GameState.Instance.Coins);
                 view.UpdateHappiness(GameState.Instance.Happiness);
                 Debug.Log("Kebutuhan " + tipeKebutuhan + " yang dimiliki: " + string.Join(", ", GameState.Instance.kebutuhanList[tipeKebutuhan]));
+                PostKebutuhanEvent(GameState.Instance.turn, GameState.Instance.kebutuhanSelected, GameState.Instance.SavingText, GameState.Instance.SavingText - 1);
 
                 string resultText = "Membeli kebutuhan " + GameState.Instance.kebutuhanSelected + " seharga " + GameState.Instance.SavingText + " koin dengan poin kebahagiaan " + (GameState.Instance.SavingText - 1) + "\n";
                 int aksiKe = GameState.Instance.kAksiKe;
                 GameState.Instance.kAksiKe++;
                 Debug.Log("kAksiKe: " + GameState.Instance.kAksiKe);
+
+                if (PlayNpcStaticDialogThen("Kebutuhan", resultText, UpdateMove))
+                {
+                    return;
+                }
 
                 if (Narasi("Kebutuhan", aksiKe, () =>
                 {

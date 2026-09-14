@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -27,10 +27,8 @@ public partial class NarasiController
 
     private DialogKarakterData GetDialogKarakterByPrerequisite(string aksi, int aksiKe)
     {
-        int player = GameState.Instance != null ? GameState.Instance.turn : 0;
-
         var matchingDialog = dialogKarakterList
-            .Where(dialogKarakter => !HasPlayedDialog(dialogKarakter.id, player))
+            .Where(dialogKarakter => !HasPlayedDialog(dialogKarakter.id, GetActivePlayerTurn()))
             .Where(dialogKarakter => HasTriggerPrerequisite(dialogKarakter, aksi, aksiKe))
             .Where(IsPrerequisiteMet)
             .OrderByDescending(CountValidPrerequisites)
@@ -42,7 +40,7 @@ public partial class NarasiController
         }
 
         return dialogKarakterList
-            .Where(dialogKarakter => !HasPlayedDialog(dialogKarakter.id, player))
+            .Where(dialogKarakter => !HasPlayedDialog(dialogKarakter.id, GetActivePlayerTurn()))
             .Where(dialogKarakter => HasTriggerPrerequisite(dialogKarakter, aksi, 0))
             .Where(IsPrerequisiteMet)
             .OrderByDescending(CountValidPrerequisites)
@@ -65,16 +63,14 @@ public partial class NarasiController
 
     private bool HasTriggerPrerequisite(DialogKarakterData dialogKarakter, string aksi, int value)
     {
-        if (GameState.Instance == null)
+        if (GameState.Instance == null || dialogKarakter == null || string.IsNullOrWhiteSpace(dialogKarakter.aksi))
         {
             return false;
         }
 
         string normalizedAksi = GameState.Instance.NormalizeActionName(aksi);
-        return GetDialogPrerequisites(dialogKarakter).Any(prerequisite =>
-            prerequisite != null
-            && GameState.Instance.NormalizeActionName(prerequisite.aksi) == normalizedAksi
-            && GetAksiValue(prerequisite) == value);
+        string normalizedDialogAksi = GameState.Instance.NormalizeActionName(dialogKarakter.aksi);
+        return normalizedDialogAksi == normalizedAksi && dialogKarakter.aksiValue == value;
     }
 
     private bool IsPrerequisiteMet(NarasiData narasi)
@@ -147,46 +143,22 @@ public partial class NarasiController
             .ToList();
     }
 
-    private List<PrerequisiteAksiData> GetPrerequisites(DialogKarakterData dialogKarakter)
-    {
-        if (dialogKarakter.prerequisiteAksi == null)
-        {
-            return new List<PrerequisiteAksiData>();
-        }
-
-        return dialogKarakter.prerequisiteAksi
-            .Where(prerequisite => prerequisite != null && !string.IsNullOrWhiteSpace(prerequisite.aksi))
-            .ToList();
-    }
-
     private List<DialogPrerequisiteData> GetDialogPrerequisites(DialogKarakterData dialogKarakter)
     {
-        var prerequisites = new List<DialogPrerequisiteData>();
-
-        if (dialogKarakter.prerequisite != null)
+        if (dialogKarakter?.prerequisite == null)
         {
-            prerequisites.AddRange(dialogKarakter.prerequisite.Where(IsActiveDialogPrerequisite));
+            return new List<DialogPrerequisiteData>();
         }
 
-        if (dialogKarakter.prerequisiteAksi != null)
-        {
-            prerequisites.AddRange(dialogKarakter.prerequisiteAksi
-                .Where(prerequisite => prerequisite != null && !string.IsNullOrWhiteSpace(prerequisite.aksi))
-                .Select(prerequisite => new DialogPrerequisiteData
-                {
-                    aksi = prerequisite.aksi,
-                    aksiValue = prerequisite.value
-                }));
-        }
-
-        return prerequisites;
+        return dialogKarakter.prerequisite
+            .Where(IsActiveDialogPrerequisite)
+            .ToList();
     }
 
     private bool IsActiveDialogPrerequisite(DialogPrerequisiteData prerequisite)
     {
         return prerequisite != null
-            && (!string.IsNullOrWhiteSpace(prerequisite.aksi)
-                || prerequisite.uang > 0
+            && (prerequisite.uang > 0
                 || prerequisite.kebahagiaan > 0
                 || prerequisite.tabungan > 0
                 || prerequisite.emas > 0
@@ -196,28 +168,13 @@ public partial class NarasiController
                 || HasItems(prerequisite.kebutuhanDimiliki)
                 || HasItems(prerequisite.tujuanFinansialDimiliki)
                 || HasItems(prerequisite.masakanDijual)
-                || !string.IsNullOrWhiteSpace(prerequisite.stat)
-                || !string.IsNullOrWhiteSpace(prerequisite.bahan)
-                || !string.IsNullOrWhiteSpace(prerequisite.kebutuhan)
-                || !string.IsNullOrWhiteSpace(prerequisite.tipeKebutuhan)
-                || !string.IsNullOrWhiteSpace(prerequisite.tujuanFinansial)
-                || !string.IsNullOrWhiteSpace(prerequisite.kondisi)
                 || prerequisite.hariKe > 0
-                || prerequisite.hariDalamMinggu > 0
-                || prerequisite.mingguKe > 0
-                || prerequisite.turnKe > 0
-                || prerequisite.playerCount > 0);
+                || prerequisite.mingguKe > 0);
     }
 
     private bool IsDialogPrerequisiteMet(DialogPrerequisiteData prerequisite)
     {
-        if (GameState.Instance == null)
-        {
-            return false;
-        }
-
-        if (!string.IsNullOrWhiteSpace(prerequisite.aksi)
-            && GameState.Instance.GetActionCount(prerequisite.aksi) < GetAksiValue(prerequisite))
+        if (GameState.Instance == null || prerequisite == null)
         {
             return false;
         }
@@ -286,131 +243,7 @@ public partial class NarasiController
             return false;
         }
 
-        if (!string.IsNullOrWhiteSpace(prerequisite.stat)
-            && !CompareValue(GetDialogStatValue(prerequisite.stat), prerequisite.value, prerequisite.comparison))
-        {
-            return false;
-        }
-
-        if (!string.IsNullOrWhiteSpace(prerequisite.bahan)
-            && CountBahan(prerequisite.bahan) < GetRequiredJumlah(prerequisite.jumlah))
-        {
-            return false;
-        }
-
-        if (!string.IsNullOrWhiteSpace(prerequisite.kebutuhan)
-            && CountKebutuhanByName(prerequisite.kebutuhan) < GetRequiredJumlah(prerequisite.jumlah))
-        {
-            return false;
-        }
-
-        if (!string.IsNullOrWhiteSpace(prerequisite.tipeKebutuhan)
-            && CountKebutuhanByType(prerequisite.tipeKebutuhan) < GetRequiredJumlah(prerequisite.jumlah))
-        {
-            return false;
-        }
-
-        if (!string.IsNullOrWhiteSpace(prerequisite.tujuanFinansial)
-            && !string.Equals(GameState.Instance.tujuanFinansial, prerequisite.tujuanFinansial, StringComparison.OrdinalIgnoreCase))
-        {
-            return false;
-        }
-
-        if (prerequisite.hariDalamMinggu > 0 && GetHariDalamMinggu() != prerequisite.hariDalamMinggu)
-        {
-            return false;
-        }
-
-        if (prerequisite.turnKe > 0 && GameState.Instance.turn != prerequisite.turnKe)
-        {
-            return false;
-        }
-
-        if (prerequisite.playerCount > 0 && GameState.Instance.playerCount != prerequisite.playerCount)
-        {
-            return false;
-        }
-
-        if (!string.IsNullOrWhiteSpace(prerequisite.kondisi)
-            && GetDialogCondition(prerequisite.kondisi) != prerequisite.aktif)
-        {
-            return false;
-        }
-
         return true;
-    }
-
-    private int GetAksiValue(DialogPrerequisiteData prerequisite)
-    {
-        return prerequisite.aksiValue > 0 ? prerequisite.aksiValue : prerequisite.value;
-    }
-
-    private int GetDialogStatValue(string stat)
-    {
-        switch (NormalizeKey(stat))
-        {
-            case "coin":
-            case "coins":
-            case "koin":
-                return GameState.Instance.Coins;
-            case "happiness":
-            case "happinesspoint":
-            case "kebahagiaan":
-                return GameState.Instance.Happiness;
-            case "saving":
-            case "tabungan":
-                return GameState.Instance.Saving;
-            case "emas":
-            case "gold":
-                return GameState.Instance.Emas;
-            case "pinjaman":
-            case "pinjamansyariah":
-            case "kartupinjaman":
-                return GameState.Instance.PinjamanSyariahCards;
-            case "pedulidonasi":
-            case "donasi":
-                return GameState.Instance.GetPeduliDonasiTotal(GameState.Instance.turn);
-            case "day":
-            case "hari":
-                return GameState.Instance.day;
-            case "movesleft":
-            case "moves":
-            case "langkah":
-                return GameState.Instance.movesLeft;
-            case "turn":
-            case "player":
-                return GameState.Instance.turn;
-            case "playercount":
-            case "jumlahpemain":
-                return GameState.Instance.playerCount;
-            case "hargaemas":
-            case "hargaemassaatini":
-                return GameState.Instance.HargaEmasSaatIni;
-            case "jumatberkah":
-                return GameState.Instance.JumatBerkah;
-            default:
-                return 0;
-        }
-    }
-
-    private bool GetDialogCondition(string kondisi)
-    {
-        switch (NormalizeKey(kondisi))
-        {
-            case "jumatberkah":
-            case "harijumatberkah":
-                return GameState.Instance.IsJumatBerkah();
-            case "investasiemas":
-            case "hariemas":
-                return GameState.Instance.IsInvestasiEmasDay();
-            case "gameover":
-                return GameState.Instance.IsGameOver();
-            case "paused":
-            case "pause":
-                return GameState.Instance.isPaused;
-            default:
-                return false;
-        }
     }
 
     private int CountBahan(string namaBahan)
@@ -475,6 +308,11 @@ public partial class NarasiController
 
     private bool HasAllStrings(List<string> requiredItems, List<string> ownedItems)
     {
+        if (requiredItems == null || ownedItems == null)
+        {
+            return false;
+        }
+
         foreach (string requiredItem in requiredItems.Where(item => !string.IsNullOrWhiteSpace(item)))
         {
             if (!ownedItems.Any(ownedItem => string.Equals(ownedItem, requiredItem, StringComparison.OrdinalIgnoreCase)))
@@ -491,45 +329,6 @@ public partial class NarasiController
         return items != null && items.Any(item => !string.IsNullOrWhiteSpace(item));
     }
 
-    private bool CompareValue(int actualValue, int expectedValue, string comparison)
-    {
-        switch (NormalizeKey(comparison))
-        {
-            case "equal":
-            case "equals":
-            case "sama":
-            case "==":
-            case "=":
-                return actualValue == expectedValue;
-            case "greater":
-            case "lebihbesar":
-            case ">":
-                return actualValue > expectedValue;
-            case "less":
-            case "lebihkecil":
-            case "<":
-                return actualValue < expectedValue;
-            case "maximum":
-            case "maksimal":
-            case "<=":
-                return actualValue <= expectedValue;
-            case "notequal":
-            case "tidaksama":
-            case "!=":
-                return actualValue != expectedValue;
-            case "minimum":
-            case "minimal":
-            case ">=":
-            default:
-                return actualValue >= expectedValue;
-        }
-    }
-
-    private int GetRequiredJumlah(int jumlah)
-    {
-        return jumlah <= 0 ? 1 : jumlah;
-    }
-
     private int GetHariDalamMinggu()
     {
         return ((GameState.Instance.day - 1) % 7) + 1;
@@ -538,12 +337,5 @@ public partial class NarasiController
     private int GetMingguKe()
     {
         return ((GameState.Instance.day - 1) / 7) + 1;
-    }
-
-    private string NormalizeKey(string value)
-    {
-        return string.IsNullOrWhiteSpace(value)
-            ? string.Empty
-            : value.Replace(" ", string.Empty).Replace("_", string.Empty).ToLowerInvariant();
     }
 }

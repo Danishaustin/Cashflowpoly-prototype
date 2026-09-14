@@ -1,3 +1,4 @@
+﻿using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -5,9 +6,10 @@ using UnityEngine.UIElements;
 public partial class UIManagerPlay
 {
     private const float DialogCharacterTransitionDuration = 0.25f;
+    private const int PlayerTurnChangeDelayMs = 500;
 
     private string dialogNameOverride;
-    private VisualElement leftDialogCharacter;
+    private int currentPlayerContainerTurn = -1;
 
     public void ApplyDialogKarakter(DialogKarakterData dialogKarakter)
     {
@@ -16,180 +18,196 @@ public partial class UIManagerPlay
             return;
         }
 
-        ApplyDialogKarakter(
-            dialogKarakter.namaKarakter,
-            dialogKarakter.spritePath,
-            dialogKarakter.menghadapKanan,
-            dialogKarakter.aksiKarakter);
-    }
+        SetDialogNameOverride(string.IsNullOrWhiteSpace(dialogKarakter.npcName) ? "NPC" : dialogKarakter.npcName);
 
-    public void ApplyDialogKarakter(DialogKarakterStepData step)
-    {
-        if (step == null)
+        if (!string.IsNullOrWhiteSpace(dialogKarakter.npcSprite))
         {
-            return;
+            UpdateNpcContainerSprite(dialogKarakter.npcSprite);
         }
 
-        bool useLeftCharacter = step.posisiKarakterDiKiri || step.menghadapKanan;
-        ApplyDialogKarakter(step.namaKarakter, step.spritePath, useLeftCharacter, step.aksiKarakter);
+        ShowNpcContainer();
     }
 
-    private void ApplyDialogKarakter(string namaKarakter, string spritePath, bool menghadapKanan, string aksiKarakter)
+    public void UpdatePlayerContainerSprite(int turn)
     {
-        SetDialogNameOverride(namaKarakter);
-
         if (playerContainer == null)
         {
             return;
         }
 
-        string action = aksiKarakter ?? string.Empty;
-        if (menghadapKanan)
-        {
-            if (action == "Menghilang")
-            {
-                HideLeftDialogCharacter();
-                return;
-            }
-
-            ShowLeftDialogCharacter(spritePath);
-            return;
-        }
-
-        if (action == "Menghilang")
-        {
-            playerContainer.RemoveFromClassList("show-character");
-            return;
-        }
-
-        playerContainer.style.display = DisplayStyle.Flex;
-        playerContainer.AddToClassList("show-character");
-        playerContainer.style.scale = new Scale(new Vector3(menghadapKanan ? 1f : -1f, 1f, 1f));
-
-        if (string.IsNullOrWhiteSpace(spritePath))
-        {
-            return;
-        }
-
+        int safeTurn = Mathf.Clamp(turn, 1, 4);
+        string spritePath = "Sprite/Character/Player/player" + safeTurn;
         Sprite sprite = Resources.Load<Sprite>(spritePath);
         if (sprite == null)
         {
-            Debug.LogWarning("Sprite karakter tidak ditemukan di Resources: " + spritePath);
+            Debug.LogWarning("Sprite player tidak ditemukan di Resources: " + spritePath);
             return;
         }
 
         playerContainer.style.backgroundImage = new StyleBackground(sprite);
+        currentPlayerContainerTurn = safeTurn;
     }
 
-    private void ShowLeftDialogCharacter(string spritePath)
+    public void RefreshPlayerContainerForTurn(int turn)
     {
-        VisualElement character = GetOrCreateLeftDialogCharacter();
-        character.RemoveFromClassList("show-dialog-character-left");
-        character.style.display = DisplayStyle.Flex;
-        character.style.scale = new Scale(new Vector3(1f, 1f, 1f));
-        ApplyCharacterSprite(character, spritePath);
-
-        character.schedule.Execute(() =>
+        if (playerContainer == null)
         {
-            character.AddToClassList("show-dialog-character-left");
+            return;
+        }
+
+        int safeTurn = Mathf.Clamp(turn, 1, 4);
+
+        if (!playerContainer.ClassListContains("show-character"))
+        {
+            UpdatePlayerContainerSprite(safeTurn);
+            return;
+        }
+
+        if (currentPlayerContainerTurn == safeTurn)
+        {
+            return;
+        }
+
+        PlayPlayerContainerExitThen(() =>
+        {
+            UpdatePlayerContainerSprite(safeTurn);
+
+            if (playerContainer != null)
+            {
+                playerContainer.style.display = DisplayStyle.Flex;
+                playerContainer.AddToClassList("show-character");
+            }
+        });
+    }
+
+    public void ShowPlayerDialogContainer()
+    {
+        if (playerContainer == null)
+        {
+            return;
+        }
+
+        playerContainer.style.display = DisplayStyle.Flex;
+        playerContainer.style.scale = new Scale(new Vector3(-1f, 1f, 1f));
+        playerContainer.RemoveFromClassList("show-character");
+        playerContainer.schedule.Execute(() =>
+        {
+            playerContainer.AddToClassList("show-character");
         }).StartingIn(1);
     }
 
-    private VisualElement GetOrCreateLeftDialogCharacter()
+    public void HidePlayerDialogContainer()
     {
-        if (leftDialogCharacter != null)
+        if (playerContainer == null)
         {
-            return leftDialogCharacter;
+            return;
         }
 
-        VisualElement parent = playerContainer != null ? playerContainer.parent : rootElement;
-        leftDialogCharacter = new VisualElement
-        {
-            name = "LeftDialogCharacter",
-            pickingMode = PickingMode.Ignore
-        };
-        leftDialogCharacter.AddToClassList("character");
-        leftDialogCharacter.AddToClassList("dialog-character-left");
-        PlaceDialogCharacterBehindDialogBox(parent, leftDialogCharacter);
-
-        return leftDialogCharacter;
+        playerContainer.RemoveFromClassList("show-character");
     }
 
-    private void PlaceDialogCharacterBehindDialogBox(VisualElement parent, VisualElement character)
+    public void PlayPlayerContainerExitThen(Action onComplete = null)
     {
-        if (parent == null || character == null)
+        if (playerContainer == null)
         {
+            SchedulePlayerTurnCallback(onComplete);
             return;
         }
 
-        if (textContainer == null)
+        if (playerContainer.ClassListContains("show-character"))
         {
-            parent.Add(character);
-            return;
+            playerContainer.RemoveFromClassList("show-character");
         }
 
-        int textContainerIndex = parent.IndexOf(textContainer);
-        if (textContainerIndex >= 0)
-        {
-            parent.Insert(textContainerIndex, character);
-            return;
-        }
-
-        parent.Add(character);
+        SchedulePlayerTurnCallback(onComplete);
     }
 
-    private void ApplyCharacterSprite(VisualElement character, string spritePath)
+    private void SchedulePlayerTurnCallback(Action onComplete)
     {
-        if (character == null || string.IsNullOrWhiteSpace(spritePath))
+        VisualElement schedulerSource = playerContainer != null ? playerContainer : rootElement;
+        if (schedulerSource == null)
+        {
+            onComplete?.Invoke();
+            return;
+        }
+
+        schedulerSource.schedule.Execute(() =>
+        {
+            onComplete?.Invoke();
+        }).StartingIn(PlayerTurnChangeDelayMs);
+    }
+
+    public void UpdateNpcContainerSprite(string npcSpriteName)
+    {
+        if (npcContainer == null || string.IsNullOrWhiteSpace(npcSpriteName))
         {
             return;
         }
 
+        string spritePath = "Sprite/Character/NPC/" + npcSpriteName;
         Sprite sprite = Resources.Load<Sprite>(spritePath);
         if (sprite == null)
         {
-            Debug.LogWarning("Sprite karakter tidak ditemukan di Resources: " + spritePath);
+            Debug.LogWarning("Sprite NPC tidak ditemukan di Resources: " + spritePath);
             return;
         }
 
-        character.style.backgroundImage = new StyleBackground(sprite);
+        npcContainer.style.backgroundImage = new StyleBackground(sprite);
+    }
+
+    public void ShowNpcContainer()
+    {
+        if (npcContainer == null)
+        {
+            return;
+        }
+
+        npcContainer.style.display = DisplayStyle.Flex;
+        npcContainer.RemoveFromClassList("show-npc-character");
+        npcContainer.schedule.Execute(() =>
+        {
+            npcContainer.AddToClassList("show-npc-character");
+        }).StartingIn(1);
+    }
+
+    public void HideNpcContainer()
+    {
+        if (npcContainer == null)
+        {
+            return;
+        }
+
+        npcContainer.RemoveFromClassList("show-npc-character");
     }
 
     public IEnumerator DismissDialogKarakter(DialogKarakterData dialogKarakter)
     {
-        if (dialogKarakter == null || !dialogKarakter.menghadapKanan || dialogKarakter.aksiKarakter != "Kemunculan")
-        {
-            yield break;
-        }
-
-        if (leftDialogCharacter == null)
-        {
-            yield break;
-        }
-
-        HideLeftDialogCharacter();
+        HideNpcContainer();
+        HidePlayerDialogContainer();
         yield return new WaitForSeconds(DialogCharacterTransitionDuration);
-
-        leftDialogCharacter.RemoveFromHierarchy();
-        leftDialogCharacter = null;
     }
 
     public IEnumerator DismissAllDialogCharacters()
     {
-        if (leftDialogCharacter != null)
+        bool hasDismissedAnyCharacter = false;
+
+        if (npcContainer != null && npcContainer.ClassListContains("show-npc-character"))
         {
-            HideLeftDialogCharacter();
+            HideNpcContainer();
+            hasDismissedAnyCharacter = true;
+        }
+
+        if (playerContainer != null && playerContainer.ClassListContains("show-character"))
+        {
+            HidePlayerDialogContainer();
+            hasDismissedAnyCharacter = true;
+        }
+
+        if (hasDismissedAnyCharacter)
+        {
             yield return new WaitForSeconds(DialogCharacterTransitionDuration);
-            leftDialogCharacter.RemoveFromHierarchy();
-            leftDialogCharacter = null;
         }
     }
-
-    private void HideLeftDialogCharacter()
-    {
-        leftDialogCharacter?.RemoveFromClassList("show-dialog-character-left");
-    }
-
 
     public void SetDialogNameOverride(string characterName)
     {
