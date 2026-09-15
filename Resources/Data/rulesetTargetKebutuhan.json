@@ -1,0 +1,100 @@
+{
+    "targetKebutuhan": [
+      {
+          "id": "misi_jam",
+          "nama": "jam",
+          "success_points": 0,
+          "failure_points": -10,
+          "penaltyPoints": 10,
+          "kebutuhanTarget": [
+              {
+                  "order": 1,
+                  "type": "TIER",
+                  "value": "primer"
+              },
+              {
+                  "order": 2,
+                  "type": "TIER",
+                  "value": "sekunder"
+              },
+              {
+                  "order": 3,
+                  "type": "FAMILY",
+                  "value": "jam"
+              }
+          ]
+      },
+      {
+          "id": "misi_boneka",
+          "nama": "boneka",
+          "success_points": 0,
+          "failure_points": -10,
+          "penaltyPoints": 10,
+          "kebutuhanTarget": [
+              {
+                  "order": 1,
+                  "type": "TIER",
+                  "value": "primer"
+              },
+              {
+                  "order": 2,
+                  "type": "TIER",
+                  "value": "sekunder"
+              },
+              {
+                  "order": 3,
+                  "type": "FAMILY",
+                  "value": "boneka"
+              }
+          ]
+      },
+      {
+          "id": "misi_gameboy",
+          "nama": "gameboy",
+          "success_points": 0,
+          "failure_points": -10,
+          "penaltyPoints": 10,
+          "kebutuhanTarget": [
+              {
+                  "order": 1,
+                  "type": "TIER",
+                  "value": "primer"
+              },
+              {
+                  "order": 2,
+                  "type": "TIER",
+                  "value": "sekunder"
+              },
+              {
+                  "order": 3,
+                  "type": "FAMILY",
+                  "value": "gameboy"
+              }
+          ]
+      },
+      {
+          "id": "misi_hiburan",
+          "nama": "hiburan",
+          "success_points": 0,
+          "failure_points": -10,
+          "penaltyPoints": 10,
+          "kebutuhanTarget": [
+              {
+                  "order": 1,
+                  "type": "TIER",
+                  "value": "primer"
+              },
+              {
+                  "order": 2,
+                  "type": "TIER",
+                  "value": "sekunder"
+              },
+              {
+                  "order": 3,
+                  "type": "FAMILY",
+                  "value": "hiburan"
+              }
+          ]
+      }
+    ]
+}

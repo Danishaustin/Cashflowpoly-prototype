@@ -1,0 +1,220 @@
+{
+    "kebutuhan": [
+      {
+          "id": "buku_1",
+          "nama": "Buku",
+          "family": "buku",
+          "tipe": "primer",
+          "hargaBeli": 2,
+          "poinKebahagiaan": 1,
+          "cardQty": 2
+      },
+      {
+          "id": "buku_2",
+          "nama": "Buku",
+          "family": "buku",
+          "tipe": "primer",
+          "hargaBeli": 3,
+          "poinKebahagiaan": 2,
+          "cardQty": 1
+      },
+      {
+          "id": "baju_1",
+          "nama": "Baju",
+          "family": "baju",
+          "tipe": "primer",
+          "hargaBeli": 2,
+          "poinKebahagiaan": 1,
+          "cardQty": 1
+      },
+      {
+          "id": "baju_2",
+          "nama": "Baju",
+          "family": "baju",
+          "tipe": "primer",
+          "hargaBeli": 3,
+          "poinKebahagiaan": 2,
+          "cardQty": 1
+      },
+      {
+          "id": "tempat_makan_1",
+          "nama": "Tempat Makan",
+          "family": "tempat_makan",
+          "tipe": "primer",
+          "hargaBeli": 2,
+          "poinKebahagiaan": 1,
+          "cardQty": 1
+      },
+      {
+          "id": "tempat_makan_2",
+          "nama": "Tempat Makan",
+          "family": "tempat_makan",
+          "tipe": "primer",
+          "hargaBeli": 3,
+          "poinKebahagiaan": 2,
+          "cardQty": 1
+      },
+      {
+          "id": "sepatu_1",
+          "nama": "Sepatu",
+          "family": "sepatu",
+          "tipe": "primer",
+          "hargaBeli": 2,
+          "poinKebahagiaan": 1,
+          "cardQty": 1
+      },
+      {
+          "id": "sepatu_2",
+          "nama": "Sepatu",
+          "family": "sepatu",
+          "tipe": "primer",
+          "hargaBeli": 3,
+          "poinKebahagiaan": 2,
+          "cardQty": 1
+      },
+      {
+          "id": "tas_1",
+          "nama": "Tas",
+          "family": "tas",
+          "tipe": "sekunder",
+          "hargaBeli": 4,
+          "poinKebahagiaan": 3,
+          "cardQty": 1
+      },
+      {
+          "id": "tas_2",
+          "nama": "Tas",
+          "family": "tas",
+          "tipe": "sekunder",
+          "hargaBeli": 5,
+          "poinKebahagiaan": 4,
+          "cardQty": 1
+      },
+      {
+          "id": "sepeda_1",
+          "nama": "Sepeda",
+          "family": "sepeda",
+          "tipe": "sekunder",
+          "hargaBeli": 4,
+          "poinKebahagiaan": 3,
+          "cardQty": 1
+      },
+      {
+          "id": "sepeda_2",
+          "nama": "Sepeda",
+          "family": "sepeda",
+          "tipe": "sekunder",
+          "hargaBeli": 5,
+          "poinKebahagiaan": 4,
+          "cardQty": 1
+      },
+      {
+          "id": "gadget_1",
+          "nama": "Gadget",
+          "family": "gadget",
+          "tipe": "sekunder",
+          "hargaBeli": 4,
+          "poinKebahagiaan": 3,
+          "cardQty": 1
+      },
+      {
+          "id": "gadget_2",
+          "nama": "Gadget",
+          "family": "gadget",
+          "tipe": "sekunder",
+          "hargaBeli": 5,
+          "poinKebahagiaan": 4,
+          "cardQty": 1
+      },
+      {
+          "id": "tempat_pensil_1",
+          "nama": "Tempat Pensil",
+          "family": "tempat_pensil",
+          "tipe": "sekunder",
+          "hargaBeli": 4,
+          "poinKebahagiaan": 3,
+          "cardQty": 1
+      },
+      {
+          "id": "tempat_pensil_2",
+          "nama": "Tempat Pensil",
+          "family": "tempat_pensil",
+          "tipe": "sekunder",
+          "hargaBeli": 5,
+          "poinKebahagiaan": 4,
+          "cardQty": 1
+      },
+      {
+          "id": "boneka_1",
+          "nama": "Boneka",
+          "family": "boneka",
+          "tipe": "tersier",
+          "hargaBeli": 6,
+          "poinKebahagiaan": 5,
+          "cardQty": 1
+      },
+      {
+          "id": "boneka_2",
+          "nama": "Boneka",
+          "family": "boneka",
+          "tipe": "tersier",
+          "hargaBeli": 7,
+          "poinKebahagiaan": 6,
+          "cardQty": 1
+      },
+      {
+          "id": "gameboy_1",
+          "nama": "Gameboy",
+          "family": "gameboy",
+          "tipe": "tersier",
+          "hargaBeli": 6,
+          "poinKebahagiaan": 5,
+          "cardQty": 1
+      },
+      {
+          "id": "gameboy_2",
+          "nama": "Gameboy",
+          "family": "gameboy",
+          "tipe": "tersier",
+          "hargaBeli": 7,
+          "poinKebahagiaan": 6,
+          "cardQty": 1
+      },
+      {
+          "id": "jam_1",
+          "nama": "Jam",
+          "family": "jam",
+          "tipe": "tersier",
+          "hargaBeli": 6,
+          "poinKebahagiaan": 5,
+          "cardQty": 1
+      },
+      {
+          "id": "jam_2",
+          "nama": "Jam",
+          "family": "jam",
+          "tipe": "tersier",
+          "hargaBeli": 7,
+          "poinKebahagiaan": 6,
+          "cardQty": 1
+      },
+      {
+          "id": "hiburan_1",
+          "nama": "Hiburan",
+          "family": "hiburan",
+          "tipe": "tersier",
+          "hargaBeli": 6,
+          "poinKebahagiaan": 5,
+          "cardQty": 1
+      },
+      {
+          "id": "hiburan_2",
+          "nama": "Hiburan",
+          "family": "hiburan",
+          "tipe": "tersier",
+          "hargaBeli": 7,
+          "poinKebahagiaan": 6,
+          "cardQty": 1
+      }
+    ]
+}

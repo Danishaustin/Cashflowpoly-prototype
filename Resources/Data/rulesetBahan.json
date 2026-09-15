@@ -1,0 +1,34 @@
+{
+    "bahan": [
+        {
+            "id": "nasi_putih",
+            "nama": "Nasi Putih",
+            "hargaBeli": 1,
+            "cardQty": 5
+        },
+        {
+            "id": "sayur",
+            "nama": "Sayur",
+            "hargaBeli": 2,
+            "cardQty": 5
+        },
+        {
+            "id": "tahu_tempe",
+            "nama": "Tahu Tempe",
+            "hargaBeli": 3,
+            "cardQty": 5
+        },
+        {
+            "id": "telur",
+            "nama": "Telur",
+            "hargaBeli": 4,
+            "cardQty": 5
+        },
+        {
+            "id": "daging",
+            "nama": "Daging",
+            "hargaBeli": 5,
+            "cardQty": 5
+        }
+    ]
+}

@@ -10,13 +10,77 @@ public partial class ChoiceController
     private static readonly Queue<NarafinQueuedEvent> PendingNarafinEvents = new Queue<NarafinQueuedEvent>();
     private static bool isSendingNarafinEvents;
 
-    private void PostBahanMasakanEvent(int player, string bahanName, int price)
+    private static string BuildBahanMasakanPayload(string cardId, string ingredientName, int amount)
     {
-        string payload = "{"
-            + JsonStringField("card_id", NarafinEventCardIdResolver.ResolveBahanCardId(bahanName))
-            + ",\"amount\":" + price.ToString(CultureInfo.InvariantCulture)
+        return "{"
+            + JsonStringField("card_id", cardId)
+            + "," + JsonStringField("ingredient_name", ingredientName)
+            + ",\"amount\":" + amount.ToString(CultureInfo.InvariantCulture)
             + "}";
-        PostPlayerEvent(player, "BahanMasakan", payload);
+    }
+
+    // Mengirim event pemain langsung dan menunggu respons server, setelah antrean event lain selesai
+    // agar sequence_number tetap berurutan. Pemanggil baru mengubah state lokal bila hasilnya sukses.
+    private async Task<NarafinSessionOperationResult> SendPlayerEventNowAsync(int player, string actionType, string payloadJson, int actionSlot)
+    {
+        string userId = NarafinPlayerPrefs.GetApiPlayerUserId(player);
+        if (string.IsNullOrWhiteSpace(userId))
+        {
+            return CreateEventFailure("PLAYER_NOT_FOUND", "user_id player " + player + " tidak tersedia.");
+        }
+
+        if (LoginManager.Instance == null)
+        {
+            return CreateEventFailure("LOGIN_NOT_READY", "Sistem login belum siap.");
+        }
+
+        if (string.IsNullOrWhiteSpace(NarafinPlayerPrefs.ApiSessionId))
+        {
+            return CreateEventFailure("SESSION_MISSING", "Session belum tersedia.");
+        }
+
+        string eventJson = BuildEventJson("PLAYER", actionType, payloadJson, player, actionSlot, userId);
+
+        while (isSendingNarafinEvents)
+        {
+            await Task.Yield();
+        }
+
+        isSendingNarafinEvents = true;
+        try
+        {
+            int sequenceNumber = NarafinPlayerPrefs.GetNextEventSequenceNumber();
+            string sequencedJson = eventJson.Replace("\"sequence_number\":0", "\"sequence_number\":" + sequenceNumber);
+            NarafinSessionOperationResult result = await LoginManager.Instance.PostEventAsync(sequencedJson);
+            if (result.Success)
+            {
+                NarafinPlayerPrefs.ConfirmEventSequenceNumber(sequenceNumber);
+            }
+            else
+            {
+                Debug.LogWarning("Narafin event ditolak. action_type: " + actionType + ", error: " + result.ErrorCode + " - " + result.ErrorMessage);
+            }
+
+            return result;
+        }
+        finally
+        {
+            isSendingNarafinEvents = false;
+            if (PendingNarafinEvents.Count > 0)
+            {
+                _ = ProcessEventQueueAsync();
+            }
+        }
+    }
+
+    private static NarafinSessionOperationResult CreateEventFailure(string errorCode, string errorMessage)
+    {
+        return new NarafinSessionOperationResult
+        {
+            Success = false,
+            ErrorCode = errorCode,
+            ErrorMessage = errorMessage
+        };
     }
 
     private void PostJualMasakanEvent(int player, string resepName, IEnumerable<string> requiredBahanNames, int income)

@@ -302,8 +302,7 @@ public partial class ChoiceController
 
     private int CountBahan(string namaBahan)
     {
-        var bahanList = GameState.Instance.GetBahanList(GameState.Instance.turn);
-        return bahanList.TryGetValue(namaBahan, out int jumlah) ? jumlah : 0;
+        return GameState.Instance.GetBahanCount(GameState.Instance.turn, namaBahan);
     }
 
     private int CountKebutuhanByName(string namaKebutuhan)

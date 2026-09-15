@@ -49,6 +49,42 @@ public partial class GameState
     private void InitializeRulesetActions()
     {
         LoadRulesetConfiguration();
+        ApplyActiveSessionSettings();
+    }
+
+    // Settings ruleset session dari server menggantikan settings file ruleset lokal bila tersedia.
+    private void ApplyActiveSessionSettings()
+    {
+        NarafinRulesetSettings sessionSettings = NarafinActiveSession.Catalog?.settings;
+        if (sessionSettings == null)
+        {
+            return;
+        }
+
+        ApplyRulesetSettings(new RulesetSettingsData
+        {
+            actions_per_turn = sessionSettings.actions_per_turn,
+            initial_coins = sessionSettings.initial_coins,
+            initial_happiness = sessionSettings.initial_happiness,
+            initial_saving = sessionSettings.initial_saving,
+            finish_day = sessionSettings.finish_day,
+            min_players = sessionSettings.min_players,
+            max_players = sessionSettings.max_players,
+            max_ingredient_total = sessionSettings.max_ingredient_total,
+            max_same_ingredient = sessionSettings.max_same_ingredient,
+            require_primary_before_others = sessionSettings.require_primary_before_others,
+            gold_trade_allow_buy = sessionSettings.gold_trade_allow_buy,
+            gold_trade_allow_sell = sessionSettings.gold_trade_allow_sell,
+            loan_enabled = sessionSettings.loan_enabled,
+            insurance_enabled = sessionSettings.insurance_enabled,
+            freelance_income = sessionSettings.freelance_income
+        });
+
+        Debug.Log(
+            "Settings ruleset session dipakai"
+            + " | actions_per_turn=" + ActionsPerTurn
+            + " | max_ingredient_total=" + MaxIngredientTotal
+            + " | max_same_ingredient=" + MaxSameIngredient);
     }
 
     private void LoadRulesetConfiguration()

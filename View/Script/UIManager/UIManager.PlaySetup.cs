@@ -282,7 +282,7 @@ public partial class UIManager
                 return;
             }
 
-            NarafinPlaySessionResult result = await LoginManager.Instance.CreateAndStartPlaySessionAsync(sessionName, selectedRulesetMode, selectedRulesetName, selectedRulesetId, playerNames);
+            NarafinPlaySessionResult result = await LoginManager.Instance.CreatePlaySessionAsync(sessionName, selectedRulesetMode, selectedRulesetName, selectedRulesetId, playerNames);
             if (!result.Success)
             {
                 ShowErrorPopup(result.ErrorMessage);

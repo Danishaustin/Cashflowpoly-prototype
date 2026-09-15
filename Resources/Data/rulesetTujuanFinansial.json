@@ -1,0 +1,39 @@
+{
+    "tujuanFinansial": [
+      {
+          "id": "tujuan_25",
+          "nama": "Kumpul Keluarga",
+          "hargaBeli": 25,
+          "poinKebahagiaan": 20,
+          "cardQty": 1
+      },
+      {
+          "id": "tujuan_28",
+          "nama": "Tamasya",
+          "hargaBeli": 28,
+          "poinKebahagiaan": 25,
+          "cardQty": 1
+      },
+      {
+          "id": "tujuan_30",
+          "nama": "Keluar Kota",
+          "hargaBeli": 30,
+          "poinKebahagiaan": 28,
+          "cardQty": 1
+      },
+      {
+          "id": "tujuan_32",
+          "nama": "Beli Mobil Baru",
+          "hargaBeli": 32,
+          "poinKebahagiaan": 30,
+          "cardQty": 1
+      },
+      {
+          "id": "tujuan_35",
+          "nama": "Beli Rumah Baru",
+          "hargaBeli": 35,
+          "poinKebahagiaan": 35,
+          "cardQty": 1
+      }
+    ]
+}

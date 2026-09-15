@@ -65,6 +65,49 @@ public partial class GameState
         }
     }
 
+    // Inventory bahan dikunci dengan card_id ruleset session. Nama lokal (resep, narasi, data offline)
+    // di-resolve ke card_id; tanpa katalog session, kunci tetap nama lokal.
+    public string ResolveBahanKey(string namaAtauCardId)
+    {
+        if (string.IsNullOrWhiteSpace(namaAtauCardId))
+        {
+            return string.Empty;
+        }
+
+        NarafinRulesetSetupDefinition catalog = NarafinActiveSession.Catalog;
+        if (catalog != null && NarafinActiveSession.TryResolveIngredientCardId(catalog, namaAtauCardId, out string cardId))
+        {
+            return cardId;
+        }
+
+        return namaAtauCardId;
+    }
+
+    public bool IsKnownBahan(string namaAtauCardId)
+    {
+        NarafinRulesetSetupDefinition catalog = NarafinActiveSession.Catalog;
+        if (catalog != null)
+        {
+            return NarafinActiveSession.FindIngredient(catalog, namaAtauCardId) != null;
+        }
+
+        return DataManager.Instance != null
+            && DataManager.Instance.bahanDict != null
+            && !string.IsNullOrWhiteSpace(namaAtauCardId)
+            && DataManager.Instance.bahanDict.ContainsKey(namaAtauCardId);
+    }
+
+    public string GetBahanDisplayName(string namaAtauCardId)
+    {
+        NarafinSetupIngredient ingredient = NarafinActiveSession.FindIngredient(NarafinActiveSession.Catalog, namaAtauCardId);
+        if (ingredient != null && !string.IsNullOrWhiteSpace(ingredient.nama))
+        {
+            return ingredient.nama;
+        }
+
+        return namaAtauCardId ?? string.Empty;
+    }
+
     public Dictionary<string, int> GetBahanList(int player)
     {
         EnsurePlayerInventory(player);
@@ -95,13 +138,13 @@ public partial class GameState
         return playerAsuransiDimiliki[player];
     }
 
+    // jumlahBahan boleh memakai nama lokal; yang dikembalikan adalah nama yang kurang sesuai input.
     public List<string> HasBahan(Dictionary<string, int> jumlahBahan)
     {
-        Dictionary<string, int> activeBahanList = GetBahanList(turn);
         var kurangBahan = new List<string>();
         foreach (var kv in jumlahBahan)
         {
-            if (!activeBahanList.ContainsKey(kv.Key) || activeBahanList[kv.Key] < kv.Value)
+            if (GetBahanCount(turn, kv.Key) < kv.Value)
             {
                 kurangBahan.Add(kv.Key);
             }
@@ -109,29 +152,31 @@ public partial class GameState
         return kurangBahan;
     }
 
-    public void AddBahanToList(string nama)
+    public void AddBahanToList(string namaAtauCardId)
     {
-        AddBahanToList(turn, nama);
+        AddBahanToList(turn, namaAtauCardId);
     }
 
-    public void AddBahanToList(int player, string nama)
+    public void AddBahanToList(int player, string namaAtauCardId)
     {
-        if (!CanAddBahan(player, nama))
+        string bahanKey = ResolveBahanKey(namaAtauCardId);
+        if (!CanAddBahan(player, bahanKey))
         {
             return;
         }
 
         Dictionary<string, int> activeBahanList = GetBahanList(player);
-        activeBahanList[nama] = activeBahanList.ContainsKey(nama) ? activeBahanList[nama] + 1 : 1;
-        Debug.Log($"Added {nama} to player {player} list. Current count: {activeBahanList[nama]}");
+        activeBahanList[bahanKey] = activeBahanList.ContainsKey(bahanKey) ? activeBahanList[bahanKey] + 1 : 1;
+        Debug.Log($"Added {bahanKey} to player {player} list. Current count: {activeBahanList[bahanKey]}");
     }
 
-    public void RemoveBahanFromList(string nama, int jumlah)
+    public void RemoveBahanFromList(string namaAtauCardId, int jumlah)
     {
+        string bahanKey = ResolveBahanKey(namaAtauCardId);
         Dictionary<string, int> activeBahanList = GetBahanList(turn);
-        if (activeBahanList.ContainsKey(nama) && activeBahanList[nama] >= jumlah)
+        if (activeBahanList.ContainsKey(bahanKey) && activeBahanList[bahanKey] >= jumlah)
         {
-            activeBahanList[nama] -= jumlah;
+            activeBahanList[bahanKey] -= jumlah;
         }
     }
 
@@ -233,15 +278,15 @@ public partial class GameState
         return total;
     }
 
-    public int GetBahanCount(int player, string nama)
+    public int GetBahanCount(int player, string namaAtauCardId)
     {
-        if (string.IsNullOrEmpty(nama))
+        if (string.IsNullOrEmpty(namaAtauCardId))
         {
             return 0;
         }
 
         Dictionary<string, int> bahan = GetBahanList(player);
-        return bahan.TryGetValue(nama, out int jumlah) ? jumlah : 0;
+        return bahan.TryGetValue(ResolveBahanKey(namaAtauCardId), out int jumlah) ? jumlah : 0;
     }
 
     public bool IsBahanTotalAtLimit(int player)
@@ -249,14 +294,14 @@ public partial class GameState
         return GetTotalBahanCount(player) >= MaxIngredientTotal;
     }
 
-    public bool IsBahanAtLimit(int player, string nama)
+    public bool IsBahanAtLimit(int player, string namaAtauCardId)
     {
-        return GetBahanCount(player, nama) >= MaxSameIngredient;
+        return GetBahanCount(player, namaAtauCardId) >= MaxSameIngredient;
     }
 
-    public bool CanAddBahan(int player, string nama)
+    public bool CanAddBahan(int player, string namaAtauCardId)
     {
-        if (string.IsNullOrEmpty(nama))
+        if (string.IsNullOrEmpty(namaAtauCardId))
         {
             return false;
         }
@@ -266,7 +311,7 @@ public partial class GameState
             return false;
         }
 
-        return !IsBahanAtLimit(player, nama);
+        return !IsBahanAtLimit(player, namaAtauCardId);
     }
 
     // Temporary weekly modifier from Risiko Kehidupan for ingredient prices.
@@ -286,20 +331,28 @@ public partial class GameState
         return weeklyBahanPriceDelta;
     }
 
-    public int GetHargaBahanEfektif(string bahanName)
+    // Harga dasar dari katalog ruleset session; tanpa katalog memakai data bahan lokal.
+    public int GetHargaBahanEfektif(string namaAtauCardId)
     {
-        if (DataManager.Instance == null || DataManager.Instance.bahanDict == null)
+        int hargaDasar;
+        NarafinSetupIngredient ingredient = NarafinActiveSession.FindIngredient(NarafinActiveSession.Catalog, namaAtauCardId);
+        if (ingredient != null)
+        {
+            hargaDasar = ingredient.hargaBeli;
+        }
+        else if (DataManager.Instance != null
+                 && DataManager.Instance.bahanDict != null
+                 && !string.IsNullOrWhiteSpace(namaAtauCardId)
+                 && DataManager.Instance.bahanDict.TryGetValue(namaAtauCardId, out BahanMakananData bahanData))
+        {
+            hargaDasar = bahanData.hargaBeli;
+        }
+        else
         {
             return 0;
         }
 
-        if (!DataManager.Instance.bahanDict.TryGetValue(bahanName, out BahanMakananData bahanData))
-        {
-            return 0;
-        }
-
-        int harga = bahanData.hargaBeli + GetMingguanPerubahanHargaBahan();
-        return Mathf.Max(0, harga);
+        return Mathf.Max(0, hargaDasar + GetMingguanPerubahanHargaBahan());
     }
 
     private int GetCurrentWeekIndex()

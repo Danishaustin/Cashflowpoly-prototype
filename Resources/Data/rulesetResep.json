@@ -1,0 +1,158 @@
+{
+    "resep": [
+      {
+          "id": "lontong_balap",
+          "nama": "lontong balap",
+          "hargaJual": 13,
+          "poinKebahagiaan": 0,
+          "bahan": [
+              "Nasi Putih",
+              "Sayur"
+          ],
+          "cardQty": 2
+      },
+      {
+          "id": "nasi_goreng",
+          "nama": "nasi goreng",
+          "hargaJual": 15,
+          "poinKebahagiaan": 0,
+          "bahan": [
+              "Nasi Putih",
+              "Telur"
+          ],
+          "cardQty": 1
+      },
+      {
+          "id": "tahu_campur",
+          "nama": "tahu campur",
+          "hargaJual": 16,
+          "poinKebahagiaan": 0,
+          "bahan": [
+              "Daging",
+              "Tahu Tempe"
+          ],
+          "cardQty": 2
+      },
+      {
+          "id": "rawon",
+          "nama": "rawon",
+          "hargaJual": 24,
+          "poinKebahagiaan": 0,
+          "bahan": [
+              "Daging",
+              "Tahu Tempe",
+              "Telur"
+          ],
+          "cardQty": 2
+      },
+      {
+          "id": "semanggi_surabaya",
+          "nama": "semanggi surabaya",
+          "hargaJual": 14,
+          "poinKebahagiaan": 0,
+          "bahan": [
+              "Sayur",
+              "Sayur"
+          ],
+          "cardQty": 2
+      },
+      {
+          "id": "soto_daging",
+          "nama": "soto daging",
+          "hargaJual": 17,
+          "poinKebahagiaan": 0,
+          "bahan": [
+              "Daging",
+              "Telur"
+          ],
+          "cardQty": 2
+      },
+      {
+          "id": "nasi_pecel",
+          "nama": "nasi pecel",
+          "hargaJual": 20,
+          "poinKebahagiaan": 0,
+          "bahan": [
+              "Nasi Putih",
+              "Sayur",
+              "Tahu Tempe"
+          ],
+          "cardQty": 2
+      },
+      {
+          "id": "sego_penyet",
+          "nama": "sego penyet",
+          "hargaJual": 22,
+          "poinKebahagiaan": 0,
+          "bahan": [
+              "Nasi Putih",
+              "Tahu Tempe",
+              "Telur"
+          ],
+          "cardQty": 2
+      },
+      {
+          "id": "tahu_telur",
+          "nama": "tahu telur",
+          "hargaJual": 25,
+          "poinKebahagiaan": 0,
+          "bahan": [
+              "Tahu Tempe",
+              "Telur",
+              "Telur"
+          ],
+          "cardQty": 2
+      },
+      {
+          "id": "sate_klopo",
+          "nama": "sate klopo",
+          "hargaJual": 26,
+          "poinKebahagiaan": 0,
+          "bahan": [
+              "Daging",
+              "Daging",
+              "Nasi Putih"
+          ],
+          "cardQty": 2
+      },
+      {
+          "id": "rujak_cingur",
+          "nama": "rujak cingur",
+          "hargaJual": 28,
+          "poinKebahagiaan": 0,
+          "bahan": [
+              "Daging",
+              "Nasi Putih",
+              "Sayur",
+              "Tahu Tempe"
+          ],
+          "cardQty": 2
+      },
+      {
+          "id": "gado_gado",
+          "nama": "gado gado",
+          "hargaJual": 26,
+          "poinKebahagiaan": 0,
+          "bahan": [
+              "Nasi Putih",
+              "Sayur",
+              "Tahu Tempe",
+              "Telur"
+          ],
+          "cardQty": 2
+      },
+      {
+          "id": "nasi_campur",
+          "nama": "nasi campur",
+          "hargaJual": 27,
+          "poinKebahagiaan": 0,
+          "bahan": [
+              "Daging",
+              "Nasi Putih",
+              "Sayur",
+              "Telur"
+          ],
+          "cardQty": 2
+      }
+    ]
+}

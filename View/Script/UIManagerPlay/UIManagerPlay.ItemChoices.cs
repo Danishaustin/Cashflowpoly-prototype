@@ -23,24 +23,29 @@ public partial class UIManagerPlay
         }
 
         initialBahanContainer.Clear();
-        var bahanList = new List<BahanMakananData>(DataManager.Instance.bahanDict.Values);
-        int itemCount = Mathf.Min(5, bahanList.Count);
-
-        for (int i = 0; i < itemCount; i++)
+        foreach (BahanChoiceOption option in GetBahanChoiceOptions())
         {
-            BahanMakananData bahan = bahanList[i];
+            if (initialBahanChoiceButtons.Count >= 5)
+            {
+                break;
+            }
+
             var button = new Button
             {
-                name = "InitialBahanOption_" + bahan.nama
+                name = "InitialBahanOption_" + option.Key
             };
             button.AddToClassList("choice-button");
             button.AddToClassList("initial-bahan-button");
             button.text = string.Empty;
 
-            Sprite bahanSprite = LoadBahanButtonSprite(bahan.nama);
+            Sprite bahanSprite = LoadBahanSprite(option.Key, option.DisplayName);
             if (bahanSprite != null)
             {
                 button.style.backgroundImage = new StyleBackground(bahanSprite);
+            }
+            else
+            {
+                button.text = option.DisplayName;
             }
 
             var checkBadge = new Label("✔");
@@ -86,6 +91,49 @@ public partial class UIManagerPlay
         }
     }
 
+    private sealed class BahanChoiceOption
+    {
+        public string Key;
+        public string DisplayName;
+    }
+
+    // Bahan dari katalog ruleset session (kunci card_id, nama dari server); tanpa katalog memakai data lokal.
+    private List<BahanChoiceOption> GetBahanChoiceOptions()
+    {
+        List<BahanChoiceOption> options = new List<BahanChoiceOption>();
+        List<NarafinSetupIngredient> ingredients = NarafinActiveSession.GetIngredients(NarafinActiveSession.Catalog);
+        if (ingredients.Count > 0)
+        {
+            foreach (NarafinSetupIngredient ingredient in ingredients)
+            {
+                options.Add(new BahanChoiceOption
+                {
+                    Key = ingredient.id,
+                    DisplayName = string.IsNullOrWhiteSpace(ingredient.nama) ? ingredient.id : ingredient.nama
+                });
+            }
+
+            return options;
+        }
+
+        if (DataManager.Instance == null || DataManager.Instance.bahanDict == null)
+        {
+            Debug.LogWarning("Data bahan belum siap.");
+            return options;
+        }
+
+        foreach (BahanMakananData bahan in DataManager.Instance.bahanDict.Values)
+        {
+            options.Add(new BahanChoiceOption
+            {
+                Key = bahan.nama,
+                DisplayName = bahan.nama
+            });
+        }
+
+        return options;
+    }
+
     private void BuildBahanChoiceButtons(VisualElement choiceBMContainer)
     {
         bahanChoiceButtons = new List<Button>();
@@ -96,35 +144,57 @@ public partial class UIManagerPlay
             return;
         }
 
-        if (DataManager.Instance == null || DataManager.Instance.bahanDict == null)
-        {
-            Debug.LogWarning("Data bahan belum siap.");
-            return;
-        }
-
-        foreach (var bahan in DataManager.Instance.bahanDict.Values)
+        foreach (BahanChoiceOption option in GetBahanChoiceOptions())
         {
             var button = new Button
             {
-                name = bahan.nama
+                name = option.Key
             };
             button.AddToClassList("choice-button");
             button.AddToClassList("item-choice-button");
             button.text = string.Empty;
 
-            Sprite bahanSprite = LoadBahanButtonSprite(bahan.nama);
+            Sprite bahanSprite = LoadBahanSprite(option.Key, option.DisplayName);
             if (bahanSprite != null)
             {
                 button.style.backgroundImage = new StyleBackground(bahanSprite);
             }
             else
             {
-                Debug.LogWarning("Sprite bahan tidak ditemukan untuk: " + bahan.nama);
+                button.text = option.DisplayName;
+                Debug.LogWarning("Sprite bahan tidak ditemukan untuk: " + option.DisplayName);
             }
 
             choiceBMContainer.Add(button);
             bahanChoiceButtons.Add(button);
         }
+    }
+
+    // Sprite bahan memakai nama lokal ("Nasi.png") sedangkan ruleset bisa memakai nama lain ("Nasi Putih"),
+    // jadi dicoba nama dari server dulu lalu nama bahan lokal yang dipetakan ke card_id yang sama.
+    private Sprite LoadBahanSprite(string bahanKey, string displayName)
+    {
+        Sprite sprite = LoadBahanButtonSprite(displayName);
+        if (sprite != null || DataManager.Instance == null || DataManager.Instance.bahanDict == null || GameState.Instance == null)
+        {
+            return sprite;
+        }
+
+        foreach (string localName in DataManager.Instance.bahanDict.Keys)
+        {
+            if (GameState.Instance.ResolveBahanKey(localName) != bahanKey)
+            {
+                continue;
+            }
+
+            sprite = LoadBahanButtonSprite(localName);
+            if (sprite != null)
+            {
+                return sprite;
+            }
+        }
+
+        return null;
     }
 
     private Sprite LoadBahanButtonSprite(string bahanName)
@@ -338,43 +408,101 @@ public partial class UIManagerPlay
             return;
         }
 
+        targetKebutuhanContainer.Clear();
+
+        // Target kebutuhan diambil dari misi ruleset session agar mission_id pada pembagian awal valid.
+        List<NarafinSetupMission> missions = NarafinActiveSession.GetMissions(NarafinActiveSession.Catalog);
+        if (missions.Count > 0)
+        {
+            int missionCount = Mathf.Min(4, missions.Count);
+            for (int i = 0; i < missionCount; i++)
+            {
+                NarafinSetupMission mission = missions[i];
+                AddTargetKebutuhanButton(targetKebutuhanContainer, mission.id, LoadMissionSprite(mission.nama), FormatItemName(mission.nama));
+            }
+
+            return;
+        }
+
         if (DataManager.Instance == null || DataManager.Instance.targetKebutuhanList == null)
         {
             Debug.LogWarning("Data target kebutuhan belum siap.");
             return;
         }
 
-        targetKebutuhanContainer.Clear();
         int itemCount = Mathf.Min(4, DataManager.Instance.targetKebutuhanList.Count);
-
         for (int i = 0; i < itemCount; i++)
         {
             var target = DataManager.Instance.targetKebutuhanList[i];
-            var button = new Button
-            {
-                name = target.id
-            };
-            button.AddToClassList("choice-button");
-            button.AddToClassList("target-kebutuhan-button");
-            button.AddToClassList("target-kebutuhan-" + target.id);
-
-            Sprite targetSprite = LoadTargetKebutuhanSprite(target.nama);
-            if (targetSprite != null)
-            {
-                button.style.backgroundImage = new StyleBackground(targetSprite);
-            }
-            else
-            {
-                Debug.LogWarning("Sprite target kebutuhan tidak ditemukan untuk: " + target.nama);
-            }
-
-            var orderBadge = new Label(string.Empty);
-            orderBadge.AddToClassList("target-kebutuhan-order-badge");
-            button.Add(orderBadge);
-
-            targetKebutuhanContainer.Add(button);
-            targetKebutuhanChoiceButtons.Add(button);
+            AddTargetKebutuhanButton(targetKebutuhanContainer, target.id, LoadTargetKebutuhanSprite(target.nama), target.nama);
         }
+    }
+
+    private void AddTargetKebutuhanButton(VisualElement targetKebutuhanContainer, string targetId, Sprite targetSprite, string label)
+    {
+        var button = new Button
+        {
+            name = targetId
+        };
+        button.AddToClassList("choice-button");
+        button.AddToClassList("target-kebutuhan-button");
+        button.AddToClassList("target-kebutuhan-" + targetId);
+
+        if (targetSprite != null)
+        {
+            button.style.backgroundImage = new StyleBackground(targetSprite);
+        }
+        else
+        {
+            button.text = label;
+            Debug.LogWarning("Sprite target kebutuhan tidak ditemukan untuk: " + label);
+        }
+
+        var orderBadge = new Label(string.Empty);
+        orderBadge.AddToClassList("target-kebutuhan-order-badge");
+        button.Add(orderBadge);
+
+        targetKebutuhanContainer.Add(button);
+        targetKebutuhanChoiceButtons.Add(button);
+    }
+
+    // Nama misi ruleset yang tidak bisa dicocokkan dari nama sprite target kebutuhan.
+    private static readonly Dictionary<string, string> MissionSpriteNames = new Dictionary<string, string>
+    {
+        { "boneka", "Target Kebutuhan Boneka" },
+        { "gameboy", "Target Kebutuhan Game Console" },
+        { "jam", "Target Kebutuhan Jam Tangan" },
+        { "hiburan", "Target Kebutuhan Wahana Bermain" }
+    };
+
+    // Misi ruleset memakai nama singkat (mis. "jam"), sprite lokal memakai nama target lengkap
+    // ("Target Kebutuhan Jam Tangan"), jadi sprite dicari dari pemetaan lalu dari target lokal yang namanya memuat nama misi.
+    private Sprite LoadMissionSprite(string missionName)
+    {
+        string missionKey = NarafinActiveSession.NormalizeName(missionName);
+        if (MissionSpriteNames.TryGetValue(missionKey, out string spriteName))
+        {
+            Sprite mappedSprite = LoadTargetKebutuhanSprite(spriteName);
+            if (mappedSprite != null)
+            {
+                return mappedSprite;
+            }
+        }
+
+        if (missionKey.Length == 0 || DataManager.Instance == null || DataManager.Instance.targetKebutuhanList == null)
+        {
+            return null;
+        }
+
+        foreach (TargetKebutuhanData target in DataManager.Instance.targetKebutuhanList)
+        {
+            if (target != null && NarafinActiveSession.NormalizeName(target.nama).Contains(missionKey))
+            {
+                return LoadTargetKebutuhanSprite(target.nama);
+            }
+        }
+
+        return null;
     }
 
     private Sprite LoadTargetKebutuhanSprite(string targetName)
@@ -467,6 +595,54 @@ public partial class UIManagerPlay
         {
             targetKebutuhanNextButton.SetEnabled(selectedCount == playerCount);
         }
+    }
+
+    public bool IsTargetKebutuhanOption(string targetId)
+    {
+        if (targetKebutuhanChoiceButtons == null || string.IsNullOrEmpty(targetId))
+        {
+            return false;
+        }
+
+        foreach (var button in targetKebutuhanChoiceButtons)
+        {
+            if (button.name == targetId)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public void SetOpeningSetupSubmitting(bool isSubmitting)
+    {
+        if (targetKebutuhanChoiceButtons != null)
+        {
+            foreach (var button in targetKebutuhanChoiceButtons)
+            {
+                button.SetEnabled(!isSubmitting);
+            }
+        }
+
+        targetKebutuhanResetButton?.SetEnabled(!isSubmitting);
+        targetKebutuhanNextButton?.SetEnabled(!isSubmitting);
+
+        if (isSubmitting && targetKebutuhanTitle != null)
+        {
+            targetKebutuhanTitle.text = "Menyimpan pembagian awal...";
+        }
+    }
+
+    public void ShowOpeningSetupError(string message)
+    {
+        if (targetKebutuhanTitle == null)
+        {
+            return;
+        }
+
+        targetKebutuhanTitle.text = "Pembagian awal gagal: "
+            + (string.IsNullOrWhiteSpace(message) ? "silakan coba lagi." : message);
     }
 
     private string FormatItemName(string text)

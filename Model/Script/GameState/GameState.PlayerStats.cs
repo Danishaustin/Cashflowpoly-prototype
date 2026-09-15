@@ -68,6 +68,12 @@ public partial class GameState
         playerCoins[turn] = amount;
     }
 
+    public void SetCoins(int player, int amount)
+    {
+        EnsurePlayerStats(player);
+        playerCoins[player] = amount;
+    }
+
     public void SetHappiness(int amount)
     {
         EnsurePlayerStats(turn);

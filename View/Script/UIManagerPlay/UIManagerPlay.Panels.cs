@@ -195,7 +195,7 @@ public partial class UIManagerPlay
                 continue;
             }
 
-            items.Add(FormatItemName(bahan.Key) + " x" + bahan.Value);
+            items.Add(FormatItemName(GameState.Instance.GetBahanDisplayName(bahan.Key)) + " x" + bahan.Value);
         }
 
         return items;

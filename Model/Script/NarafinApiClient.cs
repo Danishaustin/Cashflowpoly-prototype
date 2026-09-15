@@ -56,8 +56,34 @@ internal class NarafinErrorResponse
 {
     public string error_code;
     public string message;
-    public string details;
+    public List<NarafinErrorDetail> details;
     public string trace_id;
+
+    public string FormatDetails()
+    {
+        if (details == null || details.Count == 0)
+        {
+            return string.Empty;
+        }
+
+        List<string> parts = new List<string>();
+        foreach (NarafinErrorDetail detail in details)
+        {
+            if (detail != null && !string.IsNullOrWhiteSpace(detail.field))
+            {
+                parts.Add(detail.field + ": " + detail.issue);
+            }
+        }
+
+        return string.Join(", ", parts);
+    }
+}
+
+[Serializable]
+internal class NarafinErrorDetail
+{
+    public string field;
+    public string issue;
 }
 
 [Serializable]
@@ -198,6 +224,7 @@ public class NarafinSessionStatePlayer
     public string user_id;
     public int player_order_no;
     public string name;
+    public int coins;
 }
 
 [Serializable]
@@ -210,9 +237,32 @@ internal class NarafinRulesetComponentsResponse
     public NarafinRulesetSetupDefinition definition;
 }
 
+// primary_need_max_per_day sengaja tidak dideklarasikan karena bisa bernilai null di ruleset.
+[Serializable]
+public class NarafinRulesetSettings
+{
+    public int actions_per_turn;
+    public int initial_coins;
+    public int initial_happiness;
+    public int initial_saving;
+    public int finish_day;
+    public int min_players;
+    public int max_players;
+    public int max_ingredient_total;
+    public int max_same_ingredient;
+    public bool require_primary_before_others;
+    public bool gold_trade_allow_buy;
+    public bool gold_trade_allow_sell;
+    public bool loan_enabled;
+    public bool insurance_enabled;
+    public int freelance_income;
+}
+
 [Serializable]
 public class NarafinRulesetSetupDefinition
 {
+    public string mode;
+    public NarafinRulesetSettings settings;
     public List<NarafinSetupIngredient> ingredients;
     public List<NarafinSetupMission> collection_missions;
     public List<NarafinSetupTieBreaker> tie_breakers;
@@ -224,30 +274,47 @@ public class NarafinRulesetSetupDefinition
 public class NarafinSetupIngredient
 {
     public string id;
+    public string nama;
+    public int hargaBeli;
+    public int cardQty;
 }
 
 [Serializable]
 public class NarafinSetupMission
 {
     public string id;
+    public string nama;
+    public int penaltyPoints;
 }
 
 [Serializable]
 public class NarafinSetupTieBreaker
 {
     public string tie_breaker_code;
+    public int tie_number;
+    public int card_qty;
 }
 
 [Serializable]
 public class NarafinSetupLoan
 {
     public string loan_code;
+    public string item_name;
+    public int principal;
+    public int repayment_amount;
+    public int duration_days;
+    public int penalty_points;
+    public int card_qty;
 }
 
 [Serializable]
 public class NarafinSetupInsurance
 {
     public string product_code;
+    public string item_name;
+    public int premium;
+    public int usage_limit;
+    public int card_qty;
 }
 
 [Serializable]
@@ -1779,6 +1846,12 @@ public sealed class NarafinApiClient
                     if (!string.IsNullOrWhiteSpace(errorResponse.message))
                     {
                         errorMessage = errorResponse.message;
+                    }
+
+                    string detailText = errorResponse.FormatDetails();
+                    if (!string.IsNullOrWhiteSpace(detailText))
+                    {
+                        errorMessage = errorMessage + " (" + detailText + ")";
                     }
                 }
             }

@@ -11,7 +11,7 @@ public class LoginManager : MonoBehaviour
     private const string InstructorRole = "INSTRUCTOR";
     private const string RoleNotAllowedErrorCode = "AUTH_ROLE_NOT_ALLOWED";
     private const string PemulaDefaultRulesetName = "Ruleset PEMULA Default";
-    private const string MahirDefaultRulesetName = "Ruleset MAHIR Default";
+    private const string MahirDefaultRulesetName = "Ruleset MAHIR Default v2";
     private const string PemulaDefaultRulesetResource = "Data/rulesetPemula";
     private const string MahirDefaultRulesetResource = "Data/rulesetMahir";
 
@@ -157,7 +157,9 @@ public class LoginManager : MonoBehaviour
         }
     }
 
-    public async Task<NarafinPlaySessionResult> CreateAndStartPlaySessionAsync(string sessionName, string rulesetMode, string selectedRulesetName, string selectedRulesetId, IReadOnlyList<string> playerNames)
+    // Membuat session dan menambahkan player. Pembagian awal dan start dilakukan di scene Play
+    // melalui SaveSetupAndStartPlaySessionAsync setelah bahan awal dan target kebutuhan dipilih.
+    public async Task<NarafinPlaySessionResult> CreatePlaySessionAsync(string sessionName, string rulesetMode, string selectedRulesetName, string selectedRulesetId, IReadOnlyList<string> playerNames)
     {
         if (!IsSignedIn())
         {
@@ -217,6 +219,27 @@ public class LoginManager : MonoBehaviour
 
         Debug.Log("Ruleset resolved. mode: " + resolvedRuleset.Mode + ", ruleset_id: " + resolvedRuleset.RulesetId + ", ruleset_version_id: " + resolvedRuleset.RulesetVersionId + ", version: " + resolvedRuleset.Version);
 
+        NarafinRulesetSetupDefinition setupCatalog = null;
+        if (!NarafinRuntimeConfig.UseOfflineMode)
+        {
+            // Katalog divalidasi sebelum session dibuat agar tidak tertinggal session yang tidak bisa di-setup.
+            NarafinRulesetSetupCatalogResult catalogResult = await apiClient.GetRulesetSetupCatalogAsync(
+                AccessToken,
+                resolvedRuleset.RulesetId,
+                resolvedRuleset.Version);
+            if (!catalogResult.Success)
+            {
+                return CreatePlaySessionFailure(catalogResult.ErrorCode, catalogResult.ErrorMessage);
+            }
+
+            if (!TryValidateSetupCatalog(resolvedRuleset.Mode, catalogResult.Definition, selectedPlayers.Count, out string catalogError))
+            {
+                return CreatePlaySessionFailure("SETUP_VALIDATION_ERROR", catalogError);
+            }
+
+            setupCatalog = catalogResult.Definition;
+        }
+
         NarafinSessionCreateResult createResult = await apiClient.CreateSessionAsync(AccessToken, sessionName.Trim(), resolvedRuleset.Mode, resolvedRuleset.RulesetVersionId);
         if (!createResult.Success)
         {
@@ -239,191 +262,250 @@ public class LoginManager : MonoBehaviour
             }
         }
 
+        List<NarafinSessionStatePlayer> sessionPlayers = new List<NarafinSessionStatePlayer>();
         if (!NarafinRuntimeConfig.UseOfflineMode)
         {
-            NarafinSessionOperationResult setupResult = await ValidateAndSaveInitialSessionSetupAsync(
-                createResult.SessionId,
-                resolvedRuleset,
-                selectedPlayers);
-
-            if (!setupResult.Success)
+            NarafinSessionStateResult stateResult = await apiClient.GetSessionStateAsync(AccessToken, createResult.SessionId);
+            if (!stateResult.Success)
             {
-                return CreatePlaySessionFailure(setupResult.ErrorCode, setupResult.ErrorMessage);
+                return CreatePlaySessionFailure(stateResult.ErrorCode, stateResult.ErrorMessage);
             }
+
+            foreach (NarafinPlayerSummary selectedPlayer in selectedPlayers)
+            {
+                NarafinSessionStatePlayer sessionPlayer = FindSessionPlayer(stateResult.Players, selectedPlayer.user_id);
+                if (sessionPlayer == null || string.IsNullOrWhiteSpace(sessionPlayer.session_player_id))
+                {
+                    return CreatePlaySessionFailure("SETUP_VALIDATION_ERROR", "session_player_id untuk player \"" + selectedPlayer.display_name + "\" tidak ditemukan.");
+                }
+            }
+
+            sessionPlayers = stateResult.Players;
         }
 
-        NarafinSessionOperationResult startResult = await apiClient.StartSessionAsync(AccessToken, createResult.SessionId);
-        if (!startResult.Success)
-        {
-            return CreatePlaySessionFailure(startResult.ErrorCode, startResult.ErrorMessage);
-        }
-
-        NarafinPlayerPrefs.StorePlaySession(
+        string rulesetVersionId = resolvedRuleset.RulesetVersionId ?? createResult.RulesetVersionId;
+        NarafinPlayerPrefs.StorePlaySession(createResult.SessionId, rulesetVersionId, selectedPlayers);
+        NarafinActiveSession.Begin(
             createResult.SessionId,
-            resolvedRuleset.RulesetVersionId ?? createResult.RulesetVersionId,
-            selectedPlayers);
-
-        NarafinSessionEventSequenceResult sequenceResult = await apiClient.GetLastSessionEventSequenceAsync(AccessToken, createResult.SessionId);
-        if (!sequenceResult.Success)
-        {
-            return CreatePlaySessionFailure(sequenceResult.ErrorCode, "Session berhasil dimulai, tetapi gagal menyinkronkan urutan event: " + sequenceResult.ErrorMessage);
-        }
-
-        NarafinPlayerPrefs.SetLastEventSequenceNumber(sequenceResult.LastSequenceNumber);
-        Debug.Log("Narafin event sequence disinkronkan. Sequence terakhir: " + sequenceResult.LastSequenceNumber);
+            resolvedRuleset.RulesetId,
+            rulesetVersionId,
+            resolvedRuleset.Version,
+            resolvedRuleset.Mode,
+            setupCatalog,
+            sessionPlayers);
 
         return new NarafinPlaySessionResult
         {
             Success = true,
             SessionId = createResult.SessionId,
             RulesetId = resolvedRuleset.RulesetId,
-            RulesetVersionId = resolvedRuleset.RulesetVersionId
+            RulesetVersionId = rulesetVersionId
         };
     }
 
-    private async Task<NarafinSessionOperationResult> ValidateAndSaveInitialSessionSetupAsync(
-        string sessionId,
-        ResolvedPlayRuleset resolvedRuleset,
-        IReadOnlyList<NarafinPlayerSummary> selectedPlayers)
+    // Dipanggil scene Play setelah bahan awal dan target kebutuhan dipilih: validasi, simpan pembagian awal,
+    // start session, lalu sinkronkan sequence dan state awal dari server.
+    public async Task<NarafinSetupStartResult> SaveSetupAndStartPlaySessionAsync(IReadOnlyList<string> initialBahanNames, IReadOnlyList<string> missionIds)
     {
+        if (!IsSignedIn())
+        {
+            return CreateSetupStartFailure("AUTH_SESSION_MISSING", "Sesi login tidak tersedia. Silakan login ulang.");
+        }
+
+        string sessionId = NarafinActiveSession.SessionId;
+        if (string.IsNullOrWhiteSpace(sessionId))
+        {
+            return CreateSetupStartFailure("SESSION_MISSING", "Session belum dibuat. Kembali ke menu utama dan mulai ulang.");
+        }
+
+        if (NarafinRuntimeConfig.UseOfflineMode)
+        {
+            NarafinActiveSession.MarkStarted();
+            return new NarafinSetupStartResult
+            {
+                Success = true,
+                Players = new List<NarafinSessionStatePlayer>()
+            };
+        }
+
+        // Jika start sudah berhasil tetapi sinkronisasi gagal, percobaan ulang cukup menyinkronkan ulang.
+        if (!NarafinActiveSession.IsStarted)
+        {
+            if (!TryBuildInitialSetupPayload(sessionId, initialBahanNames, missionIds, out string setupJson, out string errorMessage))
+            {
+                return CreateSetupStartFailure("SETUP_VALIDATION_ERROR", errorMessage);
+            }
+
+            NarafinSessionOperationResult validationResult = await apiClient.ValidateSessionSetupAsync(AccessToken, sessionId, setupJson);
+            if (!validationResult.Success)
+            {
+                return CreateSetupStartFailure(validationResult.ErrorCode, validationResult.ErrorMessage);
+            }
+
+            NarafinSessionOperationResult saveResult = await apiClient.SaveSessionSetupAsync(AccessToken, sessionId, setupJson);
+            if (!saveResult.Success)
+            {
+                return CreateSetupStartFailure(saveResult.ErrorCode, saveResult.ErrorMessage);
+            }
+
+            NarafinSessionOperationResult startResult = await apiClient.StartSessionAsync(AccessToken, sessionId);
+            if (!startResult.Success)
+            {
+                return CreateSetupStartFailure(startResult.ErrorCode, startResult.ErrorMessage);
+            }
+
+            NarafinActiveSession.MarkStarted();
+        }
+
+        NarafinSessionEventSequenceResult sequenceResult = await apiClient.GetLastSessionEventSequenceAsync(AccessToken, sessionId);
+        if (!sequenceResult.Success)
+        {
+            return CreateSetupStartFailure(sequenceResult.ErrorCode, "Session berhasil dimulai, tetapi gagal menyinkronkan urutan event: " + sequenceResult.ErrorMessage);
+        }
+
+        NarafinPlayerPrefs.SetLastEventSequenceNumber(sequenceResult.LastSequenceNumber);
+        Debug.Log("Narafin event sequence disinkronkan. Sequence terakhir: " + sequenceResult.LastSequenceNumber);
+
         NarafinSessionStateResult stateResult = await apiClient.GetSessionStateAsync(AccessToken, sessionId);
         if (!stateResult.Success)
         {
-            return CreateSessionOperationFailure(stateResult.ErrorCode, stateResult.ErrorMessage);
+            return CreateSetupStartFailure(stateResult.ErrorCode, "Session berhasil dimulai, tetapi gagal membaca state awal: " + stateResult.ErrorMessage);
         }
 
-        NarafinRulesetSetupCatalogResult catalogResult = await apiClient.GetRulesetSetupCatalogAsync(
-            AccessToken,
-            resolvedRuleset.RulesetId,
-            resolvedRuleset.Version);
-        if (!catalogResult.Success)
+        return new NarafinSetupStartResult
         {
-            return CreateSessionOperationFailure(catalogResult.ErrorCode, catalogResult.ErrorMessage);
-        }
-
-        if (!TryBuildInitialSetupPayload(sessionId, resolvedRuleset.Mode, stateResult.Players, selectedPlayers, catalogResult.Definition, out string setupJson, out string errorMessage))
-        {
-            return CreateSessionOperationFailure("SETUP_VALIDATION_ERROR", errorMessage);
-        }
-
-        NarafinSessionOperationResult validationResult = await apiClient.ValidateSessionSetupAsync(AccessToken, sessionId, setupJson);
-        if (!validationResult.Success)
-        {
-            return validationResult;
-        }
-
-        return await apiClient.SaveSessionSetupAsync(AccessToken, sessionId, setupJson);
+            Success = true,
+            Players = stateResult.Players
+        };
     }
 
-    private static bool TryBuildInitialSetupPayload(
-        string sessionId,
-        string rulesetMode,
-        IReadOnlyList<NarafinSessionStatePlayer> sessionPlayers,
-        IReadOnlyList<NarafinPlayerSummary> selectedPlayers,
-        NarafinRulesetSetupDefinition definition,
-        out string setupJson,
-        out string errorMessage)
+    private static NarafinSetupStartResult CreateSetupStartFailure(string errorCode, string errorMessage)
     {
-        setupJson = string.Empty;
+        return new NarafinSetupStartResult
+        {
+            Success = false,
+            ErrorCode = errorCode ?? string.Empty,
+            ErrorMessage = errorMessage ?? string.Empty,
+            Players = new List<NarafinSessionStatePlayer>()
+        };
+    }
+
+    private static bool TryValidateSetupCatalog(string rulesetMode, NarafinRulesetSetupDefinition catalog, int playerCount, out string errorMessage)
+    {
         errorMessage = string.Empty;
 
-        if (definition == null || definition.tie_breakers == null || definition.ingredients == null || definition.collection_missions == null)
+        if (catalog == null || catalog.tie_breakers == null || catalog.ingredients == null || catalog.collection_missions == null)
         {
             errorMessage = "Komponen ruleset untuk pembagian awal tidak lengkap.";
             return false;
         }
 
-        if (definition.tie_breakers.Count < selectedPlayers.Count ||
-            definition.ingredients.Count == 0 ||
-            definition.collection_missions.Count < selectedPlayers.Count)
+        if (NarafinActiveSession.GetTieBreakersByNumber(catalog).Count < playerCount)
         {
-            errorMessage = "Ruleset tidak memiliki Tie Breaker, bahan, atau misi awal yang cukup untuk seluruh player.";
+            errorMessage = "Ruleset tidak memiliki Tie Breaker yang cukup untuk seluruh player.";
+            return false;
+        }
+
+        if (catalog.ingredients.Count == 0)
+        {
+            errorMessage = "Ruleset tidak memiliki bahan masakan untuk pembagian awal.";
+            return false;
+        }
+
+        if (NarafinActiveSession.GetMissions(catalog).Count < playerCount)
+        {
+            errorMessage = "Ruleset tidak memiliki target kebutuhan (misi) yang cukup untuk seluruh player.";
             return false;
         }
 
         bool isMahir = string.Equals(rulesetMode, "MAHIR", StringComparison.OrdinalIgnoreCase);
-        string loanCode = GetFirstSetupLoanCode(definition);
-        string insuranceProductCode = GetFirstSetupInsuranceProductCode(definition);
-        if (isMahir && (string.IsNullOrWhiteSpace(loanCode) || string.IsNullOrWhiteSpace(insuranceProductCode)))
+        if (isMahir && (NarafinActiveSession.GetFirstLoan(catalog) == null || NarafinActiveSession.GetFirstInsurance(catalog) == null))
         {
-            errorMessage = "Ruleset Mahir harus memiliki kode pinjaman dan produk asuransi untuk pembagian awal.";
+            errorMessage = "Ruleset Mahir harus memiliki produk pinjaman syariah dan asuransi untuk pembagian awal.";
             return false;
         }
 
-        List<NarafinSessionSetupPlayer> setupPlayers = new List<NarafinSessionSetupPlayer>();
-        for (int i = 0; i < selectedPlayers.Count; i++)
+        return true;
+    }
+
+    // Player urutan ke-n (sesuai urutan nama di Home) memperoleh tie breaker nomor ke-n;
+    // pinjaman dan asuransi memakai produk pertama pada ruleset.
+    private static bool TryBuildInitialSetupPayload(
+        string sessionId,
+        IReadOnlyList<string> initialBahanNames,
+        IReadOnlyList<string> missionIds,
+        out string setupJson,
+        out string errorMessage)
+    {
+        setupJson = string.Empty;
+        NarafinRulesetSetupDefinition catalog = NarafinActiveSession.Catalog;
+        IReadOnlyList<NarafinSessionStatePlayer> sessionPlayers = NarafinActiveSession.Players;
+
+        if (sessionPlayers.Count == 0)
         {
-            NarafinPlayerSummary selectedPlayer = selectedPlayers[i];
-            NarafinSessionStatePlayer sessionPlayer = FindSessionPlayer(sessionPlayers, selectedPlayer.user_id);
-            if (sessionPlayer == null || string.IsNullOrWhiteSpace(sessionPlayer.session_player_id))
+            errorMessage = "Daftar player session belum dimuat.";
+            return false;
+        }
+
+        if (!TryValidateSetupCatalog(NarafinActiveSession.Mode, catalog, sessionPlayers.Count, out errorMessage))
+        {
+            return false;
+        }
+
+        if (initialBahanNames == null || initialBahanNames.Count < sessionPlayers.Count)
+        {
+            errorMessage = "Bahan awal belum dipilih untuk semua player.";
+            return false;
+        }
+
+        if (missionIds == null || missionIds.Count < sessionPlayers.Count)
+        {
+            errorMessage = "Target kebutuhan belum dipilih untuk semua player.";
+            return false;
+        }
+
+        List<NarafinSetupTieBreaker> tieBreakers = NarafinActiveSession.GetTieBreakersByNumber(catalog);
+        NarafinSetupLoan loan = NarafinActiveSession.IsMahir ? NarafinActiveSession.GetFirstLoan(catalog) : null;
+        NarafinSetupInsurance insurance = NarafinActiveSession.IsMahir ? NarafinActiveSession.GetFirstInsurance(catalog) : null;
+
+        List<NarafinSessionSetupPlayer> setupPlayers = new List<NarafinSessionSetupPlayer>();
+        for (int i = 0; i < sessionPlayers.Count; i++)
+        {
+            NarafinSessionStatePlayer sessionPlayer = sessionPlayers[i];
+            string playerName = string.IsNullOrWhiteSpace(sessionPlayer.name) ? "Player " + (i + 1) : sessionPlayer.name;
+            if (string.IsNullOrWhiteSpace(sessionPlayer.session_player_id))
             {
-                errorMessage = "session_player_id untuk player \"" + selectedPlayer.display_name + "\" tidak ditemukan.";
+                errorMessage = "session_player_id untuk player \"" + playerName + "\" tidak ditemukan.";
                 return false;
             }
 
-            NarafinSetupTieBreaker tieBreaker = definition.tie_breakers[i];
-            NarafinSetupIngredient ingredient = definition.ingredients[i % definition.ingredients.Count];
-            NarafinSetupMission mission = definition.collection_missions[i];
-            if (tieBreaker == null || ingredient == null || mission == null ||
-                string.IsNullOrWhiteSpace(tieBreaker.tie_breaker_code) ||
-                string.IsNullOrWhiteSpace(ingredient.id) ||
-                string.IsNullOrWhiteSpace(mission.id))
+            if (!NarafinActiveSession.TryResolveIngredientCardId(catalog, initialBahanNames[i], out string ingredientCardId))
             {
-                errorMessage = "Komponen ruleset untuk pembagian awal memiliki kode yang kosong.";
+                errorMessage = "Bahan awal \"" + initialBahanNames[i] + "\" milik " + playerName + " tidak ada di ruleset session.";
+                return false;
+            }
+
+            if (!NarafinActiveSession.HasMission(catalog, missionIds[i]))
+            {
+                errorMessage = "Target kebutuhan milik " + playerName + " tidak ada di ruleset session.";
                 return false;
             }
 
             setupPlayers.Add(new NarafinSessionSetupPlayer
             {
                 session_player_id = sessionPlayer.session_player_id,
-                tie_breaker_code = tieBreaker.tie_breaker_code,
-                ingredient_card_id = ingredient.id,
+                tie_breaker_code = tieBreakers[i].tie_breaker_code,
+                ingredient_card_id = ingredientCardId,
                 gold_quantity = 1,
-                mission_id = mission.id,
-                loan_code = isMahir ? loanCode : null,
-                insurance_product_code = isMahir ? insuranceProductCode : null
+                mission_id = missionIds[i],
+                loan_code = loan?.loan_code,
+                insurance_product_code = insurance?.product_code
             });
         }
 
         setupJson = BuildInitialSetupJson("unity-setup-" + sessionId + "-" + Guid.NewGuid().ToString("N"), setupPlayers);
         Debug.Log("Narafin initial setup payload: " + setupJson);
         return true;
-    }
-
-    private static string GetFirstSetupLoanCode(NarafinRulesetSetupDefinition definition)
-    {
-        if (definition?.sharia_loans == null)
-        {
-            return null;
-        }
-
-        foreach (NarafinSetupLoan loan in definition.sharia_loans)
-        {
-            if (loan != null && !string.IsNullOrWhiteSpace(loan.loan_code))
-            {
-                return loan.loan_code;
-            }
-        }
-
-        return null;
-    }
-
-    private static string GetFirstSetupInsuranceProductCode(NarafinRulesetSetupDefinition definition)
-    {
-        if (definition?.insurance_products == null)
-        {
-            return null;
-        }
-
-        foreach (NarafinSetupInsurance insurance in definition.insurance_products)
-        {
-            if (insurance != null && !string.IsNullOrWhiteSpace(insurance.product_code))
-            {
-                return insurance.product_code;
-            }
-        }
-
-        return null;
     }
 
     private static string BuildInitialSetupJson(string clientRequestId, IReadOnlyList<NarafinSessionSetupPlayer> players)
@@ -688,6 +770,7 @@ public class LoginManager : MonoBehaviour
         ClearCachedFields();
 
         NarafinPlayerPrefs.ClearAuthSession();
+        NarafinActiveSession.Clear();
     }
 
     private async Task<bool> SyncUnityGameServicesAuthAsync(NarafinAuthSession session)

@@ -1,0 +1,257 @@
+{
+    "risikoKehidupan": [
+        {
+            "risk_code": "risk_beli_peralatan_dapur",
+            "item_name": "Beli Peralatan Dapur",
+            "effect_type": "COIN_EFFECT",
+            "direction": "OUT",
+            "amount": 3,
+            "target_scope": "SELF",
+            "value_delta": null,
+            "duration_days": 1,
+            "card_qty": 1
+        },
+        {
+            "risk_code": "risk_menang_undian",
+            "item_name": "Menang Undian",
+            "effect_type": "COIN_EFFECT",
+            "direction": "IN",
+            "amount": 2,
+            "target_scope": "SELF",
+            "value_delta": null,
+            "duration_days": 1,
+            "card_qty": 1
+        },
+        {
+            "risk_code": "risk_study_tour",
+            "item_name": "Study Tour",
+            "effect_type": "COIN_EFFECT",
+            "direction": "OUT",
+            "amount": 4,
+            "target_scope": "SELF",
+            "value_delta": null,
+            "duration_days": 1,
+            "card_qty": 1
+        },
+        {
+            "risk_code": "risk_depresi",
+            "item_name": "Depresi",
+            "effect_type": "COIN_EFFECT",
+            "direction": "OUT",
+            "amount": 3,
+            "target_scope": "SELF",
+            "value_delta": null,
+            "duration_days": 1,
+            "card_qty": 1
+        },
+        {
+            "risk_code": "risk_panen_melimpah",
+            "item_name": "Panen Melimpah",
+            "effect_type": "INGREDIENT_PRICE_MODIFIER",
+            "direction": "",
+            "amount": 0,
+            "target_scope": "ALL_PLAYERS",
+            "value_delta": -1,
+            "duration_days": 7,
+            "card_qty": 1
+        },
+        {
+            "risk_code": "risk_ekstrakurikuler_anak",
+            "item_name": "Ekstrakurikuler Anak",
+            "effect_type": "COIN_EFFECT",
+            "direction": "OUT",
+            "amount": 3,
+            "target_scope": "SELF",
+            "value_delta": null,
+            "duration_days": 1,
+            "card_qty": 1
+        },
+        {
+            "risk_code": "risk_ban_bocor",
+            "item_name": "Ban Bocor",
+            "effect_type": "COIN_EFFECT",
+            "direction": "OUT",
+            "amount": 3,
+            "target_scope": "SELF",
+            "value_delta": null,
+            "duration_days": 1,
+            "card_qty": 1
+        },
+        {
+            "risk_code": "risk_sakit_gigi",
+            "item_name": "Sakit Gigi",
+            "effect_type": "COIN_EFFECT",
+            "direction": "OUT",
+            "amount": 4,
+            "target_scope": "SELF",
+            "value_delta": null,
+            "duration_days": 1,
+            "card_qty": 1
+        },
+        {
+            "risk_code": "risk_operasi_usus_buntu",
+            "item_name": "Operasi Usus Buntu",
+            "effect_type": "COIN_EFFECT",
+            "direction": "OUT",
+            "amount": 6,
+            "target_scope": "SELF",
+            "value_delta": null,
+            "duration_days": 1,
+            "card_qty": 1
+        },
+        {
+            "risk_code": "risk_ganti_oli",
+            "item_name": "Ganti Oli",
+            "effect_type": "COIN_EFFECT",
+            "direction": "OUT",
+            "amount": 3,
+            "target_scope": "SELF",
+            "value_delta": null,
+            "duration_days": 1,
+            "card_qty": 1
+        },
+        {
+            "risk_code": "risk_mobil_tabrakan",
+            "item_name": "Mobil Tabrakan",
+            "effect_type": "COIN_EFFECT",
+            "direction": "OUT",
+            "amount": 6,
+            "target_scope": "SELF",
+            "value_delta": null,
+            "duration_days": 1,
+            "card_qty": 1
+        },
+        {
+            "risk_code": "risk_pemadaman_listrik",
+            "item_name": "Pemadaman Listrik",
+            "effect_type": "ALL_PLAYERS_COIN_EFFECT",
+            "direction": "OUT",
+            "amount": 3,
+            "target_scope": "ALL_PLAYERS",
+            "value_delta": null,
+            "duration_days": 1,
+            "card_qty": 1
+        },
+        {
+            "risk_code": "risk_ganti_aki",
+            "item_name": "Ganti Aki",
+            "effect_type": "COIN_EFFECT",
+            "direction": "OUT",
+            "amount": 3,
+            "target_scope": "SELF",
+            "value_delta": null,
+            "duration_days": 1,
+            "card_qty": 1
+        },
+        {
+            "risk_code": "risk_bbm_naik",
+            "item_name": "BBM Naik",
+            "effect_type": "INGREDIENT_PRICE_MODIFIER",
+            "direction": "",
+            "amount": 0,
+            "target_scope": "ALL_PLAYERS",
+            "value_delta": 1,
+            "duration_days": 7,
+            "card_qty": 1
+        },
+        {
+            "risk_code": "risk_kecelakaan",
+            "item_name": "Kecelakaan",
+            "effect_type": "COIN_EFFECT",
+            "direction": "OUT",
+            "amount": 5,
+            "target_scope": "SELF",
+            "value_delta": null,
+            "duration_days": 1,
+            "card_qty": 1
+        },
+        {
+            "risk_code": "risk_sakit_perut",
+            "item_name": "Sakit Perut",
+            "effect_type": "COIN_EFFECT",
+            "direction": "OUT",
+            "amount": 3,
+            "target_scope": "SELF",
+            "value_delta": null,
+            "duration_days": 1,
+            "card_qty": 1
+        },
+        {
+            "risk_code": "risk_sakit_asam_lambung",
+            "item_name": "Sakit Asam Lambung",
+            "effect_type": "COIN_EFFECT",
+            "direction": "OUT",
+            "amount": 4,
+            "target_scope": "SELF",
+            "value_delta": null,
+            "duration_days": 1,
+            "card_qty": 1
+        },
+        {
+            "risk_code": "risk_wisuda_kelulusan",
+            "item_name": "Wisuda Kelulusan",
+            "effect_type": "COIN_EFFECT",
+            "direction": "OUT",
+            "amount": 6,
+            "target_scope": "SELF",
+            "value_delta": null,
+            "duration_days": 1,
+            "card_qty": 1
+        },
+        {
+            "risk_code": "risk_bencana_banjir",
+            "item_name": "Bencana Banjir",
+            "effect_type": "ALL_PLAYERS_COIN_EFFECT",
+            "direction": "OUT",
+            "amount": 3,
+            "target_scope": "ALL_PLAYERS",
+            "value_delta": null,
+            "duration_days": 1,
+            "card_qty": 1
+        },
+        {
+            "risk_code": "risk_gudang_terbakar",
+            "item_name": "Gudang Terbakar",
+            "effect_type": "COIN_EFFECT",
+            "direction": "OUT",
+            "amount": 6,
+            "target_scope": "SELF",
+            "value_delta": null,
+            "duration_days": 1,
+            "card_qty": 1
+        },
+        {
+            "risk_code": "risk_investasi_emas",
+            "item_name": "Investasi Emas",
+            "effect_type": "GOLD_TRADE",
+            "direction": "",
+            "amount": 0,
+            "target_scope": "ALL_PLAYERS",
+            "value_delta": null,
+            "duration_days": 1,
+            "card_qty": 2
+        },
+        {
+            "risk_code": "risk_tahun_ajaran_baru",
+            "item_name": "Tahun Ajaran Baru",
+            "effect_type": "COIN_EFFECT",
+            "direction": "OUT",
+            "amount": 5,
+            "target_scope": "SELF",
+            "value_delta": null,
+            "duration_days": 1,
+            "card_qty": 1
+        },
+        {
+            "risk_code": "risk_ulang_tahun",
+            "item_name": "Ulang Tahun",
+            "effect_type": "PLAYER_TO_PLAYER_TRANSFER",
+            "direction": "IN",
+            "amount": 1,
+            "target_scope": "OTHER_PLAYERS",
+            "value_delta": null,
+            "duration_days": 1,
+            "card_qty": 1
+        }
+    ]
+}
