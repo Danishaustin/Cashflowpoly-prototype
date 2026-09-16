@@ -1,9 +1,8 @@
-﻿using System.Collections.Generic;
 using UnityEngine;
 
 public partial class NarasiController
 {
-    // Keeps narasi data ready without re-reading DataManager on every action.
+    // Menyiapkan dialog dari paket narasi aktif sekali saja, tanpa membaca DataManager tiap aksi.
     private bool EnsureNarasiCache()
     {
         if (isNarasiCacheReady)
@@ -24,33 +23,23 @@ public partial class NarasiController
 
     private void BuildNarasiCache()
     {
-        narasiList.Clear();
         dialogKarakterList.Clear();
 
-        if (DataManager.Instance.narasiDict != null)
+        if (DataManager.Instance.dialogKarakterDict == null)
         {
-            foreach (var n in DataManager.Instance.narasiDict.Values)
-            {
-                if (n.prerequisiteAksi == null || n.prerequisiteAksi.Count == 0)
-                {
-                    continue;
-                }
-
-                narasiList.Add(n);
-            }
+            Debug.LogWarning("Data dialog karakter belum dimuat.");
+            return;
         }
 
-        if (DataManager.Instance.dialogKarakterDict != null)
+        foreach (DialogKarakterData dialog in DataManager.Instance.dialogKarakterDict.Values)
         {
-            foreach (var dialog in DataManager.Instance.dialogKarakterDict.Values)
+            // Dialog tanpa aksi atau tanpa baris berisi tidak bisa dipicu, jadi tidak perlu ikut dipertimbangkan.
+            if (dialog == null || string.IsNullOrWhiteSpace(dialog.aksi) || GetPlayableLines(dialog).Count == 0)
             {
-                if (dialog == null || string.IsNullOrWhiteSpace(dialog.aksi))
-                {
-                    continue;
-                }
-
-                dialogKarakterList.Add(dialog);
+                continue;
             }
+
+            dialogKarakterList.Add(dialog);
         }
     }
 
@@ -59,7 +48,7 @@ public partial class NarasiController
         isNarasiCacheReady = false;
         if (EnsureNarasiCache())
         {
-            Debug.Log("Data narasi dimuat ulang.");
+            Debug.Log("Data narasi dimuat ulang (" + dialogKarakterList.Count + " dialog siap pakai).");
         }
     }
 }

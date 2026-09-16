@@ -51,6 +51,7 @@ public partial class UIManagerPlay
 
     public void HideDialog()
     {
+        CancelServerWaitSchedule();
         HideDialogContainer();
     }
 

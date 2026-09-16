@@ -95,7 +95,7 @@ public partial class ChoiceController
         string resultText = "Mengambil " + itemName + ". Mendapatkan " + loan.principal
             + " koin dan 1 kartu pinjaman syariah. Kartu saat ini: "
             + GameState.Instance.GetPinjamanSyariahCards(player) + "\n";
-        ShowSystemDialogThen(resultText, UpdateMove);
+        PlayNarasiThen("PinjamanSyariah", resultText, UpdateMove);
     }
 
     // Pinjaman yang dikembalikan selalu yang paling lama diambil.
@@ -147,25 +147,30 @@ public partial class ChoiceController
         string resultText = "Mengembalikan " + holding.ItemName + ". Membayar " + amount
             + " koin dan mengurangi 1 kartu pinjaman syariah. Kartu tersisa: "
             + GameState.Instance.GetPinjamanSyariahCards(player) + "\n";
-        ShowSystemDialogThen(resultText, UpdateMove);
+        PlayNarasiThen("BayarPinjaman", resultText, UpdateMove);
     }
 
     private async Task<NarafinSessionOperationResult> SendPinjamanSyariahEventAsync(int player, string actionType, string payloadJson, string progressText)
     {
         isSubmittingPinjamanSyariah = true;
-        view.AddSystemTextToDialog(progressText);
+        BeginServerWait(progressText);
+
+        NarafinSessionOperationResult result;
         try
         {
-            return await SendPlayerEventNowAsync(player, actionType, payloadJson, GetCurrentActionSlot());
+            result = await SendPlayerEventNowAsync(player, actionType, payloadJson, GetCurrentActionSlot());
         }
         catch (Exception ex)
         {
             Debug.LogWarning("Gagal mengirim event pinjaman syariah: " + ex.Message);
-            return CreateEventFailure("EVENT_SEND_FAILED", "Gagal menghubungi server.");
+            result = CreateEventFailure("EVENT_SEND_FAILED", "Gagal menghubungi server.");
         }
         finally
         {
             isSubmittingPinjamanSyariah = false;
         }
+
+        await EndServerWaitAsync();
+        return result;
     }
 }

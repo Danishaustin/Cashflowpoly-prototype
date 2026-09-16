@@ -69,7 +69,7 @@ public partial class ChoiceController
 
         NarafinSessionOperationResult result;
         isSubmittingAsuransi = true;
-        view.AddSystemTextToDialog("Mencatat pembelian " + itemName + "...");
+        BeginServerWait("Mencatat pembelian " + itemName + "...");
         try
         {
             result = await SendPlayerEventNowAsync(
@@ -88,6 +88,8 @@ public partial class ChoiceController
             isSubmittingAsuransi = false;
         }
 
+        await EndServerWaitAsync();
+
         if (this == null)
         {
             return;
@@ -104,14 +106,6 @@ public partial class ChoiceController
         view.UpdateCoins(GameState.Instance.GetCoins(player));
 
         string resultText = "Membeli " + itemName + " seharga " + premium + " koin.\n";
-        if (Narasi("MembeliAsuransi", 0, () =>
-        {
-            ShowSystemDialogThen(resultText, UpdateMove);
-        }))
-        {
-            return;
-        }
-
-        ShowSystemDialogThen(resultText, UpdateMove);
+        PlayNarasiThen("Asuransi", resultText, UpdateMove);
     }
 }

@@ -112,7 +112,7 @@
                 <ui:VisualElement class="risk-panel-header">
                     <ui:Label tabindex="-1" text="Risiko Kehidupan" parse-escape-sequences="true" display-tooltip-when-elided="true" class="risk-panel-title" />
                 </ui:VisualElement>
-                <ui:VisualElement name="RisikoSetupContent" class="risk-content risk-setup-content">
+                <ui:VisualElement name="RisikoSetupContent" class="risk-content risk-setup-content" style="display: flex;">
                     <ui:Toggle label="Investasi Emas" name="RisikoInvestasiEmasToggle" class="risk-toggle" />
                     <ui:Toggle label="Bayar Uang Ke Bank" name="RisikoBayarBankSetupToggle" class="risk-toggle" />
                     <ui:VisualElement name="RisikoCoinInputContainer" class="risk-number-input-row" style="display: none;">
@@ -148,7 +148,10 @@
                     </ui:VisualElement>
                     <ui:Toggle label="Pinjaman Syariah" name="RisikoPinjamanSyariahToggle" class="risk-toggle" />
                 </ui:VisualElement>
-                <ui:ScrollView name="RisikoKartuList" class="risk-content risk-card-list" style="display: none;" />
+                <ui:VisualElement name="RisikoKartuContent" class="risk-content" style="display: none;">
+                    <ui:Label tabindex="-1" text="Pilih kartu risiko yang ditarik" parse-escape-sequences="true" display-tooltip-when-elided="true" class="risk-decision-player-text" />
+                    <ui:DropdownField name="RisikoKartuDropdown" class="risk-card-dropdown" />
+                </ui:VisualElement>
                 <ui:VisualElement style="flex-grow: 0; height: 14%; width: auto; flex-direction: row; justify-content: center;">
                     <ui:Button text="Next" parse-escape-sequences="true" display-tooltip-when-elided="true" name="NextButtonRisikoKehidupan" class="choice-button" style="width: 30%;" />
                 </ui:VisualElement>
@@ -242,11 +245,7 @@
                 <ui:Label tabindex="-1" text="Quest" parse-escape-sequences="true" display-tooltip-when-elided="true" class="quest-panel-title" />
                 <ui:Button parse-escape-sequences="true" display-tooltip-when-elided="true" name="CloseQuestButton" class="quest-close-button" />
             </ui:VisualElement>
-            <ui:VisualElement name="QuestList" class="quest-list">
-                <ui:Label tabindex="-1" text="Jual 3 masakan 0/3" parse-escape-sequences="true" display-tooltip-when-elided="true" class="quest-item-title" />
-                <ui:Label tabindex="-1" text="Beli 2 kebutuhan 0/2" parse-escape-sequences="true" display-tooltip-when-elided="true" class="quest-item-title" />
-                <ui:Label tabindex="-1" text="Menabung 10 koin 0/10" parse-escape-sequences="true" display-tooltip-when-elided="true" class="quest-item-title" />
-            </ui:VisualElement>
+            <ui:ScrollView name="QuestList" class="quest-list" />
         </ui:VisualElement>
         <ui:VisualElement name="InventoryInputBlocker" class="inventory-input-blocker" style="display: none;" />
         <ui:VisualElement name="InventoryPanel" class="inventory-panel" style="display: none;">
@@ -272,7 +271,6 @@
             <ui:Label tabindex="-1" text="Pause" parse-escape-sequences="true" display-tooltip-when-elided="true" class="pause-panel-title" />
             <ui:VisualElement name="PauseButtonContainer" class="pause-panel-button-container">
                 <ui:Button parse-escape-sequences="true" display-tooltip-when-elided="true" name="ResumePauseButton" class="pause-panel-icon-button pause-resume-button" />
-                <ui:Button parse-escape-sequences="true" display-tooltip-when-elided="true" name="RestartPauseButton" class="pause-panel-icon-button pause-restart-button" />
                 <ui:Button parse-escape-sequences="true" display-tooltip-when-elided="true" name="HomePauseButton" class="pause-panel-icon-button pause-home-button" />
             </ui:VisualElement>
         </ui:VisualElement>

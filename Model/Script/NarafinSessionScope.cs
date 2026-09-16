@@ -48,11 +48,6 @@ public static class NarafinSessionScope
         return BuildKey("DialogPlayed", dialogId, player);
     }
 
-    public static string GetStaticDialogPlayedKey(string dialogId, int player)
-    {
-        return BuildKey("StaticDialogPlayed", dialogId, player);
-    }
-
     private static string EnsureSessionId()
     {
         string sessionId = Guid.NewGuid().ToString("N");

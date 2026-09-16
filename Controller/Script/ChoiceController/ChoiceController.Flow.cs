@@ -8,13 +8,6 @@ public partial class ChoiceController
     private int lastSabtuAnnouncementDay = -1;
 
     // Shared flow helpers used by each choice action.
-    private bool Narasi(string aksi, int aksiKe, System.Action onComplete = null)
-    {
-        Debug.Log("Menampilkan narasi untuk aksi " + aksi);
-
-        return NarasiController.Instance.HandleNarasi(aksi, aksiKe, onComplete);
-    }
-
     private void UpdateMove()
     {
         _ = UpdateMoveAsync();

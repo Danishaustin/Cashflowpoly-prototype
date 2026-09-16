@@ -16,12 +16,6 @@ public partial class UIManagerPlay
         SetPauseState(false);
     }
 
-    private void RestartGame(ClickEvent evt)
-    {
-        SetPauseState(false);
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
-    }
-
     private void GoToHome(ClickEvent evt)
     {
         SetPauseState(false);

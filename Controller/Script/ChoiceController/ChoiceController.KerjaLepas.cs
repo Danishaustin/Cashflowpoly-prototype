@@ -30,7 +30,7 @@ public partial class ChoiceController
 
         NarafinSessionOperationResult result;
         isSubmittingKerjaLepas = true;
-        view.AddSystemTextToDialog("Mencatat kerja lepas...");
+        BeginServerWait("Mencatat kerja lepas...");
         try
         {
             result = await SendPlayerEventNowAsync(player, "KerjaLepas", BuildKerjaLepasPayload(income), GetCurrentActionSlot());
@@ -44,6 +44,8 @@ public partial class ChoiceController
         {
             isSubmittingKerjaLepas = false;
         }
+
+        await EndServerWaitAsync();
 
         if (this == null)
         {
@@ -60,18 +62,6 @@ public partial class ChoiceController
         view.UpdateCoins(GameState.Instance.GetCoins(player));
 
         string resultText = "Bekerja lepas mendapatkan " + income + " koin\n";
-        int aksiKe = GameState.Instance.klAksiKe;
-        GameState.Instance.klAksiKe++;
-        Debug.Log("klAksiKe: " + GameState.Instance.klAksiKe);
-
-        if (Narasi("KerjaLepas", aksiKe, () =>
-        {
-            ShowSystemDialogThen(resultText, UpdateMove);
-        }))
-        {
-            return;
-        }
-
-        ShowSystemDialogThen(resultText, UpdateMove);
+        PlayNarasiThen("KerjaLepas", resultText, UpdateMove);
     }
 }

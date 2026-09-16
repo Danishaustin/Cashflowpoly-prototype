@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -225,6 +226,7 @@ public partial class UIManager
         string defaultNpcSprite = npcSpriteChoices.Count > 0 ? npcSpriteChoices[0] : string.Empty;
         ConfigureDropdown(editNarasiNpcSpriteInput, npcSpriteChoices, defaultNpcSprite);
         UpdateEditNarasiNpcSpritePreview(editNarasiNpcSpriteInput?.value ?? defaultNpcSprite);
+        await SetupEditNarasiQuestDropdownsAsync();
     }
 
     private List<string> BuildEditNarasiDropdownChoices(
@@ -493,6 +495,13 @@ public partial class UIManager
             return false;
         }
 
+        // Dialog tanpa aksi pemicu atau tanpa baris berisi tidak akan pernah muncul saat bermain.
+        if (string.IsNullOrWhiteSpace(editNarasiActionTypeInput?.value))
+        {
+            ShowErrorPopup("Aksi pemicu tidak boleh kosong.");
+            return false;
+        }
+
         DialogKarakterDatabase database = await LoadEditNarasiDatabaseAsync();
         if (database == null)
         {
@@ -516,6 +525,11 @@ public partial class UIManager
 
         DialogKarakterData previousData = existingIndex >= 0 ? database.dialogKarakter[existingIndex] : null;
         DialogKarakterData formData = BuildEditNarasiDialogFromForm(previousData);
+        if (formData.lines == null || !formData.lines.Any(line => line != null && !string.IsNullOrWhiteSpace(line.text)))
+        {
+            ShowErrorPopup("Isi minimal satu baris dialog.");
+            return false;
+        }
 
         if (existingIndex >= 0)
         {
@@ -717,6 +731,10 @@ public partial class UIManager
             aksiValue = editNarasiAksiValueInput?.value ?? 0,
             npcName = editNarasiNpcNameInput?.value?.Trim() ?? string.Empty,
             npcSprite = editNarasiNpcSpriteInput?.value?.Trim() ?? string.Empty,
+            questId = ResolveQuestIdFromOption(editNarasiQuestEffectDropdown?.value),
+            questState = string.IsNullOrWhiteSpace(ResolveQuestIdFromOption(editNarasiQuestEffectDropdown?.value))
+                ? string.Empty
+                : QuestState.Normalize(editNarasiQuestEffectStateDropdown?.value),
             prerequisite = BuildEditNarasiPrerequisites(),
             lines = BuildEditNarasiLines()
         };
@@ -737,7 +755,11 @@ public partial class UIManager
             bahanDimiliki = ParseCommaSeparatedList(editNarasiRequiredBahanInput?.value),
             kebutuhanDimiliki = ParseCommaSeparatedList(editNarasiRequiredKebutuhanInput?.value),
             tujuanFinansialDimiliki = ParseCommaSeparatedList(editNarasiRequiredTujuanFinansialInput?.value),
-            masakanDijual = ParseCommaSeparatedList(editNarasiRequiredMasakanInput?.value)
+            masakanDijual = ParseCommaSeparatedList(editNarasiRequiredMasakanInput?.value),
+            questId = ResolveQuestIdFromOption(editNarasiQuestPrereqDropdown?.value),
+            questState = string.IsNullOrWhiteSpace(ResolveQuestIdFromOption(editNarasiQuestPrereqDropdown?.value))
+                ? string.Empty
+                : QuestState.Normalize(editNarasiQuestPrereqStateDropdown?.value)
         };
 
         return new List<DialogPrerequisiteData> { prerequisite };
@@ -824,6 +846,8 @@ public partial class UIManager
         SetDropdownWithoutNotify(editNarasiActionTypeInput, dialogData.aksi);
         SetDropdownWithoutNotify(editNarasiNpcSpriteInput, dialogData.npcSprite);
         UpdateEditNarasiNpcSpritePreview(dialogData.npcSprite);
+        SetQuestDropdownValue(editNarasiQuestEffectDropdown, dialogData.questId);
+        SetDropdownWithoutNotify(editNarasiQuestEffectStateDropdown, QuestState.Normalize(dialogData.questState));
         PopulateEditNarasiPrerequisite(dialogData);
         PopulateEditNarasiLines(dialogData);
     }
@@ -848,6 +872,8 @@ public partial class UIManager
         SetTextWithoutNotify(editNarasiRequiredKebutuhanInput, JoinPrerequisiteNames(prerequisite?.kebutuhanDimiliki, NarafinEventCardIdResolver.ResolveKebutuhanNameFromCardId));
         SetTextWithoutNotify(editNarasiRequiredTujuanFinansialInput, JoinPrerequisiteNames(prerequisite?.tujuanFinansialDimiliki, NarafinEventCardIdResolver.ResolveTujuanFinansialNameFromCardId));
         SetTextWithoutNotify(editNarasiRequiredMasakanInput, JoinPrerequisiteNames(prerequisite?.masakanDijual, NarafinEventCardIdResolver.ResolveResepNameFromCardId));
+        SetQuestDropdownValue(editNarasiQuestPrereqDropdown, prerequisite?.questId);
+        SetDropdownWithoutNotify(editNarasiQuestPrereqStateDropdown, QuestState.Normalize(prerequisite?.questState));
     }
 
     private void PopulateEditNarasiLines(DialogKarakterData dialogData)

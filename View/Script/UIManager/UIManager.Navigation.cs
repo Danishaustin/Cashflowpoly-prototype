@@ -18,6 +18,7 @@ public partial class UIManager
         editPemilihanNarasiContainer?.RemoveFromClassList("show-edit-narasi-select");
         editPemilihanNarasiContainer?.RemoveFromClassList("hide-edit-narasi-select-left");
         editNarasiContainer?.RemoveFromClassList("show-edit-narasi");
+        ResetEditQuestNavigationState();
     }
 
     private async void OnEditNarasiClicked(ClickEvent evt)

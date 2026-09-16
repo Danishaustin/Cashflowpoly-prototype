@@ -10,6 +10,10 @@ public class DialogKarakterData
     public int aksiValue;
     public string npcName;
     public string npcSprite;
+
+    // Efek quest: setelah dialog selesai diputar, quest ini diubah ke state tersebut.
+    public string questId;
+    public string questState;
     public List<DialogKarakterLineData> lines;
 }
 
@@ -28,6 +32,10 @@ public class DialogPrerequisiteData
     public List<string> kebutuhanDimiliki;
     public List<string> tujuanFinansialDimiliki;
     public List<string> masakanDijual;
+
+    // Syarat quest: dialog hanya muncul bila quest ini sedang berada pada state tersebut.
+    public string questId;
+    public string questState;
 }
 
 [Serializable]

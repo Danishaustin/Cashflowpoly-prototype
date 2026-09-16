@@ -106,7 +106,6 @@ public partial class UIManagerPlay : MonoBehaviour
     private Button previousTujuanFinansialButton;
     private Button nextTujuanFinansialButton;
     private Button resumePauseButton;
-    private Button restartPauseButton;
     private Button homePauseButton;
     private Button questToggleButton;
     private Button closeQuestButton;
@@ -147,6 +146,7 @@ public partial class UIManagerPlay : MonoBehaviour
     private Toggle risikoJualEmasToggle;
     private Toggle risikoPinjamanSyariahToggle;
     private VisualElement questPanel;
+    private VisualElement questList;
     private VisualElement inventoryInputBlocker;
     private VisualElement inventoryPanel;
     private VisualElement inventoryList;
@@ -236,7 +236,6 @@ public partial class UIManagerPlay : MonoBehaviour
         previousTujuanFinansialButton = root.Q<Button>("PreviousTujuanFinansialButton");
         nextTujuanFinansialButton = root.Q<Button>("NextTujuanFinansialButton");
         resumePauseButton = root.Q<Button>("ResumePauseButton");
-        restartPauseButton = root.Q<Button>("RestartPauseButton");
         homePauseButton = root.Q<Button>("HomePauseButton");
         questToggleButton = root.Q<Button>("QuestToggleButton");
         closeQuestButton = root.Q<Button>("CloseQuestButton");
@@ -265,6 +264,7 @@ public partial class UIManagerPlay : MonoBehaviour
         initialBahanGrid = root.Q<VisualElement>("InitialBahanGrid");
         BindRisikoKehidupanElements(root);
         questPanel = root.Q<VisualElement>("QuestPanel");
+        questList = root.Q<VisualElement>("QuestList");
         inventoryInputBlocker = root.Q<VisualElement>("InventoryInputBlocker");
         inventoryPanel = root.Q<VisualElement>("InventoryPanel");
         inventoryList = root.Q<VisualElement>("InventoryList");
@@ -364,7 +364,6 @@ public partial class UIManagerPlay : MonoBehaviour
         previousTujuanFinansialButton.RegisterCallback<ClickEvent>(ShowPreviousTujuanFinansialPage);
         nextTujuanFinansialButton.RegisterCallback<ClickEvent>(ShowNextTujuanFinansialPage);
         resumePauseButton.RegisterCallback<ClickEvent>(ResumePause);
-        restartPauseButton.RegisterCallback<ClickEvent>(RestartGame);
         homePauseButton.RegisterCallback<ClickEvent>(GoToHome);
         questToggleButton.RegisterCallback<ClickEvent>(ToggleQuestPanel);
         closeQuestButton.RegisterCallback<ClickEvent>(HideQuestPanel);
@@ -430,8 +429,7 @@ public partial class UIManagerPlay : MonoBehaviour
                 continue;
             }
 
-            if (specialButtons.Contains(button.name)
-                || (button.name != null && button.name.StartsWith(RisikoKartuButtonPrefix, System.StringComparison.Ordinal)))
+            if (specialButtons.Contains(button.name))
             {
                 button.RegisterCallback<ClickEvent>(evt => OnChoiceTFClicked(evt, container));
                 continue;

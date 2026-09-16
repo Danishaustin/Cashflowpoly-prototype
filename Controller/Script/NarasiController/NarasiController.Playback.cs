@@ -1,14 +1,16 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
 public partial class NarasiController
 {
-    // Entry point used by choice actions to play matching narasi before continuing.
-    public bool HandleNarasi(string aksi, int aksiKe, System.Action onComplete = null)
+    // Satu-satunya jalur narasi: dialog karakter dari paket narasi aktif, lalu teks hasil aksi.
+    // false berarti tidak ada dialog yang cocok sehingga pemanggil menampilkan teks hasil aksinya sendiri.
+    public bool PlayDialogKarakterThen(string aksi, int aksiKe, string resultText, System.Action onComplete)
     {
-        if (!EnsureNarasiCache())
+        // Narasi yang sedang berjalan tidak boleh dipotong: onComplete-nya membawa kelanjutan giliran.
+        if (isPlayingNarasi || !EnsureNarasiCache())
         {
             return false;
         }
@@ -24,59 +26,40 @@ public partial class NarasiController
             return false;
         }
 
-        int activePlayerTurn = GetActivePlayerTurn();
-        DialogKarakterData selectedDialogKarakter = GetDialogKarakterByPrerequisite(aksi, aksiKe);
-        if (selectedDialogKarakter != null)
-        {
-            var dialogLines = selectedDialogKarakter.lines?
-                .Where(line => line != null && !string.IsNullOrWhiteSpace(line.text))
-                .ToList();
-
-            if (dialogLines != null && dialogLines.Count > 0)
-            {
-                if (currentNarasiCoroutine != null)
-                {
-                    StopCoroutine(currentNarasiCoroutine);
-                }
-
-                currentNarasiCoroutine = StartCoroutine(PlayDialogKarakter(selectedDialogKarakter, dialogLines, activePlayerTurn, onComplete));
-                return true;
-            }
-        }
-
-        NarasiData selectedNarasi = GetNarasiByPrerequisite(aksi, aksiKe);
-        if (selectedNarasi == null)
+        DialogKarakterData dialogKarakter = GetDialogKarakterByPrerequisite(aksi, aksiKe);
+        if (dialogKarakter == null)
         {
             return false;
         }
 
-        if (currentNarasiCoroutine != null)
-        {
-            StopCoroutine(currentNarasiCoroutine);
-        }
-
-        var narasiList = new List<string>()
-        {
-            selectedNarasi.narasi1,
-            selectedNarasi.narasi2,
-            selectedNarasi.narasi3
-        }
-            .Where(text => !string.IsNullOrWhiteSpace(text))
-            .ToList();
-
-        if (narasiList.Count == 0)
+        List<DialogKarakterLineData> dialogLines = GetPlayableLines(dialogKarakter);
+        if (dialogLines.Count == 0)
         {
             return false;
         }
 
-        currentNarasiCoroutine = StartCoroutine(PlayNarasi(narasiList, onComplete));
+        isPlayingNarasi = true;
+        currentNarasiCoroutine = StartCoroutine(PlayDialogKarakter(dialogKarakter, dialogLines, GetActivePlayerTurn(), resultText, onComplete));
         return true;
+    }
+
+    private static List<DialogKarakterLineData> GetPlayableLines(DialogKarakterData dialogKarakter)
+    {
+        if (dialogKarakter?.lines == null)
+        {
+            return new List<DialogKarakterLineData>();
+        }
+
+        return dialogKarakter.lines
+            .Where(line => line != null && !string.IsNullOrWhiteSpace(line.text))
+            .ToList();
     }
 
     private IEnumerator PlayDialogKarakter(
         DialogKarakterData dialogKarakter,
         List<DialogKarakterLineData> dialogLines,
         int activePlayerTurn,
+        string resultText,
         System.Action onComplete)
     {
         string npcName = string.IsNullOrWhiteSpace(dialogKarakter.npcName) ? "NPC" : dialogKarakter.npcName;
@@ -107,18 +90,27 @@ public partial class NarasiController
             yield return view.PlayDialogSteps(new List<string> { line.text });
         }
 
+        // Teks hasil aksi tetap ditampilkan sesudah dialog agar pemain tahu akibat aksinya.
+        if (!string.IsNullOrWhiteSpace(resultText))
+        {
+            view.HideNpcContainer();
+            view.ShowPlayerDialogContainer();
+            view.ClearDialogNameOverride();
+            yield return view.PlaySystemDialogSteps(new List<string> { resultText });
+        }
+
+        // State quest hanya berubah lewat narasi, jadi efeknya diterapkan setelah dialognya benar-benar diputar.
+        if (!string.IsNullOrWhiteSpace(dialogKarakter.questId) && GameState.Instance != null)
+        {
+            GameState.Instance.SetQuestState(activePlayerTurn, dialogKarakter.questId, dialogKarakter.questState);
+        }
+
         MarkDialogPlayed(dialogKarakter.id, activePlayerTurn);
         view.HideNpcContainer();
         view.HidePlayerDialogContainer();
         view.ClearDialogNameOverride();
         currentNarasiCoroutine = null;
-        onComplete?.Invoke();
-    }
-
-    private IEnumerator PlayNarasi(List<string> narasiList, System.Action onComplete)
-    {
-        yield return view.PlayDialogSteps(narasiList);
-        currentNarasiCoroutine = null;
+        isPlayingNarasi = false;
         onComplete?.Invoke();
     }
 

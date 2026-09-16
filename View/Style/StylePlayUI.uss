@@ -606,13 +606,13 @@ Button:active {
     margin-left: 24px;
 }
 
-.risk-card-button {
+.risk-card-dropdown {
     width: 96%;
-    min-height: 56px;
-    margin-top: 4px;
-    margin-bottom: 4px;
+    min-height: 62px;
+    align-self: center;
+    margin-top: 6px;
+    margin-bottom: 6px;
     font-size: 30px;
-    white-space: normal;
 }
 
 .risk-warning-text {
@@ -901,7 +901,6 @@ Button:active {
     padding-right: 10px;
     padding-bottom: 10px;
     padding-left: 10px;
-    display: none;
 }
 
 .inventory-toggle-button {
@@ -941,7 +940,7 @@ Button:active {
     top: 130px;
     left: 60%;
     width: 420px;
-    height: 330px;
+    height: 360px;
     padding-top: 18px;
     padding-right: 18px;
     padding-bottom: 18px;
@@ -998,11 +997,69 @@ Button:active {
     padding-top: 14px;
 }
 
+.quest-player-title {
+    -unity-font: resource('Sprite/300Mind/2D Game UI Kit/Fonts/Ariston Comic Font');
+    -unity-font-definition: initial;
+    -unity-font-style: bold;
+    font-size: 34px;
+    color: rgb(16, 84, 52);
+    margin-top: 8px;
+    margin-bottom: 10px;
+    white-space: normal;
+}
+
 .quest-item-title {
     -unity-font: resource('Sprite/300Mind/2D Game UI Kit/Fonts/Ariston Comic Font');
     -unity-font-definition: initial;
     font-size: 32px;
     color: rgb(22, 52, 42);
+    margin-bottom: 14px;
+    white-space: normal;
+}
+
+/* Nama quest dan statenya dipisah agar warna state bisa berbeda dari nama quest. */
+.quest-item-row {
+    flex-direction: row;
+    align-items: flex-start;
+    margin-bottom: 10px;
+    flex-wrap: wrap;
+}
+
+.quest-item-row .quest-item-title {
+    margin-bottom: 0;
+}
+
+.quest-item-state {
+    -unity-font: resource('Sprite/300Mind/2D Game UI Kit/Fonts/Ariston Comic Font');
+    -unity-font-definition: initial;
+    -unity-font-style: bold;
+    font-size: 32px;
+    margin-bottom: 0;
+    white-space: normal;
+}
+
+.quest-state-aktif {
+    color: rgb(226, 178, 20);
+}
+
+.quest-state-selesai {
+    color: rgb(38, 150, 70);
+}
+
+.quest-state-gagal {
+    color: rgb(190, 40, 40);
+}
+
+.quest-state-belum {
+    color: rgb(110, 122, 116);
+}
+
+.quest-item-detail {
+    -unity-font: resource('Sprite/300Mind/2D Game UI Kit/Fonts/Ariston Comic Font');
+    -unity-font-definition: initial;
+    font-size: 26px;
+    color: rgb(72, 96, 84);
+    margin-left: 18px;
     margin-bottom: 14px;
     white-space: normal;
 }
@@ -1299,18 +1356,6 @@ Button:active {
 
 .pause-resume-button:active {
     background-image: url("project://database/Assets/View/UI/Sprites/Icons/Play-Click.png?fileID=21300000&guid=ed8c76e8f04533e4ca4ddf5053bcb5a6&type=3#Play-Click");
-}
-
-.pause-restart-button {
-    background-image: url("project://database/Assets/View/UI/Sprites/Icons/Repeat-Right-Idle.png?fileID=21300000&guid=75ae5dca92bd51049a051e24e05abf1b&type=3#Repeat-Right-Idle");
-    border-left-color: rgba(255, 255, 255, 0);
-    border-right-color: rgba(255, 255, 255, 0);
-    border-top-color: rgba(255, 255, 255, 0);
-    border-bottom-color: rgba(255, 255, 255, 0);
-}
-
-.pause-restart-button:active {
-    background-image: url("project://database/Assets/View/UI/Sprites/Icons/Repeat-Right-Click.png?fileID=21300000&guid=25bd480bb65f58849abc5953a3dfce03&type=3#Repeat-Right-Click");
 }
 
 .pause-home-button {

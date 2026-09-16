@@ -7,15 +7,14 @@ public partial class NarasiController : MonoBehaviour
 
     [SerializeField] private UIManagerPlay view;
 
-    private List<NarasiData> narasiList;
     private List<DialogKarakterData> dialogKarakterList;
     private Coroutine currentNarasiCoroutine;
     private bool isNarasiCacheReady;
+    private bool isPlayingNarasi;
 
     void Awake()
     {
         Instance = this;
-        narasiList = new List<NarasiData>();
         dialogKarakterList = new List<DialogKarakterData>();
     }
 

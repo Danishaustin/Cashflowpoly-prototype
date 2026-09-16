@@ -104,7 +104,7 @@ public partial class ChoiceController
         view.UpdatePlayerTurn(GameState.Instance.turn);
         view.UpdatePlayerStats();
 
-        ShowSystemDialogThen(playerName + " berdonasi " + amount + " coin.", () => ContinueAfterPeduliDonasiStep(isPeduliDonasiSelesai));
+        PlayNarasiThen("JumatBerkah", playerName + " berdonasi " + amount + " coin.", () => ContinueAfterPeduliDonasiStep(isPeduliDonasiSelesai));
     }
 
     // Donasi Jumat wajib; pemain yang koinnya kurang melakukan Kerja Lepas dulu (diterima server sebelum donasi)
@@ -157,20 +157,25 @@ public partial class ChoiceController
     private async Task<NarafinSessionOperationResult> SendDonasiEventAsync(int player, string actionType, string payloadJson, int actionSlot, string progressText)
     {
         isSubmittingDonasi = true;
-        view.AddSystemTextToDialog(progressText);
+        BeginServerWait(progressText);
+
+        NarafinSessionOperationResult result;
         try
         {
-            return await SendPlayerEventNowAsync(player, actionType, payloadJson, actionSlot);
+            result = await SendPlayerEventNowAsync(player, actionType, payloadJson, actionSlot);
         }
         catch (Exception ex)
         {
             Debug.LogWarning("Gagal mengirim event Jumat: " + ex.Message);
-            return CreateEventFailure("EVENT_SEND_FAILED", "Gagal menghubungi server.");
+            result = CreateEventFailure("EVENT_SEND_FAILED", "Gagal menghubungi server.");
         }
         finally
         {
             isSubmittingDonasi = false;
         }
+
+        await EndServerWaitAsync();
+        return result;
     }
 
     private void ContinueAfterPeduliDonasiStep(bool isPeduliDonasiSelesai)

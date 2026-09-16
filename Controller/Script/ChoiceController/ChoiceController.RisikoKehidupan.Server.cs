@@ -57,18 +57,22 @@ public partial class ChoiceController
             return true;
         }
 
-        if (selectedChoice.StartsWith(UIManagerPlay.RisikoKartuButtonPrefix, StringComparison.Ordinal))
-        {
-            if (risikoServerRisk == null)
-            {
-                _ = KirimRisikoKehidupanAsync(selectedChoice.Substring(UIManagerPlay.RisikoKartuButtonPrefix.Length));
-            }
-
-            return true;
-        }
-
         if (selectedChoice == "NextButtonRisikoKehidupan")
         {
+            // Sebelum kartu dikirim, Next berarti mengonfirmasi pilihan dropdown kartu risiko.
+            if (risikoServerRisk == null)
+            {
+                string riskCode = view.GetSelectedRisikoKartuCode();
+                if (string.IsNullOrWhiteSpace(riskCode))
+                {
+                    view.ShowRisikoKehidupanWarning("Pilih kartu risiko terlebih dahulu.");
+                    return true;
+                }
+
+                _ = KirimRisikoKehidupanAsync(riskCode);
+                return true;
+            }
+
             if (risikoServerPayer != 0)
             {
                 _ = HandleRisikoServerDecisionNextAsync();
@@ -477,7 +481,7 @@ public partial class ChoiceController
         view.HideChoiceContainer("ChoiceRisikoKehidupan");
         view.UpdatePlayerTurn(GameState.Instance.turn);
         view.UpdatePlayerStats();
-        ShowSystemDialogThen(resultText, UpdateMove);
+        PlayNarasiThen("RisikoKehidupan", resultText, UpdateMove);
     }
 
     private async Task<NarafinSessionOperationResult> SendRisikoEventAsync(int player, string actionType, string payloadJson)

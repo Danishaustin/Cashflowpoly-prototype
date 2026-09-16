@@ -52,7 +52,65 @@
                 <ui:VisualElement name="EditMenuCard" class="edit-menu-card">
                     <ui:Label tabindex="-1" text="Edit Menu" parse-escape-sequences="true" display-tooltip-when-elided="true" name="EditMenuTitle" class="edit-menu-title" />
                     <ui:Button text="Edit Narasi" parse-escape-sequences="true" display-tooltip-when-elided="true" name="EditNarasiButton" class="home-button edit-menu-button" />
-                    <ui:Button text="Edit Asset" parse-escape-sequences="true" display-tooltip-when-elided="true" name="EditAssetButton" class="home-button edit-menu-button" />
+                    <ui:Button text="Edit Quest" parse-escape-sequences="true" display-tooltip-when-elided="true" name="EditQuestButton" class="home-button edit-menu-button" />
+                    <ui:Button text="Edit Asset" parse-escape-sequences="true" display-tooltip-when-elided="true" name="EditAssetButton" class="home-button edit-menu-button" style="display: none;" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+        </ui:VisualElement>
+        <ui:VisualElement name="EditPemilihanQuestContainer" class="edit-narasi-select-page">
+            <ui:VisualElement name="Navbar" class="navbar">
+                <ui:Button text="Back" parse-escape-sequences="true" display-tooltip-when-elided="true" name="BackEditPemilihanQuestButton" class="home-button navbar-button" />
+            </ui:VisualElement>
+            <ui:VisualElement name="Body" class="edit-narasi-select-body">
+                <ui:VisualElement name="EditQuestSelectCard" class="edit-narasi-select-card">
+                    <ui:Label tabindex="-1" text="Pilih Quest" parse-escape-sequences="true" display-tooltip-when-elided="true" name="EditQuestSelectTitle" class="edit-menu-title" />
+                    <ui:Label tabindex="-1" text="Paket Quest" parse-escape-sequences="true" display-tooltip-when-elided="true" class="edit-field-label" />
+                    <ui:DropdownField name="EditQuestPackDropdown" class="edit-narasi-pack-dropdown" />
+                    <ui:VisualElement name="EditQuestPackActions" class="edit-action-row">
+                        <ui:Button text="+ New" parse-escape-sequences="true" display-tooltip-when-elided="true" name="EditQuestPackNewButton" class="home-button edit-narasi-pack-new-button" />
+                        <ui:Button text="Delete" parse-escape-sequences="true" display-tooltip-when-elided="true" name="EditQuestPackDeleteButton" class="home-button edit-narasi-pack-new-button edit-delete-button" />
+                    </ui:VisualElement>
+                </ui:VisualElement>
+            </ui:VisualElement>
+            <ui:Button text="Next" parse-escape-sequences="true" display-tooltip-when-elided="true" name="NextEditPemilihanQuestButton" class="home-button edit-narasi-select-next-button" />
+        </ui:VisualElement>
+        <ui:VisualElement name="EditQuestContainer" class="edit-narasi-page">
+            <ui:VisualElement name="Navbar" class="navbar edit-narasi-navbar">
+                <ui:Button text="Back" parse-escape-sequences="true" display-tooltip-when-elided="true" name="BackEditQuestButton" class="home-button navbar-button" />
+            </ui:VisualElement>
+            <ui:VisualElement name="Body" class="edit-narasi-body">
+                <ui:Label tabindex="-1" text="Edit Quest" parse-escape-sequences="true" display-tooltip-when-elided="true" name="EditQuestTitle" class="edit-narasi-title" />
+                <ui:VisualElement name="EditQuestWorkspace" class="edit-narasi-workspace">
+                    <ui:VisualElement name="EditQuestListPanel" class="edit-narasi-list-panel">
+                        <ui:VisualElement name="EditQuestActivePackHeader" class="edit-narasi-active-pack-header">
+                            <ui:Label tabindex="-1" text="Nama Quest Pack" parse-escape-sequences="true" display-tooltip-when-elided="true" class="edit-section-title edit-narasi-active-pack-label" />
+                            <ui:TextField name="EditQuestActivePackNameInput" class="input-field edit-text-input edit-narasi-active-pack-input" />
+                        </ui:VisualElement>
+                        <ui:Label tabindex="-1" text="Daftar Quest" parse-escape-sequences="true" display-tooltip-when-elided="true" class="edit-section-title" />
+                        <ui:DropdownField name="EditQuestDropdown" class="edit-dialog-dropdown" />
+                        <ui:VisualElement name="EditQuestActions" class="edit-action-row edit-dialog-action-row">
+                            <ui:Button text="+ New" parse-escape-sequences="true" display-tooltip-when-elided="true" name="EditQuestNewButton" class="home-button edit-small-button" />
+                            <ui:Button text="Delete" parse-escape-sequences="true" display-tooltip-when-elided="true" name="EditQuestDeleteButton" class="home-button edit-small-button edit-delete-button" />
+                        </ui:VisualElement>
+                    </ui:VisualElement>
+                    <ui:VisualElement name="EditQuestDetailPanel" class="edit-narasi-detail-panel">
+                        <ui:ScrollView name="EditQuestScrollView" class="edit-narasi-scroll">
+                            <ui:VisualElement name="EditQuestBasicSection" class="edit-section-card">
+                                <ui:Label tabindex="-1" text="Basic Info" parse-escape-sequences="true" display-tooltip-when-elided="true" class="edit-section-title" />
+                                <ui:Label tabindex="-1" text="Quest ID" parse-escape-sequences="true" display-tooltip-when-elided="true" class="edit-field-label" />
+                                <ui:TextField name="EditQuestIdInput" class="input-field edit-text-input" />
+                                <ui:Label tabindex="-1" text="Nama Quest" parse-escape-sequences="true" display-tooltip-when-elided="true" class="edit-field-label" />
+                                <ui:TextField name="EditQuestNamaInput" class="input-field edit-text-input" />
+                                <ui:Label tabindex="-1" text="Perintah" parse-escape-sequences="true" display-tooltip-when-elided="true" class="edit-field-label" />
+                                <ui:TextField multiline="true" name="EditQuestPerintahInput" class="input-field edit-text-input edit-line-text" />
+                                <ui:Label tabindex="-1" text="Perintah bersifat statis, tanpa angka yang dihitung otomatis. Contoh: Beli Nasi di pasar" parse-escape-sequences="true" display-tooltip-when-elided="true" class="edit-prerequisite-hint" />
+                            </ui:VisualElement>
+                        </ui:ScrollView>
+                        <ui:VisualElement name="EditQuestFooter" class="edit-narasi-footer">
+                            <ui:Button text="Reset" parse-escape-sequences="true" display-tooltip-when-elided="true" name="EditQuestResetButton" class="home-button edit-footer-button" />
+                            <ui:Button text="Save" parse-escape-sequences="true" display-tooltip-when-elided="true" name="EditQuestSaveButton" class="home-button edit-footer-button" />
+                        </ui:VisualElement>
+                    </ui:VisualElement>
                 </ui:VisualElement>
             </ui:VisualElement>
         </ui:VisualElement>
@@ -107,6 +165,10 @@
                                 <ui:Label tabindex="-1" text="NPC Sprite" parse-escape-sequences="true" display-tooltip-when-elided="true" class="edit-field-label" />
                                 <ui:DropdownField name="EditNarasiNpcSpriteInput" class="edit-basic-dropdown" />
                                 <ui:VisualElement name="EditNarasiNpcSpritePreview" class="edit-npc-sprite-preview" style="width: 250px; height: 250px;" />
+                                <ui:Label tabindex="-1" text="Ubah Quest" parse-escape-sequences="true" display-tooltip-when-elided="true" class="edit-field-label" />
+                                <ui:DropdownField name="EditNarasiQuestEffectDropdown" class="edit-basic-dropdown" />
+                                <ui:Label tabindex="-1" text="Jadi State" parse-escape-sequences="true" display-tooltip-when-elided="true" class="edit-field-label" />
+                                <ui:DropdownField name="EditNarasiQuestEffectStateDropdown" class="edit-basic-dropdown" />
                             </ui:VisualElement>
                             <ui:VisualElement name="EditNarasiLinesSection" class="edit-section-card">
                                 <ui:Label tabindex="-1" text="Dialog Lines" parse-escape-sequences="true" display-tooltip-when-elided="true" class="edit-section-title" />
@@ -154,6 +216,10 @@
                                 <ui:TextField name="EditNarasiRequiredTujuanFinansialInput" class="input-field edit-text-input" />
                                 <ui:Label tabindex="-1" text="Syarat Masakan Terjual" parse-escape-sequences="true" display-tooltip-when-elided="true" class="edit-field-label" />
                                 <ui:TextField name="EditNarasiRequiredMasakanInput" class="input-field edit-text-input" />
+                                <ui:Label tabindex="-1" text="Syarat Quest" parse-escape-sequences="true" display-tooltip-when-elided="true" class="edit-field-label" />
+                                <ui:DropdownField name="EditNarasiQuestPrereqDropdown" class="edit-basic-dropdown" />
+                                <ui:Label tabindex="-1" text="State Quest" parse-escape-sequences="true" display-tooltip-when-elided="true" class="edit-field-label" />
+                                <ui:DropdownField name="EditNarasiQuestPrereqStateDropdown" class="edit-basic-dropdown" />
                             </ui:VisualElement>
                         </ui:ScrollView>
                         <ui:VisualElement name="EditNarasiFooter" class="edit-narasi-footer">
@@ -187,23 +253,29 @@
                 </ui:VisualElement>
             </ui:VisualElement>
         </ui:VisualElement>
-        <ui:VisualElement name="SessionSetupContainer" class="session-setup-page">
+        <ui:VisualElement name="SessionSetupContainer" class="session-setup-page" style="top: 3px; left: 0;">
             <ui:VisualElement name="Navbar" class="navbar">
                 <ui:Button text="Back" parse-escape-sequences="true" display-tooltip-when-elided="true" name="BackSessionSetupButton" class="home-button navbar-button" />
             </ui:VisualElement>
             <ui:VisualElement name="Body" class="session-setup-body">
-                <ui:VisualElement name="SessionSetupForm" class="session-setup-form" style="height: 700px; justify-content: space-around;">
+                <ui:VisualElement name="SessionSetupForm" class="session-setup-form" style="justify-content: space-around;">
                     <ui:Label tabindex="-1" text="Setup Session" parse-escape-sequences="true" display-tooltip-when-elided="true" name="SessionSetupTitle" class="session-setup-title" />
                     <ui:VisualElement name="SessionSetupInputContainer" class="session-setup-input-container">
-                        <ui:Label tabindex="-1" text="Session Name" parse-escape-sequences="true" display-tooltip-when-elided="true" name="SessionNameLabel" class="label-field" style="font-size: 44px;" />
-                        <ui:TextField picking-mode="Ignore" name="SessionNameInput" class="input-field session-setup-input" style="font-size: 44px;" />
-                        <ui:Label tabindex="-1" text="Ruleset" parse-escape-sequences="true" display-tooltip-when-elided="true" name="RulesetLabel" class="label-field" style="font-size: 44px;" />
-                        <ui:VisualElement name="RulesetSelectorRow" class="ruleset-selector-row">
-                            <ui:DropdownField name="RulesetModeDropdown" value="Mahir" class="input-field session-setup-input ruleset-mode-dropdown" style="font-size: 34px; height: 70px;" />
-                            <ui:DropdownField name="RulesetDropdown" class="input-field session-setup-input ruleset-dropdown" style="font-size: 36px;" />
+                        <ui:VisualElement name="SessionSetupColumnLeft" class="session-setup-column">
+                            <ui:Label tabindex="-1" text="Session Name" parse-escape-sequences="true" display-tooltip-when-elided="true" name="SessionNameLabel" class="label-field" style="font-size: 44px;" />
+                            <ui:TextField picking-mode="Ignore" name="SessionNameInput" class="input-field session-setup-input" style="font-size: 44px;" />
+                            <ui:Label tabindex="-1" text="Ruleset" parse-escape-sequences="true" display-tooltip-when-elided="true" name="RulesetLabel" class="label-field" style="font-size: 44px;" />
+                            <ui:VisualElement name="RulesetSelectorRow" class="ruleset-selector-row">
+                                <ui:DropdownField name="RulesetModeDropdown" value="Mahir" class="input-field session-setup-input ruleset-mode-dropdown" style="font-size: 34px; height: 70px;" />
+                                <ui:DropdownField name="RulesetDropdown" class="input-field session-setup-input ruleset-dropdown" style="font-size: 36px; margin-top: 25px;" />
+                            </ui:VisualElement>
                         </ui:VisualElement>
-                        <ui:Label tabindex="-1" text="Narasi" parse-escape-sequences="true" display-tooltip-when-elided="true" name="NarasiPackLabel" class="label-field" style="font-size: 44px;" />
-                        <ui:DropdownField name="NarasiPackDropdown" value="Default" class="input-field session-setup-input ruleset-dropdown" style="font-size: 36px;" />
+                        <ui:VisualElement name="SessionSetupColumnRight" class="session-setup-column">
+                            <ui:Label tabindex="-1" text="Narasi" parse-escape-sequences="true" display-tooltip-when-elided="true" name="NarasiPackLabel" class="label-field" style="font-size: 44px;" />
+                            <ui:DropdownField name="NarasiPackDropdown" value="Default" class="input-field session-setup-input ruleset-dropdown session-pack-dropdown" style="font-size: 36px;" />
+                            <ui:Label tabindex="-1" text="Quest" parse-escape-sequences="true" display-tooltip-when-elided="true" name="QuestPackLabel" class="label-field" style="font-size: 44px;" />
+                            <ui:DropdownField name="QuestPackDropdown" value="Default" class="input-field session-setup-input ruleset-dropdown session-pack-dropdown" style="font-size: 36px;" />
+                        </ui:VisualElement>
                     </ui:VisualElement>
                     <ui:Label tabindex="-1" parse-escape-sequences="true" display-tooltip-when-elided="true" name="SessionSetupValidationText" class="session-setup-validation" />
                 </ui:VisualElement>

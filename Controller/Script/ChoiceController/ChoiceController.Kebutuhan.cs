@@ -104,7 +104,7 @@ public partial class ChoiceController
 
         NarafinSessionOperationResult result;
         isSubmittingKebutuhan = true;
-        view.AddSystemTextToDialog("Mencatat pembelian " + kebutuhanName + "...");
+        BeginServerWait("Mencatat pembelian " + kebutuhanName + "...");
         try
         {
             result = await SendPlayerEventNowAsync(player, "Kebutuhan", BuildKebutuhanPayload(need), GetCurrentActionSlot());
@@ -118,6 +118,8 @@ public partial class ChoiceController
         {
             isSubmittingKebutuhan = false;
         }
+
+        await EndServerWaitAsync();
 
         if (this == null)
         {
@@ -137,24 +139,7 @@ public partial class ChoiceController
         view.UpdateHappiness(GameState.Instance.GetHappiness(player));
 
         string resultText = "Membeli kebutuhan " + kebutuhanName + " seharga " + need.hargaBeli + " koin dengan poin kebahagiaan " + need.poinKebahagiaan + "\n";
-        int aksiKe = GameState.Instance.kAksiKe;
-        GameState.Instance.kAksiKe++;
-        Debug.Log("kAksiKe: " + GameState.Instance.kAksiKe);
-
-        if (PlayNpcStaticDialogThen("Kebutuhan", resultText, UpdateMove))
-        {
-            return;
-        }
-
-        if (Narasi("Kebutuhan", aksiKe, () =>
-        {
-            ShowSystemDialogThen(resultText, UpdateMove);
-        }))
-        {
-            return;
-        }
-
-        ShowSystemDialogThen(resultText, UpdateMove);
+        PlayNarasiThen("Kebutuhan", resultText, UpdateMove);
     }
 
     // Alur lama tanpa katalog ruleset session (mode offline): harga diisi manual dari data lokal.
@@ -222,24 +207,7 @@ public partial class ChoiceController
                 PostKebutuhanEvent(GameState.Instance.turn, GameState.Instance.kebutuhanSelected, GameState.Instance.SavingText, GameState.Instance.SavingText - 1);
 
                 string resultText = "Membeli kebutuhan " + GameState.Instance.kebutuhanSelected + " seharga " + GameState.Instance.SavingText + " koin dengan poin kebahagiaan " + (GameState.Instance.SavingText - 1) + "\n";
-                int aksiKe = GameState.Instance.kAksiKe;
-                GameState.Instance.kAksiKe++;
-                Debug.Log("kAksiKe: " + GameState.Instance.kAksiKe);
-
-                if (PlayNpcStaticDialogThen("Kebutuhan", resultText, UpdateMove))
-                {
-                    return;
-                }
-
-                if (Narasi("Kebutuhan", aksiKe, () =>
-                {
-                    ShowSystemDialogThen(resultText, UpdateMove);
-                }))
-                {
-                    return;
-                }
-
-                ShowSystemDialogThen(resultText, UpdateMove);
+                PlayNarasiThen("Kebutuhan", resultText, UpdateMove);
                 break;
             default:
                 Debug.Log("Pilihan tidak valid");

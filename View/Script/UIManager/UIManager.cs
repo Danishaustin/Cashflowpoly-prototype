@@ -1,9 +1,12 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UIElements;
 
 public partial class UIManager : MonoBehaviour
 {
+    private const int HomeSceneBuildIndex = 0;
+
     private Button addPlayerButton;
     private Button playButton;
     private Button editButton;
@@ -65,6 +68,11 @@ public partial class UIManager : MonoBehaviour
     private DropdownField rulesetModeDropdown;
     private DropdownField rulesetDropdown;
     private DropdownField narasiPackDropdown;
+    private DropdownField questPackDropdown;
+    private DropdownField editNarasiQuestEffectDropdown;
+    private DropdownField editNarasiQuestEffectStateDropdown;
+    private DropdownField editNarasiQuestPrereqDropdown;
+    private DropdownField editNarasiQuestPrereqStateDropdown;
     private DropdownField editNarasiPackDropdown;
     private DropdownField editNarasiDialogDropdown;
     private DropdownField editNarasiLineSpeaker1;
@@ -84,6 +92,7 @@ public partial class UIManager : MonoBehaviour
     private Button[] rulesetSuggestionButtons;
     private readonly List<NarafinRulesetSummary> currentRulesetOptions = new List<NarafinRulesetSummary>();
     private readonly List<NarasiPackData> currentNarasiPackOptions = new List<NarasiPackData>();
+    private readonly List<QuestPackData> currentQuestPackOptions = new List<QuestPackData>();
     private Label playValidationText;
     private Label addPlayerValidationText;
     private Label sessionSetupValidationText;
@@ -114,15 +123,63 @@ public partial class UIManager : MonoBehaviour
     private VisualElement errorPopupCard;
     private Coroutine errorPopupHideCoroutine;
     private bool isPlayLoading;
+    private VisualElement rootElement;
+    private bool isHomeUiReady;
+
+    void OnEnable()
+    {
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    void OnDisable()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
+    // GameObject ini satu paket dengan LoginManager dan ChangeScene yang memakai DontDestroyOnLoad,
+    // jadi UI Home ikut bertahan lintas scene: disembunyikan saat di scene lain dan dipulihkan saat kembali.
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        if (!isHomeUiReady)
+        {
+            return;
+        }
+
+        bool isHomeScene = scene.buildIndex == HomeSceneBuildIndex;
+        if (rootElement != null)
+        {
+            rootElement.style.display = isHomeScene ? DisplayStyle.Flex : DisplayStyle.None;
+        }
+
+        if (!isHomeScene)
+        {
+            return;
+        }
+
+        // Tanpa ini, overlay "Memuat permainan..." dan tombol yang dinonaktifkan sebelum pindah scene
+        // masih tertinggal saat pemain kembali ke Home.
+        ResetPlayLoadingState();
+        EndAuthLoading();
+        EndAddPlayerLoading();
+        ResetHomeNavigationState();
+
+        if (LoginManager.Instance != null && !LoginManager.Instance.IsSignedIn())
+        {
+            loginContainer?.AddToClassList("show-login");
+        }
+    }
 
     async void Start()
     {
         var root = GetComponent<UIDocument>().rootVisualElement;
+        rootElement = root;
+        root.style.display = DisplayStyle.Flex;
         UIAspectRatioUtility.ApplyResponsiveScale(root, root.Q<VisualElement>("MainContainer"));
 
         BindElements(root);
         ResetHomeNavigationState();
         ResetPlayLoadingState();
+        isHomeUiReady = true;
         RegisterCallbacks();
         SetupMobileKeyboardFocusHandlers();
         AudioController.Instance.RegisterButtonSounds(root);
@@ -140,6 +197,14 @@ public partial class UIManager : MonoBehaviour
             {
                 dialogKarakterStatusText.style.color = new Color(100, 200, 100);  // Green for success
             }
+        }
+
+        // LoginManager hidup di GameObject terpisah yang bertahan lintas scene; tanpa itu Home tidak bisa dipakai.
+        if (LoginManager.Instance == null)
+        {
+            Debug.LogError("LoginManager tidak ditemukan. Pastikan komponennya ada di scene Home.");
+            loginContainer?.AddToClassList("show-login");
+            return;
         }
 
         await LoginManager.Instance.InitializeServicesAsync();
@@ -213,6 +278,12 @@ public partial class UIManager : MonoBehaviour
         rulesetModeDropdown = root.Q<DropdownField>("RulesetModeDropdown");
         rulesetDropdown = root.Q<DropdownField>("RulesetDropdown");
         narasiPackDropdown = root.Q<DropdownField>("NarasiPackDropdown");
+        questPackDropdown = root.Q<DropdownField>("QuestPackDropdown");
+        editNarasiQuestEffectDropdown = root.Q<DropdownField>("EditNarasiQuestEffectDropdown");
+        editNarasiQuestEffectStateDropdown = root.Q<DropdownField>("EditNarasiQuestEffectStateDropdown");
+        editNarasiQuestPrereqDropdown = root.Q<DropdownField>("EditNarasiQuestPrereqDropdown");
+        editNarasiQuestPrereqStateDropdown = root.Q<DropdownField>("EditNarasiQuestPrereqStateDropdown");
+        BindEditQuestElements(root);
         editNarasiPackDropdown = root.Q<DropdownField>("EditNarasiPackDropdown");
         editNarasiDialogDropdown = root.Q<DropdownField>("EditNarasiDialogDropdown");
         editNarasiLineSpeaker1 = root.Q<DropdownField>("EditNarasiLineSpeaker1");
@@ -295,6 +366,7 @@ public partial class UIManager : MonoBehaviour
         editNarasiAddLineButton?.RegisterCallback<ClickEvent>(OnEditNarasiAddLineClicked);
         editNarasiResetButton?.RegisterCallback<ClickEvent>(OnEditNarasiResetClicked);
         editNarasiSaveButton?.RegisterCallback<ClickEvent>(OnEditNarasiSaveClicked);
+        RegisterEditQuestCallbacks();
         exitButton.RegisterCallback<ClickEvent>(OnExitClicked);
         backAddPlayer.RegisterCallback<ClickEvent>(evt => OnBackClicked(evt, addPlayerContainer, "show-add-player"));
         loginButton.RegisterCallback<ClickEvent>(OnLoginClicked);

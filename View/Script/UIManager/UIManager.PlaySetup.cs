@@ -13,6 +13,8 @@ public partial class UIManager
     private const string RulesetVersionPlayerPrefsKey = "Narafin.RulesetVersion";
     private const string NarasiPackIdPlayerPrefsKey = "Narafin.NarasiPackId";
     private const string NarasiPackNamePlayerPrefsKey = "Narafin.NarasiPackName";
+    private const string QuestPackIdPlayerPrefsKey = "Narafin.QuestPackId";
+    private const string QuestPackNamePlayerPrefsKey = "Narafin.QuestPackName";
 
     private readonly List<NarafinPlayerSummary> currentPlayerSuggestions = new List<NarafinPlayerSummary>();
     private int activePlayerNameInputIndex = -1;
@@ -66,6 +68,11 @@ public partial class UIManager
             narasiPackDropdown.SetValueWithoutNotify(NarasiSessionContext.DefaultOptionName);
         }
 
+        if (questPackDropdown != null)
+        {
+            questPackDropdown.SetValueWithoutNotify(QuestSessionContext.DefaultOptionName);
+        }
+
         if (playerCountDropdown != null)
         {
             playerCountDropdown.SetValueWithoutNotify("3");
@@ -112,6 +119,7 @@ public partial class UIManager
 
             SetupRulesetDropdown();
             await SetupNarasiPackDropdownAsync();
+            await SetupQuestPackDropdownAsync();
             ShowSessionSetup();
         }
         catch (System.Exception ex)
@@ -170,6 +178,10 @@ public partial class UIManager
         NarasiPackData selectedNarasiPack = GetSelectedNarasiPack();
         PlayerPrefs.SetString(NarasiPackIdPlayerPrefsKey, selectedNarasiPack != null ? selectedNarasiPack.id ?? string.Empty : string.Empty);
         PlayerPrefs.SetString(NarasiPackNamePlayerPrefsKey, selectedNarasiPack != null ? selectedNarasiPack.name ?? string.Empty : NarasiSessionContext.DefaultOptionName);
+
+        QuestPackData selectedQuestPack = GetSelectedQuestPack();
+        PlayerPrefs.SetString(QuestPackIdPlayerPrefsKey, selectedQuestPack != null ? selectedQuestPack.id ?? string.Empty : string.Empty);
+        PlayerPrefs.SetString(QuestPackNamePlayerPrefsKey, selectedQuestPack != null ? selectedQuestPack.name ?? string.Empty : QuestSessionContext.DefaultOptionName);
 
         NarafinSessionScope.BeginNewSession(sessionName);
 
@@ -282,6 +294,13 @@ public partial class UIManager
                 return;
             }
 
+            NarafinSessionOperationResult questResult = await ApplySelectedQuestPackAsync();
+            if (!questResult.Success)
+            {
+                ShowErrorPopup(questResult.ErrorMessage);
+                return;
+            }
+
             NarafinPlaySessionResult result = await LoginManager.Instance.CreatePlaySessionAsync(sessionName, selectedRulesetMode, selectedRulesetName, selectedRulesetId, playerNames);
             if (!result.Success)
             {
@@ -311,6 +330,14 @@ public partial class UIManager
 
             PlayerPrefs.Save();
             NarafinSessionScope.BeginNewSession(NarafinSessionScope.CurrentSessionName);
+            // Bila ChangeScene tidak ada, overlay wajib ditutup lagi supaya Home tidak terkunci.
+            if (ChangeScene.Instance == null)
+            {
+                Debug.LogError("ChangeScene tidak ditemukan. Pastikan komponennya ada di scene Home.");
+                ShowErrorPopup("Gagal membuka permainan. Komponen perpindahan scene tidak ditemukan.");
+                return;
+            }
+
             startedSceneTransition = true;
             ChangeScene.Instance.ChangeToScene(1);
         }
@@ -365,6 +392,101 @@ public partial class UIManager
         {
             Debug.LogWarning(NarasiPackRepository.LastCloudWarningMessage);
         }
+    }
+
+    private async System.Threading.Tasks.Task SetupQuestPackDropdownAsync()
+    {
+        if (questPackDropdown == null)
+        {
+            return;
+        }
+
+        string previouslySelected = questPackDropdown.value;
+        currentQuestPackOptions.Clear();
+        QuestPackRepository.ClearLastCloudWarning();
+
+        QuestManifestData manifest = await QuestPackRepository.LoadManifestAsync();
+        if (manifest?.questPacks != null)
+        {
+            foreach (QuestPackData pack in manifest.questPacks)
+            {
+                if (pack != null && !string.IsNullOrWhiteSpace(pack.id) && !string.IsNullOrWhiteSpace(pack.name))
+                {
+                    currentQuestPackOptions.Add(pack);
+                }
+            }
+        }
+
+        List<string> choices = new List<string> { QuestSessionContext.DefaultOptionName };
+        foreach (QuestPackData pack in currentQuestPackOptions)
+        {
+            choices.Add(pack.name);
+        }
+
+        questPackDropdown.choices = choices;
+        string selectedOption = choices.Contains(previouslySelected) ? previouslySelected : QuestSessionContext.DefaultOptionName;
+        questPackDropdown.SetValueWithoutNotify(selectedOption);
+
+        if (!string.IsNullOrWhiteSpace(QuestPackRepository.LastCloudWarningMessage))
+        {
+            Debug.LogWarning(QuestPackRepository.LastCloudWarningMessage);
+        }
+    }
+
+    private QuestPackData GetSelectedQuestPack()
+    {
+        string selectedName = questPackDropdown != null ? questPackDropdown.value : QuestSessionContext.DefaultOptionName;
+        if (string.IsNullOrWhiteSpace(selectedName) || string.Equals(selectedName, QuestSessionContext.DefaultOptionName, System.StringComparison.OrdinalIgnoreCase))
+        {
+            return null;
+        }
+
+        foreach (QuestPackData pack in currentQuestPackOptions)
+        {
+            if (pack != null && string.Equals(pack.name, selectedName, System.StringComparison.Ordinal))
+            {
+                return pack;
+            }
+        }
+
+        return null;
+    }
+
+    // Paket quest dipilih terpisah dari paket narasi, jadi keduanya diterapkan sebelum session dibuat.
+    private async System.Threading.Tasks.Task<NarafinSessionOperationResult> ApplySelectedQuestPackAsync()
+    {
+        string selectedPackId = PlayerPrefs.GetString(QuestPackIdPlayerPrefsKey, string.Empty);
+        if (string.IsNullOrWhiteSpace(selectedPackId))
+        {
+            return await QuestSessionContext.ApplyAsync(null);
+        }
+
+        QuestManifestData manifest = await QuestPackRepository.LoadManifestAsync();
+        QuestPackData selectedPack = null;
+        if (manifest?.questPacks != null)
+        {
+            foreach (QuestPackData pack in manifest.questPacks)
+            {
+                if (pack != null && string.Equals(pack.id, selectedPackId, System.StringComparison.OrdinalIgnoreCase))
+                {
+                    selectedPack = pack;
+                    break;
+                }
+            }
+        }
+
+        if (selectedPack == null)
+        {
+            string packName = PlayerPrefs.GetString(QuestPackNamePlayerPrefsKey, "paket terpilih");
+            return new NarafinSessionOperationResult
+            {
+                Success = false,
+                ErrorCode = "QUEST_PACK_NOT_FOUND",
+                ErrorMessage = "Paket quest \"" + packName + "\" tidak ditemukan."
+            };
+        }
+
+        return await QuestSessionContext.ApplyAsync(selectedPack);
     }
 
     private NarasiPackData GetSelectedNarasiPack()

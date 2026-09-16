@@ -14,6 +14,11 @@ public partial class UIManagerPlay
     private void ToggleQuestPanel(ClickEvent evt)
     {
         bool isVisible = questPanel.style.display == DisplayStyle.Flex;
+        if (!isVisible)
+        {
+            RefreshQuestPanel();
+        }
+
         questPanel.style.display = isVisible ? DisplayStyle.None : DisplayStyle.Flex;
         if (!isVisible && inventoryPanel != null)
         {
@@ -25,6 +30,86 @@ public partial class UIManagerPlay
     {
         questPanel.style.display = DisplayStyle.None;
     }
+
+    // Hanya quest pemain yang sedang bergiliran yang ditampilkan, dan namanya ditulis agar jelas quest siapa.
+    // Quest yang belum diaktifkan narasi tidak ditampilkan karena belum diterima pemain itu.
+    private void RefreshQuestPanel()
+    {
+        if (questList == null || GameState.Instance == null)
+        {
+            return;
+        }
+
+        questList.Clear();
+        List<QuestData> quests = GameState.Instance.GetQuestList();
+        if (quests.Count == 0)
+        {
+            var noQuestLabel = new Label("Paket quest ini belum punya quest.");
+            noQuestLabel.AddToClassList("quest-item-title");
+            questList.Add(noQuestLabel);
+            return;
+        }
+
+        int activePlayer = GameState.Instance.turn;
+        var playerLabel = new Label(PlayerPrefs.GetString("PlayerName_" + activePlayer, "Player " + activePlayer));
+        playerLabel.AddToClassList("quest-player-title");
+        questList.Add(playerLabel);
+
+        bool hasQuest = false;
+        foreach (QuestData quest in quests)
+        {
+            string questState = GameState.Instance.GetQuestState(activePlayer, quest.id);
+            if (questState == QuestState.BelumAktif)
+            {
+                continue;
+            }
+
+            hasQuest = true;
+            string questName = string.IsNullOrWhiteSpace(quest.nama) ? quest.id : quest.nama;
+            var questRow = new VisualElement();
+            questRow.AddToClassList("quest-item-row");
+
+            var titleLabel = new Label(questName + " - ");
+            titleLabel.AddToClassList("quest-item-title");
+            questRow.Add(titleLabel);
+
+            var stateLabel = new Label(QuestState.GetLabel(questState));
+            stateLabel.AddToClassList("quest-item-state");
+            stateLabel.AddToClassList(GetQuestStateClass(questState));
+            questRow.Add(stateLabel);
+
+            questList.Add(questRow);
+
+            if (!string.IsNullOrWhiteSpace(quest.perintah))
+            {
+                var detailLabel = new Label(quest.perintah);
+                detailLabel.AddToClassList("quest-item-detail");
+                questList.Add(detailLabel);
+            }
+        }
+
+        if (!hasQuest)
+        {
+            var emptyLabel = new Label("Belum ada quest.");
+            emptyLabel.AddToClassList("quest-item-detail");
+            questList.Add(emptyLabel);
+        }
+    }
+    private static string GetQuestStateClass(string questState)
+    {
+        switch (QuestState.Normalize(questState))
+        {
+            case QuestState.Aktif:
+                return "quest-state-aktif";
+            case QuestState.Selesai:
+                return "quest-state-selesai";
+            case QuestState.Gagal:
+                return "quest-state-gagal";
+            default:
+                return "quest-state-belum";
+        }
+    }
+
 
     private void ToggleInventoryPanel(ClickEvent evt)
     {

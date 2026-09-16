@@ -70,7 +70,7 @@ public partial class ChoiceController
 
         NarafinSessionOperationResult result;
         isSubmittingJualMasakan = true;
-        view.AddSystemTextToDialog("Mencatat penjualan " + orderName + "...");
+        BeginServerWait("Mencatat penjualan " + orderName + "...");
         try
         {
             result = await SendPlayerEventNowAsync(
@@ -88,6 +88,8 @@ public partial class ChoiceController
         {
             isSubmittingJualMasakan = false;
         }
+
+        await EndServerWaitAsync();
 
         if (this == null)
         {
@@ -114,23 +116,7 @@ public partial class ChoiceController
         Action onComplete = UseRisikoCatalog ? () => StartRisikoKehidupanServer(saleEventId) : (Action)UpdateMove;
 
         string resultText = "Menjual " + orderName + " menghasilkan " + order.hargaJual + " koin\n";
-        int aksiKe = GameState.Instance.jmAksiKe;
-        GameState.Instance.jmAksiKe++;
-
-        if (PlayNpcStaticDialogThen("JualMasakan", resultText, onComplete))
-        {
-            return;
-        }
-
-        if (Narasi("JualMasakan", aksiKe, () =>
-        {
-            ShowSystemDialogThen(resultText, onComplete);
-        }))
-        {
-            return;
-        }
-
-        ShowSystemDialogThen(resultText, onComplete);
+        PlayNarasiThen("JualMasakan", resultText, onComplete);
     }
 
     // Alur lama tanpa katalog ruleset session (mode offline).
@@ -167,23 +153,6 @@ public partial class ChoiceController
         PostJualMasakanEvent(GameState.Instance.turn, selectedChoice, listBahan, amountCoins);
 
         string resultText = "Menjual " + selectedChoice + " menghasilkan " + amountCoins + " koin\n";
-        int aksiKe = GameState.Instance.jmAksiKe;
-        GameState.Instance.jmAksiKe++;
-        Debug.Log("jmAksiKe: " + GameState.Instance.jmAksiKe);
-
-        if (PlayNpcStaticDialogThen("JualMasakan", resultText, ShowRisikoKehidupanAfterJualMasakan))
-        {
-            return;
-        }
-
-        if (Narasi("JualMasakan", aksiKe, () =>
-        {
-            ShowSystemDialogThen(resultText, ShowRisikoKehidupanAfterJualMasakan);
-        }))
-        {
-            return;
-        }
-
-        ShowSystemDialogThen(resultText, ShowRisikoKehidupanAfterJualMasakan);
+        PlayNarasiThen("JualMasakan", resultText, ShowRisikoKehidupanAfterJualMasakan);
     }
 }

@@ -4,61 +4,27 @@ using System.Linq;
 
 public partial class NarasiController
 {
-    // Selects the most specific narasi whose action prerequisites are met.
-    private NarasiData GetNarasiByPrerequisite(string aksi, int aksiKe)
-    {
-        var matchingNarasi = narasiList
-            .Where(narasi => HasTriggerPrerequisite(narasi, aksi, aksiKe))
-            .Where(narasi => IsPrerequisiteMet(narasi))
-            .OrderByDescending(CountValidPrerequisites)
-            .FirstOrDefault();
-
-        if (matchingNarasi != null)
-        {
-            return matchingNarasi;
-        }
-
-        return narasiList
-            .Where(narasi => HasTriggerPrerequisite(narasi, aksi, 0))
-            .Where(narasi => IsPrerequisiteMet(narasi))
-            .OrderByDescending(CountValidPrerequisites)
-            .FirstOrDefault();
-    }
-
+    // Dialog paling spesifik yang cocok dengan aksi ke-n; bila tidak ada, dipakai dialog umum (aksiValue 0).
     private DialogKarakterData GetDialogKarakterByPrerequisite(string aksi, int aksiKe)
     {
-        var matchingDialog = dialogKarakterList
-            .Where(dialogKarakter => !HasPlayedDialog(dialogKarakter.id, GetActivePlayerTurn()))
-            .Where(dialogKarakter => HasTriggerPrerequisite(dialogKarakter, aksi, aksiKe))
-            .Where(IsPrerequisiteMet)
-            .OrderByDescending(CountValidPrerequisites)
-            .FirstOrDefault();
-
-        if (matchingDialog != null)
+        DialogKarakterData dialogKarakter = FindDialogKarakter(aksi, aksiKe);
+        if (dialogKarakter != null || aksiKe == 0)
         {
-            return matchingDialog;
+            return dialogKarakter;
         }
 
-        return dialogKarakterList
-            .Where(dialogKarakter => !HasPlayedDialog(dialogKarakter.id, GetActivePlayerTurn()))
-            .Where(dialogKarakter => HasTriggerPrerequisite(dialogKarakter, aksi, 0))
-            .Where(IsPrerequisiteMet)
-            .OrderByDescending(CountValidPrerequisites)
-            .FirstOrDefault();
+        return FindDialogKarakter(aksi, 0);
     }
 
-    private bool HasTriggerPrerequisite(NarasiData narasi, string aksi, int value)
+    private DialogKarakterData FindDialogKarakter(string aksi, int aksiValue)
     {
-        if (GameState.Instance == null || narasi.prerequisiteAksi == null)
-        {
-            return false;
-        }
-
-        string normalizedAksi = GameState.Instance.NormalizeActionName(aksi);
-        return narasi.prerequisiteAksi.Any(prerequisite =>
-            prerequisite != null
-            && GameState.Instance.NormalizeActionName(prerequisite.aksi) == normalizedAksi
-            && prerequisite.value == value);
+        int activePlayerTurn = GetActivePlayerTurn();
+        return dialogKarakterList
+            .Where(dialogKarakter => !HasPlayedDialog(dialogKarakter.id, activePlayerTurn))
+            .Where(dialogKarakter => HasTriggerPrerequisite(dialogKarakter, aksi, aksiValue))
+            .Where(IsPrerequisiteMet)
+            .OrderByDescending(CountValidPrerequisites)
+            .FirstOrDefault();
     }
 
     private bool HasTriggerPrerequisite(DialogKarakterData dialogKarakter, string aksi, int value)
@@ -71,30 +37,6 @@ public partial class NarasiController
         string normalizedAksi = GameState.Instance.NormalizeActionName(aksi);
         string normalizedDialogAksi = GameState.Instance.NormalizeActionName(dialogKarakter.aksi);
         return normalizedDialogAksi == normalizedAksi && dialogKarakter.aksiValue == value;
-    }
-
-    private bool IsPrerequisiteMet(NarasiData narasi)
-    {
-        if (GameState.Instance == null)
-        {
-            return false;
-        }
-
-        var prerequisites = GetPrerequisites(narasi);
-        if (prerequisites.Count == 0)
-        {
-            return true;
-        }
-
-        foreach (var prerequisite in prerequisites)
-        {
-            if (GameState.Instance.GetActionCount(prerequisite.aksi) < prerequisite.value)
-            {
-                return false;
-            }
-        }
-
-        return true;
     }
 
     private bool IsPrerequisiteMet(DialogKarakterData dialogKarakter)
@@ -121,26 +63,9 @@ public partial class NarasiController
         return true;
     }
 
-    private int CountValidPrerequisites(NarasiData narasi)
-    {
-        return GetPrerequisites(narasi).Count;
-    }
-
     private int CountValidPrerequisites(DialogKarakterData dialogKarakter)
     {
         return GetDialogPrerequisites(dialogKarakter).Count;
-    }
-
-    private List<PrerequisiteAksiData> GetPrerequisites(NarasiData narasi)
-    {
-        if (narasi.prerequisiteAksi == null)
-        {
-            return new List<PrerequisiteAksiData>();
-        }
-
-        return narasi.prerequisiteAksi
-            .Where(prerequisite => prerequisite != null && !string.IsNullOrWhiteSpace(prerequisite.aksi))
-            .ToList();
     }
 
     private List<DialogPrerequisiteData> GetDialogPrerequisites(DialogKarakterData dialogKarakter)
@@ -169,7 +94,8 @@ public partial class NarasiController
                 || HasItems(prerequisite.tujuanFinansialDimiliki)
                 || HasItems(prerequisite.masakanDijual)
                 || prerequisite.hariKe > 0
-                || prerequisite.mingguKe > 0);
+                || prerequisite.mingguKe > 0
+                || !string.IsNullOrWhiteSpace(prerequisite.questId));
     }
 
     private bool IsDialogPrerequisiteMet(DialogPrerequisiteData prerequisite)
@@ -215,6 +141,12 @@ public partial class NarasiController
         }
 
         if (prerequisite.asuransiDimiliki && !GameState.Instance.GetAsuransiDimiliki(GameState.Instance.turn))
+        {
+            return false;
+        }
+
+        if (!string.IsNullOrWhiteSpace(prerequisite.questId)
+            && !GameState.Instance.IsQuestInState(GameState.Instance.turn, prerequisite.questId, prerequisite.questState))
         {
             return false;
         }

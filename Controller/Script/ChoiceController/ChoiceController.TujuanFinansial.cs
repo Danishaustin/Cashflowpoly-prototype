@@ -136,7 +136,7 @@ public partial class ChoiceController
 
         NarafinSessionOperationResult result;
         isSubmittingMenabung = true;
-        view.AddSystemTextToDialog("Mencatat tabungan untuk " + goal.nama + "...");
+        BeginServerWait("Mencatat tabungan untuk " + goal.nama + "...");
         try
         {
             result = await SendPlayerEventNowAsync(player, "Menabung", BuildMenabungPayload(goal.id, amount), GetCurrentActionSlot());
@@ -146,6 +146,8 @@ public partial class ChoiceController
             Debug.LogWarning("Gagal mengirim tabungan: " + ex.Message);
             result = CreateEventFailure("EVENT_SEND_FAILED", "Gagal menghubungi server.");
         }
+
+        await EndServerWaitAsync();
 
         if (this == null)
         {
@@ -179,32 +181,11 @@ public partial class ChoiceController
         if (isNewlyOwned)
         {
             resultText += "Target tercapai! Kartu tujuan " + goal.nama + " diperoleh (+" + goal.poinKebahagiaan + " kebahagiaan).\n";
-            int aksiKe = GameState.Instance.tfAksiKe;
-            GameState.Instance.tfAksiKe++;
-
-            if (PlayNpcStaticDialogThen("TujuanFinansial", resultText, UpdateMove))
-            {
-                return;
-            }
-
-            if (Narasi("TujuanFinansial", aksiKe, () =>
-            {
-                ShowSystemDialogThen(resultText, UpdateMove);
-            }))
-            {
-                return;
-            }
-
-            ShowSystemDialogThen(resultText, UpdateMove);
+            PlayNarasiThen("TujuanFinansial", resultText, UpdateMove);
             return;
         }
 
-        if (PlayNpcStaticDialogThen("Menabung", resultText, UpdateMove))
-        {
-            return;
-        }
-
-        ShowSystemDialogThen(resultText, UpdateMove);
+        PlayNarasiThen("Menabung", resultText, UpdateMove);
     }
 
     private async Task SyncTujuanFinansialFromServerAsync(int player)
@@ -270,24 +251,7 @@ public partial class ChoiceController
         PostTujuanFinansialEvent(GameState.Instance.turn, selectedChoice, -amount, amountHappiness);
 
         string resultText = "Membeli tujuan finansial " + selectedChoice + " seharga " + (-amount) + " koin dengan poin kebahagiaan " + amountHappiness + "\n";
-        int aksiKe = GameState.Instance.tfAksiKe;
-        GameState.Instance.tfAksiKe++;
-        Debug.Log("tfAksiKe: " + GameState.Instance.tfAksiKe);
-
-        if (PlayNpcStaticDialogThen("TujuanFinansial", resultText, CompleteTujuanFinansialFlow))
-        {
-            return;
-        }
-
-        if (Narasi("TujuanFinansial", aksiKe, () =>
-        {
-            ShowSystemDialogThen(resultText, CompleteTujuanFinansialFlow);
-        }))
-        {
-            return;
-        }
-
-        ShowSystemDialogThen(resultText, CompleteTujuanFinansialFlow);
+        PlayNarasiThen("TujuanFinansial", resultText, CompleteTujuanFinansialFlow);
     }
 
     private void HandleChoiceMenabungLegacy(string selectedChoice)
@@ -329,12 +293,7 @@ public partial class ChoiceController
                 PostMenabungEvent(GameState.Instance.turn, GameState.Instance.SavingText);
 
                 string savingText = "Menabung " + GameState.Instance.SavingText + " koin\n";
-                if (PlayNpcStaticDialogThen("Menabung", savingText, ContinueAfterMenabung))
-                {
-                    break;
-                }
-
-                ShowSystemDialogThen(savingText, ContinueAfterMenabung);
+                PlayNarasiThen("Menabung", savingText, ContinueAfterMenabung);
                 break;
             default:
                 Debug.Log("Pilihan tidak valid");

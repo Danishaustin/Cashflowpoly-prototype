@@ -1,27 +1,38 @@
+using System.Collections.Generic;
 using UnityEngine.UIElements;
 
 public partial class UIManagerPlay
 {
-    // Satu tombol per kartu life_risks ruleset session; pemain memilih kartu fisik yang ditarik.
-    private void BuildRisikoKartuButtons()
+    private readonly Dictionary<string, string> risikoKartuOptionLookup = new Dictionary<string, string>();
+
+    // Satu baris dropdown per kartu life_risks ruleset session; pemain memilih kartu fisik yang ditarik,
+    // lalu menekan Next untuk mengirimkannya.
+    private void BuildRisikoKartuDropdown()
     {
-        if (risikoKartuList == null)
+        risikoKartuOptionLookup.Clear();
+        if (risikoKartuDropdown == null)
         {
             return;
         }
 
-        risikoKartuList.Clear();
+        List<string> options = new List<string>();
         foreach (NarafinSetupLifeRisk risk in NarafinActiveSession.GetLifeRisks(NarafinActiveSession.Catalog))
         {
-            var button = new Button
+            string label = GetRisikoKartuLabel(risk);
+            string uniqueLabel = label;
+            int duplicateCount = 2;
+            while (risikoKartuOptionLookup.ContainsKey(uniqueLabel))
             {
-                name = RisikoKartuButtonPrefix + risk.risk_code,
-                text = GetRisikoKartuLabel(risk)
-            };
-            button.AddToClassList("choice-button");
-            button.AddToClassList("risk-card-button");
-            risikoKartuList.Add(button);
+                uniqueLabel = label + " (" + duplicateCount + ")";
+                duplicateCount++;
+            }
+
+            risikoKartuOptionLookup[uniqueLabel] = risk.risk_code;
+            options.Add(uniqueLabel);
         }
+
+        risikoKartuDropdown.choices = options;
+        risikoKartuDropdown.SetValueWithoutNotify(options.Count > 0 ? options[0] : string.Empty);
     }
 
     private static string GetRisikoKartuLabel(NarafinSetupLifeRisk risk)
@@ -39,12 +50,24 @@ public partial class UIManagerPlay
                 return riskName + " (" + risk.amount + " koin dari tiap pemain lain)";
             case "INGREDIENT_PRICE_MODIFIER":
                 return riskName + " (harga bahan " + (risk.value_delta >= 0 ? "+" : string.Empty) + risk.value_delta
-                    + " selama " + risk.duration_days + " hari)";
+                    + ", " + risk.duration_days + " hari)";
             case "GOLD_TRADE":
                 return riskName + " (transaksi emas)";
             default:
                 return riskName;
         }
+    }
+
+    // risk_code kartu yang sedang dipilih; kosong berarti tidak ada pilihan yang sah.
+    public string GetSelectedRisikoKartuCode()
+    {
+        string selectedOption = risikoKartuDropdown?.value;
+        if (string.IsNullOrWhiteSpace(selectedOption))
+        {
+            return string.Empty;
+        }
+
+        return risikoKartuOptionLookup.TryGetValue(selectedOption, out string riskCode) ? riskCode : string.Empty;
     }
 
     public void ShowRisikoKartuContent()
@@ -61,7 +84,7 @@ public partial class UIManagerPlay
         }
     }
 
-    private void SetRisikoContentVisible(bool showSetup, bool showDecision, bool showKartuList)
+    private void SetRisikoContentVisible(bool showSetup, bool showDecision, bool showKartu)
     {
         if (risikoSetupContent != null)
         {
@@ -73,15 +96,9 @@ public partial class UIManagerPlay
             risikoCoinDecisionContent.style.display = showDecision ? DisplayStyle.Flex : DisplayStyle.None;
         }
 
-        if (risikoKartuList != null)
+        if (risikoKartuContent != null)
         {
-            risikoKartuList.style.display = showKartuList ? DisplayStyle.Flex : DisplayStyle.None;
-        }
-
-        // Kartu dipilih langsung dari daftar, jadi tombol Next hanya dipakai panel lain.
-        if (risikoNextButton != null)
-        {
-            risikoNextButton.style.display = showKartuList ? DisplayStyle.None : DisplayStyle.Flex;
+            risikoKartuContent.style.display = showKartu ? DisplayStyle.Flex : DisplayStyle.None;
         }
     }
 }

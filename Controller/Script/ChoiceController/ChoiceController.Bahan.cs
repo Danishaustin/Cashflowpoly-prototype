@@ -59,7 +59,7 @@ public partial class ChoiceController
 
         NarafinSessionOperationResult result;
         isSubmittingBahanMasakan = true;
-        view.AddSystemTextToDialog("Mencatat pembelian " + bahanName + "...");
+        BeginServerWait("Mencatat pembelian " + bahanName + "...");
         try
         {
             result = await SendPlayerEventNowAsync(
@@ -78,6 +78,8 @@ public partial class ChoiceController
             isSubmittingBahanMasakan = false;
         }
 
+        await EndServerWaitAsync();
+
         if (this == null)
         {
             return;
@@ -94,23 +96,6 @@ public partial class ChoiceController
         view.UpdateCoins(gameState.GetCoins(activePlayer));
 
         string resultText = "Membeli " + bahanName + " seharga " + hargaBahan + " koin\n";
-        int aksiKe = gameState.bmAksiKe;
-        gameState.bmAksiKe++;
-        Debug.Log("bmAksiKe: " + gameState.bmAksiKe);
-
-        if (PlayNpcStaticDialogThen("BahanMasakan", resultText, UpdateMove))
-        {
-            return;
-        }
-
-        if (Narasi("BahanMasakan", aksiKe, () =>
-        {
-            ShowSystemDialogThen(resultText, UpdateMove);
-        }))
-        {
-            return;
-        }
-
-        ShowSystemDialogThen(resultText, UpdateMove);
+        PlayNarasiThen("BahanMasakan", resultText, UpdateMove);
     }
 }

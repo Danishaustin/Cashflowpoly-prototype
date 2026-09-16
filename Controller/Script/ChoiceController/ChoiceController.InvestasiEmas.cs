@@ -116,7 +116,7 @@ public partial class ChoiceController
     {
         NarafinSessionOperationResult result;
         isSubmittingInvestasiEmas = true;
-        view.AddSystemTextToDialog("Membuka harga emas...");
+        BeginServerWait("Membuka harga emas...");
         try
         {
             result = await SendSystemEventNowAsync("BukaHargaEmas", BuildBukaHargaEmasPayload(goldPrice));
@@ -130,6 +130,8 @@ public partial class ChoiceController
         {
             isSubmittingInvestasiEmas = false;
         }
+
+        await EndServerWaitAsync();
 
         if (this == null)
         {
@@ -368,7 +370,7 @@ public partial class ChoiceController
         string resultText = isBuy
             ? playerName + " membeli " + qty + " emas seharga " + total + " koin. Emas saat ini: " + GameState.Instance.GetEmas(player) + "\n"
             : playerName + " menjual " + qty + " emas dan mendapatkan " + total + " koin. Emas tersisa: " + GameState.Instance.GetEmas(player) + "\n";
-        ShowInvestasiEmasDialogThen(resultText, AdvanceInvestasiEmas);
+        PlayNarasiThen(actionType, resultText, AdvanceInvestasiEmas);
     }
 
     private async Task LewatiTransaksiEmasAsync()
@@ -398,20 +400,25 @@ public partial class ChoiceController
     private async Task<NarafinSessionOperationResult> SendInvestasiEmasEventAsync(int player, string actionType, string payloadJson, string progressText)
     {
         isSubmittingInvestasiEmas = true;
-        view.AddSystemTextToDialog(progressText);
+        BeginServerWait(progressText);
+
+        NarafinSessionOperationResult result;
         try
         {
-            return await SendPlayerEventNowAsync(player, actionType, payloadJson, 0);
+            result = await SendPlayerEventNowAsync(player, actionType, payloadJson, 0);
         }
         catch (Exception ex)
         {
             Debug.LogWarning("Gagal mengirim event emas: " + ex.Message);
-            return CreateEventFailure("EVENT_SEND_FAILED", "Gagal menghubungi server.");
+            result = CreateEventFailure("EVENT_SEND_FAILED", "Gagal menghubungi server.");
         }
         finally
         {
             isSubmittingInvestasiEmas = false;
         }
+
+        await EndServerWaitAsync();
+        return result;
     }
 
     private void ShowInvestasiEmasDialogThen(string text, Action onComplete)

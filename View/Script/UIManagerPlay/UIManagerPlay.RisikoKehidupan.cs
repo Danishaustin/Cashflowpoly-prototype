@@ -9,16 +9,14 @@ public partial class UIManagerPlay
     private bool risikoCanPinjamanSyariah;
     private int risikoJualEmasMax = 1;
 
-    public const string RisikoKartuButtonPrefix = "RisikoKartu_";
-
-    private VisualElement risikoKartuList;
-    private Button risikoNextButton;
+    private VisualElement risikoKartuContent;
+    private DropdownField risikoKartuDropdown;
 
     private void BindRisikoKehidupanElements(VisualElement root)
     {
-        risikoKartuList = root.Q<VisualElement>("RisikoKartuList");
-        risikoNextButton = root.Q<Button>("NextButtonRisikoKehidupan");
-        BuildRisikoKartuButtons();
+        risikoKartuContent = root.Q<VisualElement>("RisikoKartuContent");
+        risikoKartuDropdown = root.Q<DropdownField>("RisikoKartuDropdown");
+        BuildRisikoKartuDropdown();
 
         risikoSetupContent = root.Q<VisualElement>("RisikoSetupContent");
         risikoCoinDecisionContent = root.Q<VisualElement>("RisikoCoinDecisionContent");

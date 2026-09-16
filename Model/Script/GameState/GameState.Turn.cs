@@ -8,7 +8,8 @@ public partial class GameState
         movesLeft = ActionsPerTurn;
         NormalizeDayAfterAdvance();
 
-        if (day >= finishDay)
+        // Permainan baru berakhir setelah melewati finish_day, jadi pemain masih bisa beraksi pada finish_day.
+        if (day > finishDay)
         {
             isGameOver = true;
             return;
@@ -21,7 +22,7 @@ public partial class GameState
         turn = GetFirstPlayerInTurnOrder();
         movesLeft = ActionsPerTurn;
         NormalizeDayAfterAdvance();
-        isGameOver = day >= finishDay;
+        isGameOver = day > finishDay;
     }
 
     public void SetTurnAndMoves(int targetTurn, int targetMovesLeft)
@@ -109,7 +110,7 @@ public partial class GameState
 
     private void NormalizeDayAfterAdvance()
     {
-        while (!SundayEnabled && GetDayOfWeek(day) == 7 && day < finishDay)
+        while (!SundayEnabled && GetDayOfWeek(day) == 7 && day <= finishDay)
         {
             day++;
         }

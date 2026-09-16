@@ -12,6 +12,7 @@ public partial class UIManager
         editPemilihanNarasiContainer?.RemoveFromClassList("show-edit-narasi-select");
         editPemilihanNarasiContainer?.RemoveFromClassList("hide-edit-narasi-select-left");
         editNarasiContainer?.RemoveFromClassList("show-edit-narasi");
+        ResetEditQuestNavigationState();
         loginContainer?.RemoveFromClassList("show-login");
         sessionSetupContainer?.RemoveFromClassList("show-session-setup");
         sessionSetupContainer?.RemoveFromClassList("hide-session-setup-left");
