@@ -22,7 +22,7 @@ public partial class GameState : MonoBehaviour
 
     // Pinjaman Syariah
     public int PinjamanSyariahCards => GetPinjamanSyariahCards(turn);
-    private Dictionary<int, int> playerPinjamanSyariahCards;
+    private Dictionary<int, List<PinjamanSyariahHolding>> playerPinjamanSyariahCards;
 
     // Game Progress
     public int day { get; private set; } = 1;

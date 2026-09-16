@@ -88,8 +88,15 @@ public partial class ChoiceController : MonoBehaviour
                 view.ShowChoice("JualMasakan");
                 break;
             case "TujuanFinansial":
+                if (UseTujuanFinansialCatalog)
+                {
+                    view.ShowChoice("TujuanFinansial");
+                    break;
+                }
+
                 GameState.Instance.SetSavingText(0);
                 view.UpdateSavingText(GameState.Instance.SavingText);
+                view.UpdateMenabungTitle("Jumlah Menabung");
                 view.ShowChoice("Menabung");
                 break;
             case "KerjaLepas":

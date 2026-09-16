@@ -606,6 +606,15 @@ Button:active {
     margin-left: 24px;
 }
 
+.risk-card-button {
+    width: 96%;
+    min-height: 56px;
+    margin-top: 4px;
+    margin-bottom: 4px;
+    font-size: 30px;
+    white-space: normal;
+}
+
 .risk-warning-text {
     width: 100%;
     min-height: 36px;

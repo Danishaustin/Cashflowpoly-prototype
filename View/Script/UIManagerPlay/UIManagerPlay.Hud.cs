@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public partial class UIManagerPlay
 {
@@ -79,6 +80,15 @@ public partial class UIManagerPlay
         savingText.text = saving.ToString();
     }
 
+    public void UpdateMenabungTitle(string title)
+    {
+        Label titleLabel = rootElement?.Q<Label>("MenabungTitleText");
+        if (titleLabel != null)
+        {
+            titleLabel.text = title;
+        }
+    }
+
     public void UpdateJumatBerkahText(int amount)
     {
         jumatBerkahText.text = amount.ToString();
@@ -87,6 +97,22 @@ public partial class UIManagerPlay
     public void UpdateKebutuhanText(int amount)
     {
         hargaBeliText.text = amount.ToString();
+        SetKebutuhanPriceLabel("Harga Beli");
+    }
+
+    public void UpdateKebutuhanVariantText(string kebutuhanName, int harga, int poin)
+    {
+        hargaBeliText.text = harga.ToString();
+        SetKebutuhanPriceLabel("Harga Beli " + kebutuhanName + " (+" + poin + " kebahagiaan)");
+    }
+
+    private void SetKebutuhanPriceLabel(string text)
+    {
+        Label priceLabel = rootElement?.Q<Label>("LabelKText");
+        if (priceLabel != null)
+        {
+            priceLabel.text = text;
+        }
     }
 
     public void UpdateHargaEmasText(int amount)

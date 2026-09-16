@@ -1,8 +1,10 @@
+using System.Threading.Tasks;
 using UnityEngine;
 
 public partial class ChoiceController
 {
     private int lastJumatAnnouncementDay = -1;
+    private bool isLewatiHariMinggu;
     private int lastSabtuAnnouncementDay = -1;
 
     // Shared flow helpers used by each choice action.
@@ -15,8 +17,18 @@ public partial class ChoiceController
 
     private void UpdateMove()
     {
+        _ = UpdateMoveAsync();
+    }
+
+    // Hari baru ditutup di server dulu, baru giliran/hari klien berlanjut.
+    private async Task UpdateMoveAsync()
+    {
         int previousTurn = GameState.Instance.turn;
-        PostAkhirGiliranIfDayWillAdvance(previousTurn);
+        await PostAkhirGiliranIfDayWillAdvanceAsync(previousTurn);
+        if (this == null)
+        {
+            return;
+        }
 
         GameState.Instance.UseMove();
 
@@ -39,6 +51,12 @@ public partial class ChoiceController
 
     private void ShowNextScheduledChoice()
     {
+        if (GameState.Instance.IsHariMingguLibur())
+        {
+            _ = LewatiHariMingguAsync();
+            return;
+        }
+
         if (GameState.Instance.IsJumatBerkah())
         {
             if (lastJumatAnnouncementDay != GameState.Instance.day)
@@ -65,6 +83,52 @@ public partial class ChoiceController
         {
             view.ShowChoice("Choice1");
         }
+    }
+
+    // Minggu libur: sistem mencatat hari libur lalu menutup hari agar hari di server ikut maju.
+    private async Task LewatiHariMingguAsync()
+    {
+        if (isLewatiHariMinggu)
+        {
+            return;
+        }
+
+        isLewatiHariMinggu = true;
+        NarafinSessionOperationResult result;
+        try
+        {
+            result = await SendSystemEventNowAsync("HariMingguLibur", "{}");
+            if (result.Success && this != null)
+            {
+                await PostAkhirGiliranForDayEndAsync();
+            }
+        }
+        catch (System.Exception ex)
+        {
+            Debug.LogWarning("Gagal mencatat hari Minggu libur: " + ex.Message);
+            result = CreateEventFailure("EVENT_SEND_FAILED", "Gagal menghubungi server.");
+        }
+        finally
+        {
+            isLewatiHariMinggu = false;
+        }
+
+        if (this == null)
+        {
+            return;
+        }
+
+        // Hari tetap dilewati di klien walau server menolak, agar permainan tidak berhenti di hari libur.
+        if (!result.Success && !NarafinRuntimeConfig.UseOfflineMode)
+        {
+            view.AddSystemTextToDialog("Hari Minggu gagal dicatat di server: " + result.ErrorMessage);
+        }
+
+        GameState.Instance.LewatiHariMinggu();
+        view.UpdateDay(GameState.Instance.day);
+        view.UpdatePlayerTurn(GameState.Instance.turn);
+        view.UpdatePlayerStats();
+        ShowSystemDialogThen("Hari Minggu libur, tidak ada aksi hari ini.\n", ShowNextScheduledChoice);
     }
 
     public void ShowCurrentDayChoice()

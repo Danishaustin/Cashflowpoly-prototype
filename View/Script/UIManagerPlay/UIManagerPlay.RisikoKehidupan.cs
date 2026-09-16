@@ -9,8 +9,17 @@ public partial class UIManagerPlay
     private bool risikoCanPinjamanSyariah;
     private int risikoJualEmasMax = 1;
 
+    public const string RisikoKartuButtonPrefix = "RisikoKartu_";
+
+    private VisualElement risikoKartuList;
+    private Button risikoNextButton;
+
     private void BindRisikoKehidupanElements(VisualElement root)
     {
+        risikoKartuList = root.Q<VisualElement>("RisikoKartuList");
+        risikoNextButton = root.Q<Button>("NextButtonRisikoKehidupan");
+        BuildRisikoKartuButtons();
+
         risikoSetupContent = root.Q<VisualElement>("RisikoSetupContent");
         risikoCoinDecisionContent = root.Q<VisualElement>("RisikoCoinDecisionContent");
         risikoCoinInputContainer = root.Q<VisualElement>("RisikoCoinInputContainer");
@@ -273,15 +282,7 @@ public partial class UIManagerPlay
         risikoCanPinjamanSyariah = canPinjamanSyariah;
         SetRisikoJualEmasRange(1, maxJualEmas);
 
-        if (risikoSetupContent != null)
-        {
-            risikoSetupContent.style.display = DisplayStyle.None;
-        }
-
-        if (risikoCoinDecisionContent != null)
-        {
-            risikoCoinDecisionContent.style.display = DisplayStyle.Flex;
-        }
+        SetRisikoContentVisible(false, true, false);
 
         if (risikoDecisionPlayerText != null)
         {

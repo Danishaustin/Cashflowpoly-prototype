@@ -150,6 +150,44 @@ public partial class GameState
         currentPeduliDonasiOrder.Clear();
     }
 
+    // Donasi Jumat wajib untuk setiap pemain dan server tidak bisa menutup hari Jumat bila ada pemain yang
+    // tidak mampu berdonasi. Karena itu pada hari Kamis (dan Jumat sebelum pemain berdonasi) koin tidak boleh
+    // dibelanjakan sampai di bawah minimum donasi.
+    public int GetDonationReserve(int player)
+    {
+        if (!FridayEnabled)
+        {
+            return 0;
+        }
+
+        int dayOfWeek = GetDayOfWeek(day);
+        bool isThursday = dayOfWeek == 4;
+        bool isFridayBeforeDonation = dayOfWeek == 5
+            && (currentPeduliDonasiOrder == null || !currentPeduliDonasiOrder.Contains(player));
+        return isThursday || isFridayBeforeDonation ? Mathf.Max(0, DonationMinAmount) : 0;
+    }
+
+    public int GetSpendableCoins(int player)
+    {
+        return Mathf.Max(0, GetCoins(player) - GetDonationReserve(player));
+    }
+
+    // null bila koin boleh dibelanjakan; selain itu alasan penolakan untuk ditampilkan ke pemain.
+    public string GetSpendBlockedMessage(int player, int amount)
+    {
+        if (GetCoins(player) < amount)
+        {
+            return "Koin tidak cukup.";
+        }
+
+        if (GetSpendableCoins(player) < amount)
+        {
+            return "Sisakan minimal " + GetDonationReserve(player) + " koin untuk donasi Jumat.";
+        }
+
+        return null;
+    }
+
     private List<int> BuildPeduliDonasiRanking()
     {
         var ranking = new List<int>();

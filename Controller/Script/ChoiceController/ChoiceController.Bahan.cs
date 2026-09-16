@@ -50,9 +50,10 @@ public partial class ChoiceController
             return;
         }
 
-        if (gameState.GetCoins(activePlayer) < hargaBahan)
+        string spendBlockedMessage = gameState.GetSpendBlockedMessage(activePlayer, hargaBahan);
+        if (spendBlockedMessage != null)
         {
-            ShowSystemDialogThen("Uang tidak cukup untuk membeli " + bahanName + ".\n", () => view.ShowChoice("BahanMasakan"));
+            ShowSystemDialogThen("Tidak bisa membeli " + bahanName + ". " + spendBlockedMessage + "\n", () => view.ShowChoice("BahanMasakan"));
             return;
         }
 

@@ -233,6 +233,48 @@ public partial class GameState
         playerAsuransiDimiliki[player] = value;
     }
 
+    private readonly Dictionary<int, string> playerAsuransiPolicyIds = new Dictionary<int, string>();
+    private readonly Dictionary<int, int> playerAsuransiRemainingUses = new Dictionary<int, int>();
+
+    // Satu polis aktif per pemain (server menolak membeli polis baru selama polis masih aktif).
+    // policy_id kosong berarti tidak punya polis yang tercatat di server.
+    public void SetAsuransiPolicy(int player, string policyId, int usageLimit)
+    {
+        EnsurePlayerInventory(player);
+        bool hasPolicy = !string.IsNullOrWhiteSpace(policyId);
+        playerAsuransiPolicyIds[player] = policyId ?? string.Empty;
+        playerAsuransiRemainingUses[player] = hasPolicy ? Mathf.Max(1, usageLimit) : 0;
+        playerAsuransiDimiliki[player] = hasPolicy;
+    }
+
+    public int GetAsuransiRemainingUses(int player)
+    {
+        if (!GetAsuransiDimiliki(player))
+        {
+            return 0;
+        }
+
+        return playerAsuransiRemainingUses.TryGetValue(player, out int remainingUses) ? remainingUses : 1;
+    }
+
+    // Memakai satu kali klaim; polis gugur saat sisa pemakaian habis sehingga pemain boleh membeli lagi.
+    public void UseAsuransiPolicy(int player)
+    {
+        int remainingUses = GetAsuransiRemainingUses(player) - 1;
+        if (remainingUses > 0)
+        {
+            playerAsuransiRemainingUses[player] = remainingUses;
+            return;
+        }
+
+        SetAsuransiPolicy(player, string.Empty, 0);
+    }
+
+    public string GetAsuransiPolicyId(int player)
+    {
+        return playerAsuransiPolicyIds.TryGetValue(player, out string policyId) ? policyId : string.Empty;
+    }
+
     public void SetTargetKebutuhanId(int player, string targetId)
     {
         EnsurePlayerInventory(player);
@@ -321,8 +363,23 @@ public partial class GameState
         weeklyBahanPriceWeek = GetCurrentWeekIndex();
     }
 
+    private int risikoBahanPriceDelta;
+    private int risikoBahanPriceUntilDay;
+
+    // Efek kartu risiko INGREDIENT_PRICE_MODIFIER: berlaku sejak hari kartu keluar selama duration_days.
+    public void SetPerubahanHargaBahan(int delta, int durationDays)
+    {
+        risikoBahanPriceDelta = delta;
+        risikoBahanPriceUntilDay = day + Mathf.Max(1, durationDays);
+    }
+
     public int GetMingguanPerubahanHargaBahan()
     {
+        if (risikoBahanPriceUntilDay > 0)
+        {
+            return day < risikoBahanPriceUntilDay ? risikoBahanPriceDelta : 0;
+        }
+
         if (GetCurrentWeekIndex() != weeklyBahanPriceWeek)
         {
             return 0;

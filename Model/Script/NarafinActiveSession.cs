@@ -8,6 +8,9 @@ public class NarafinSetupStartResult
     public string ErrorCode;
     public string ErrorMessage;
     public List<NarafinSessionStatePlayer> Players;
+
+    // Event session setelah start (termasuk SetupPinjamanAwal dan SetupAsuransiAwal); null bila tidak dibaca.
+    public List<NarafinSessionEventSummary> SetupEvents;
 }
 
 // Session Narafin yang sedang disiapkan atau dimainkan: dibuat di Home, dipakai scene Play untuk pembagian awal dan start.
@@ -236,6 +239,243 @@ public static class NarafinActiveSession
             if (string.Equals(ingredient.id, cardId, StringComparison.Ordinal))
             {
                 return ingredient;
+            }
+        }
+
+        return null;
+    }
+
+    public static List<NarafinSetupNeed> GetNeeds(NarafinRulesetSetupDefinition catalog)
+    {
+        List<NarafinSetupNeed> needs = new List<NarafinSetupNeed>();
+        if (catalog?.needs == null)
+        {
+            return needs;
+        }
+
+        foreach (NarafinSetupNeed need in catalog.needs)
+        {
+            if (need != null && !string.IsNullOrWhiteSpace(need.id))
+            {
+                needs.Add(need);
+            }
+        }
+
+        return needs;
+    }
+
+    public static NarafinSetupNeed FindNeed(NarafinRulesetSetupDefinition catalog, string cardId)
+    {
+        if (string.IsNullOrWhiteSpace(cardId))
+        {
+            return null;
+        }
+
+        foreach (NarafinSetupNeed need in GetNeeds(catalog))
+        {
+            if (string.Equals(need.id, cardId, StringComparison.Ordinal))
+            {
+                return need;
+            }
+        }
+
+        return null;
+    }
+
+    public static string GetNeedFamily(NarafinSetupNeed need)
+    {
+        if (need == null)
+        {
+            return string.Empty;
+        }
+
+        return string.IsNullOrWhiteSpace(need.family) ? need.id : need.family;
+    }
+
+    // Satu kartu per family sesuai urutan katalog; dipakai sebagai tombol jenis kebutuhan.
+    public static List<NarafinSetupNeed> GetNeedFamilies(NarafinRulesetSetupDefinition catalog)
+    {
+        List<NarafinSetupNeed> families = new List<NarafinSetupNeed>();
+        HashSet<string> seenFamilies = new HashSet<string>(StringComparer.Ordinal);
+
+        foreach (NarafinSetupNeed need in GetNeeds(catalog))
+        {
+            if (seenFamilies.Add(GetNeedFamily(need)))
+            {
+                families.Add(need);
+            }
+        }
+
+        return families;
+    }
+
+    // Varian kartu dalam satu family, diurutkan dari harga termurah.
+    public static List<NarafinSetupNeed> GetNeedVariants(NarafinRulesetSetupDefinition catalog, string family)
+    {
+        List<NarafinSetupNeed> variants = new List<NarafinSetupNeed>();
+        if (string.IsNullOrWhiteSpace(family))
+        {
+            return variants;
+        }
+
+        foreach (NarafinSetupNeed need in GetNeeds(catalog))
+        {
+            if (string.Equals(GetNeedFamily(need), family, StringComparison.Ordinal))
+            {
+                variants.Add(need);
+            }
+        }
+
+        variants.Sort((a, b) =>
+        {
+            int priceCompare = a.hargaBeli.CompareTo(b.hargaBeli);
+            return priceCompare != 0 ? priceCompare : string.CompareOrdinal(a.id, b.id);
+        });
+        return variants;
+    }
+
+    // need_tier wajib dikirim pada event Kebutuhan; tanpa itu server menolak sebagian besar kartu.
+    public static string GetNeedTierCode(string tipe)
+    {
+        switch ((tipe ?? string.Empty).Trim().ToLowerInvariant())
+        {
+            case "primer":
+                return "PRIMARY";
+            case "sekunder":
+                return "SECONDARY";
+            case "tersier":
+                return "TERTIARY";
+            default:
+                return (tipe ?? string.Empty).Trim().ToUpperInvariant();
+        }
+    }
+
+    public static List<NarafinSetupFinancialGoal> GetFinancialGoals(NarafinRulesetSetupDefinition catalog)
+    {
+        List<NarafinSetupFinancialGoal> goals = new List<NarafinSetupFinancialGoal>();
+        if (catalog?.financial_goals == null)
+        {
+            return goals;
+        }
+
+        foreach (NarafinSetupFinancialGoal goal in catalog.financial_goals)
+        {
+            if (goal != null && !string.IsNullOrWhiteSpace(goal.id))
+            {
+                goals.Add(goal);
+            }
+        }
+
+        return goals;
+    }
+
+    public static NarafinSetupFinancialGoal FindFinancialGoal(NarafinRulesetSetupDefinition catalog, string goalId)
+    {
+        if (string.IsNullOrWhiteSpace(goalId))
+        {
+            return null;
+        }
+
+        foreach (NarafinSetupFinancialGoal goal in GetFinancialGoals(catalog))
+        {
+            if (string.Equals(goal.id, goalId, StringComparison.Ordinal))
+            {
+                return goal;
+            }
+        }
+
+        return null;
+    }
+
+    // Harga dari Kartu Harga Emas ruleset (unik, urut dari termurah); server menolak harga di luar daftar ini.
+    public static List<int> GetGoldPrices(NarafinRulesetSetupDefinition catalog)
+    {
+        List<int> prices = new List<int>();
+        if (catalog?.gold_prices == null)
+        {
+            return prices;
+        }
+
+        foreach (NarafinSetupGoldPrice goldPrice in catalog.gold_prices)
+        {
+            if (goldPrice != null && goldPrice.unit_price > 0 && !prices.Contains(goldPrice.unit_price))
+            {
+                prices.Add(goldPrice.unit_price);
+            }
+        }
+
+        prices.Sort();
+        return prices;
+    }
+
+    public static List<NarafinSetupOrder> GetOrders(NarafinRulesetSetupDefinition catalog)
+    {
+        List<NarafinSetupOrder> orders = new List<NarafinSetupOrder>();
+        if (catalog?.orders == null)
+        {
+            return orders;
+        }
+
+        foreach (NarafinSetupOrder order in catalog.orders)
+        {
+            if (order != null && !string.IsNullOrWhiteSpace(order.id))
+            {
+                orders.Add(order);
+            }
+        }
+
+        return orders;
+    }
+
+    public static NarafinSetupOrder FindOrder(NarafinRulesetSetupDefinition catalog, string orderId)
+    {
+        if (string.IsNullOrWhiteSpace(orderId))
+        {
+            return null;
+        }
+
+        foreach (NarafinSetupOrder order in GetOrders(catalog))
+        {
+            if (string.Equals(order.id, orderId, StringComparison.Ordinal))
+            {
+                return order;
+            }
+        }
+
+        return null;
+    }
+
+    public static List<NarafinSetupLifeRisk> GetLifeRisks(NarafinRulesetSetupDefinition catalog)
+    {
+        List<NarafinSetupLifeRisk> risks = new List<NarafinSetupLifeRisk>();
+        if (catalog?.life_risks == null)
+        {
+            return risks;
+        }
+
+        foreach (NarafinSetupLifeRisk risk in catalog.life_risks)
+        {
+            if (risk != null && !string.IsNullOrWhiteSpace(risk.risk_code))
+            {
+                risks.Add(risk);
+            }
+        }
+
+        return risks;
+    }
+
+    public static NarafinSetupLifeRisk FindLifeRisk(NarafinRulesetSetupDefinition catalog, string riskCode)
+    {
+        if (string.IsNullOrWhiteSpace(riskCode))
+        {
+            return null;
+        }
+
+        foreach (NarafinSetupLifeRisk risk in GetLifeRisks(catalog))
+        {
+            if (string.Equals(risk.risk_code, riskCode, StringComparison.Ordinal))
+            {
+                return risk;
             }
         }
 

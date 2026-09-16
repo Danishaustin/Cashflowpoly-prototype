@@ -212,9 +212,24 @@ internal class NarafinSessionEventsResponse
 }
 
 [Serializable]
-internal class NarafinSessionEventSummary
+public class NarafinSessionEventSummary
 {
     public long sequence_number;
+    public string action_type;
+    public string user_id;
+    public NarafinSessionEventPayload payload;
+}
+
+// Hanya field payload yang dibaca klien (pinjaman dan asuransi dari setup); field lain diabaikan JsonUtility.
+[Serializable]
+public class NarafinSessionEventPayload
+{
+    public string loan_id;
+    public string loan_code;
+    public int principal;
+    public int repayment_amount;
+    public string policy_id;
+    public string product_code;
 }
 
 [Serializable]
@@ -225,6 +240,19 @@ public class NarafinSessionStatePlayer
     public int player_order_no;
     public string name;
     public int coins;
+    public int happiness;
+    public int saving;
+    public List<NarafinStateFinancialGoal> tujuanFinansial;
+}
+
+// purchased_at_day sengaja tidak dideklarasikan karena bernilai null selama tujuan belum tercapai.
+[Serializable]
+public class NarafinStateFinancialGoal
+{
+    public string nama;
+    public int current_amount;
+    public int target_amount;
+    public string status;
 }
 
 [Serializable]
@@ -256,6 +284,8 @@ public class NarafinRulesetSettings
     public bool loan_enabled;
     public bool insurance_enabled;
     public int freelance_income;
+    public int donation_min_amount;
+    public int donation_max_amount;
 }
 
 [Serializable]
@@ -264,10 +294,41 @@ public class NarafinRulesetSetupDefinition
     public string mode;
     public NarafinRulesetSettings settings;
     public List<NarafinSetupIngredient> ingredients;
+    public List<NarafinSetupNeed> needs;
+    public List<NarafinSetupFinancialGoal> financial_goals;
+    public List<NarafinSetupGoldPrice> gold_prices;
     public List<NarafinSetupMission> collection_missions;
     public List<NarafinSetupTieBreaker> tie_breakers;
     public List<NarafinSetupLoan> sharia_loans;
     public List<NarafinSetupInsurance> insurance_products;
+    public List<NarafinSetupOrder> orders;
+    public List<NarafinSetupLifeRisk> life_risks;
+}
+
+[Serializable]
+public class NarafinSetupOrder
+{
+    public string id;
+    public string nama;
+    public int hargaJual;
+    public int poinKebahagiaan;
+    public List<string> bahan;
+    public int cardQty;
+}
+
+// value_delta bernilai null pada kartu selain perubahan harga; respons disanitasi menjadi 0 sebelum dibaca.
+[Serializable]
+public class NarafinSetupLifeRisk
+{
+    public string risk_code;
+    public string item_name;
+    public string effect_type;
+    public string direction;
+    public int amount;
+    public string target_scope;
+    public int value_delta;
+    public int duration_days;
+    public int card_qty;
 }
 
 [Serializable]
@@ -277,6 +338,37 @@ public class NarafinSetupIngredient
     public string nama;
     public int hargaBeli;
     public int cardQty;
+}
+
+[Serializable]
+public class NarafinSetupNeed
+{
+    public string id;
+    public string nama;
+    public string family;
+    public string tipe;
+    public int hargaBeli;
+    public int poinKebahagiaan;
+    public int cardQty;
+}
+
+[Serializable]
+public class NarafinSetupFinancialGoal
+{
+    public string id;
+    public string nama;
+    public int hargaBeli;
+    public int poinKebahagiaan;
+    public int cardQty;
+}
+
+[Serializable]
+public class NarafinSetupGoldPrice
+{
+    public string price_code;
+    public int qty;
+    public int unit_price;
+    public int card_qty;
 }
 
 [Serializable]
@@ -368,6 +460,9 @@ public class NarafinSessionOperationResult
     public bool Success;
     public string ErrorCode;
     public string ErrorMessage;
+
+    // event_id yang diterima server; dipakai sebagai rujukan event berikutnya (mis. source_order_event_id).
+    public string EventId;
 }
 
 public class NarafinSessionStateResult
@@ -384,6 +479,7 @@ public class NarafinSessionEventSequenceResult
     public string ErrorCode;
     public string ErrorMessage;
     public int LastSequenceNumber;
+    public List<NarafinSessionEventSummary> Events;
 }
 
 public class NarafinRulesetSetupCatalogResult
@@ -1073,6 +1169,7 @@ public sealed class NarafinApiClient
         int lastSequenceNumber = 0;
         string cursor = string.Empty;
         bool hasMore = false;
+        List<NarafinSessionEventSummary> events = new List<NarafinSessionEventSummary>();
 
         do
         {
@@ -1108,6 +1205,11 @@ public sealed class NarafinApiClient
                     {
                         foreach (NarafinSessionEventSummary item in response.items)
                         {
+                            if (item != null)
+                            {
+                                events.Add(item);
+                            }
+
                             if (item != null && item.sequence_number > lastSequenceNumber)
                             {
                                 if (item.sequence_number > int.MaxValue)
@@ -1139,8 +1241,20 @@ public sealed class NarafinApiClient
         return new NarafinSessionEventSequenceResult
         {
             Success = true,
-            LastSequenceNumber = lastSequenceNumber
+            LastSequenceNumber = lastSequenceNumber,
+            Events = events
         };
+    }
+
+    // JsonUtility tidak bisa membaca null ke field int; value_delta kartu risiko non-harga dianggap 0.
+    private static string SanitizeRulesetJson(string responseText)
+    {
+        if (string.IsNullOrEmpty(responseText))
+        {
+            return responseText;
+        }
+
+        return System.Text.RegularExpressions.Regex.Replace(responseText, "\"value_delta\"\\s*:\\s*null", "\"value_delta\":0");
     }
 
     private async Task<NarafinRulesetSetupCatalogResult> GetRulesetSetupCatalogInternalAsync(string accessToken, string rulesetId, int version)
@@ -1164,7 +1278,7 @@ public sealed class NarafinApiClient
 
             try
             {
-                NarafinRulesetComponentsResponse response = JsonUtility.FromJson<NarafinRulesetComponentsResponse>(responseText);
+                NarafinRulesetComponentsResponse response = JsonUtility.FromJson<NarafinRulesetComponentsResponse>(SanitizeRulesetJson(responseText));
                 if (response == null || response.definition == null)
                 {
                     return CreateSetupCatalogFailureResult("INVALID_RESPONSE", "Komponen ruleset Narafin tidak valid.");
@@ -1484,7 +1598,7 @@ public sealed class NarafinApiClient
 
         try
         {
-            NarafinRulesetDetailResponse response = JsonUtility.FromJson<NarafinRulesetDetailResponse>(responseText);
+            NarafinRulesetDetailResponse response = JsonUtility.FromJson<NarafinRulesetDetailResponse>(SanitizeRulesetJson(responseText));
             if (response == null)
             {
                 return new NarafinRulesetDetailResult

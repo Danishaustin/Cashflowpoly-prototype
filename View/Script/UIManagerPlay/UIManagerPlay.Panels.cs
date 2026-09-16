@@ -300,7 +300,9 @@ public partial class UIManagerPlay
                     continue;
                 }
 
-                itemCounts[kebutuhan] = itemCounts.ContainsKey(kebutuhan) ? itemCounts[kebutuhan] + 1 : 1;
+                // Kartu disimpan dengan card_id; varian dengan nama sama (buku_1, buku_2) digabung per nama.
+                string displayName = GameState.Instance.GetKebutuhanDisplayName(kebutuhan);
+                itemCounts[displayName] = itemCounts.ContainsKey(displayName) ? itemCounts[displayName] + 1 : 1;
             }
         }
 
@@ -324,9 +326,10 @@ public partial class UIManagerPlay
 
             foreach (string kebutuhan in kebutuhanGroup.Value)
             {
-                if (!string.IsNullOrEmpty(kebutuhan) && !itemTypes.ContainsKey(kebutuhan))
+                string displayName = string.IsNullOrEmpty(kebutuhan) ? string.Empty : GameState.Instance.GetKebutuhanDisplayName(kebutuhan);
+                if (!string.IsNullOrEmpty(displayName) && !itemTypes.ContainsKey(displayName))
                 {
-                    itemTypes[kebutuhan] = kebutuhanGroup.Key;
+                    itemTypes[displayName] = kebutuhanGroup.Key;
                 }
             }
         }

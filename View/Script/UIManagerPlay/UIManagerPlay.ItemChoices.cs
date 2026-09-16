@@ -224,6 +224,19 @@ public partial class UIManagerPlay
             return;
         }
 
+        // Satu tombol per family kartu kebutuhan ruleset session; varian harga dipilih di ChoiceKJumlah.
+        List<NarafinSetupNeed> families = NarafinActiveSession.GetNeedFamilies(NarafinActiveSession.Catalog);
+        if (families.Count > 0)
+        {
+            foreach (NarafinSetupNeed need in families)
+            {
+                string family = NarafinActiveSession.GetNeedFamily(need);
+                AddKebutuhanChoiceButton(choiceKContainer, family, GameState.GetKebutuhanSpriteName(family, need.nama), need.nama);
+            }
+
+            return;
+        }
+
         if (DataManager.Instance == null || DataManager.Instance.kebutuhanDict == null)
         {
             Debug.LogWarning("Data kebutuhan belum siap.");
@@ -232,27 +245,33 @@ public partial class UIManagerPlay
 
         foreach (var kebutuhan in DataManager.Instance.kebutuhanDict.Values)
         {
-            var button = new Button
-            {
-                name = kebutuhan.nama
-            };
-            button.AddToClassList("choice-button");
-            button.AddToClassList("item-choice-button");
-            button.text = string.Empty;
-
-            Sprite kebutuhanSprite = LoadKebutuhanButtonSprite(kebutuhan.nama);
-            if (kebutuhanSprite != null)
-            {
-                button.style.backgroundImage = new StyleBackground(kebutuhanSprite);
-            }
-            else
-            {
-                Debug.LogWarning("Sprite kebutuhan tidak ditemukan untuk: " + kebutuhan.nama);
-            }
-
-            choiceKContainer.Add(button);
-            kebutuhanChoiceButtons.Add(button);
+            AddKebutuhanChoiceButton(choiceKContainer, kebutuhan.nama, kebutuhan.nama, kebutuhan.nama);
         }
+    }
+
+    private void AddKebutuhanChoiceButton(VisualElement choiceKContainer, string kebutuhanKey, string spriteName, string label)
+    {
+        var button = new Button
+        {
+            name = kebutuhanKey
+        };
+        button.AddToClassList("choice-button");
+        button.AddToClassList("item-choice-button");
+        button.text = string.Empty;
+
+        Sprite kebutuhanSprite = LoadKebutuhanButtonSprite(spriteName);
+        if (kebutuhanSprite != null)
+        {
+            button.style.backgroundImage = new StyleBackground(kebutuhanSprite);
+        }
+        else
+        {
+            button.text = label;
+            Debug.LogWarning("Sprite kebutuhan tidak ditemukan untuk: " + label);
+        }
+
+        choiceKContainer.Add(button);
+        kebutuhanChoiceButtons.Add(button);
     }
 
     private Sprite LoadKebutuhanButtonSprite(string kebutuhanName)
@@ -281,6 +300,18 @@ public partial class UIManagerPlay
             return;
         }
 
+        // Kartu pesanan dari katalog ruleset session (kunci order id); sprite memakai nama resep lokal.
+        List<NarafinSetupOrder> orders = NarafinActiveSession.GetOrders(NarafinActiveSession.Catalog);
+        if (orders.Count > 0)
+        {
+            foreach (NarafinSetupOrder order in orders)
+            {
+                AddJualMasakanChoiceButton(choiceJMContainer, order.id, GameState.GetOrderLocalName(order), GameState.GetOrderDisplayName(order));
+            }
+
+            return;
+        }
+
         if (DataManager.Instance == null || DataManager.Instance.resepDict == null)
         {
             Debug.LogWarning("Data resep belum siap.");
@@ -289,28 +320,34 @@ public partial class UIManagerPlay
 
         foreach (var resep in DataManager.Instance.resepDict.Values)
         {
-            var button = new Button
-            {
-                name = resep.nama
-            };
-            button.AddToClassList("choice-button");
-            button.AddToClassList("item-choice-button");
-            button.AddToClassList("jual-masakan-choice-button");
-            button.text = string.Empty;
-
-            Sprite jualMasakanSprite = LoadJualMasakanButtonSprite(resep.nama);
-            if (jualMasakanSprite != null)
-            {
-                button.style.backgroundImage = new StyleBackground(jualMasakanSprite);
-            }
-            else
-            {
-                Debug.LogWarning("Sprite jual masakan tidak ditemukan untuk: " + resep.nama);
-            }
-
-            choiceJMContainer.Add(button);
-            jualMasakanChoiceButtons.Add(button);
+            AddJualMasakanChoiceButton(choiceJMContainer, resep.nama, resep.nama, string.Empty);
         }
+    }
+
+    private void AddJualMasakanChoiceButton(VisualElement choiceJMContainer, string resepKey, string spriteName, string label)
+    {
+        var button = new Button
+        {
+            name = resepKey
+        };
+        button.AddToClassList("choice-button");
+        button.AddToClassList("item-choice-button");
+        button.AddToClassList("jual-masakan-choice-button");
+        button.text = string.Empty;
+
+        Sprite jualMasakanSprite = LoadJualMasakanButtonSprite(spriteName);
+        if (jualMasakanSprite != null)
+        {
+            button.style.backgroundImage = new StyleBackground(jualMasakanSprite);
+        }
+        else
+        {
+            button.text = label;
+            Debug.LogWarning("Sprite jual masakan tidak ditemukan untuk: " + spriteName);
+        }
+
+        choiceJMContainer.Add(button);
+        jualMasakanChoiceButtons.Add(button);
     }
 
     private void BuildTujuanFinansialChoiceButtons(VisualElement choiceTFContainer)
@@ -323,6 +360,18 @@ public partial class UIManagerPlay
             return;
         }
 
+        // Tujuan dari katalog ruleset session (kunci goal_id); sprite lokal dipetakan berdasarkan harga.
+        List<NarafinSetupFinancialGoal> goals = NarafinActiveSession.GetFinancialGoals(NarafinActiveSession.Catalog);
+        if (goals.Count > 0)
+        {
+            foreach (NarafinSetupFinancialGoal goal in goals)
+            {
+                AddTujuanFinansialChoiceButton(choiceTFContainer, goal.id, GameState.GetTujuanFinansialSpriteName(goal), goal.nama);
+            }
+
+            return;
+        }
+
         if (DataManager.Instance == null || DataManager.Instance.tujuanFinansialDict == null)
         {
             Debug.LogWarning("Data tujuan finansial belum siap.");
@@ -331,27 +380,33 @@ public partial class UIManagerPlay
 
         foreach (var tujuanFinansial in DataManager.Instance.tujuanFinansialDict.Values)
         {
-            var button = new Button
-            {
-                name = tujuanFinansial.nama
-            };
-            button.AddToClassList("choice-button");
-            button.AddToClassList("item-choice-button");
-            button.text = string.Empty;
-
-            Sprite tujuanFinansialSprite = LoadTujuanFinansialButtonSprite(tujuanFinansial.nama);
-            if (tujuanFinansialSprite != null)
-            {
-                button.style.backgroundImage = new StyleBackground(tujuanFinansialSprite);
-            }
-            else
-            {
-                Debug.LogWarning("Sprite tujuan finansial tidak ditemukan untuk: " + tujuanFinansial.nama);
-            }
-
-            choiceTFContainer.Add(button);
-            tujuanFinansialChoiceButtons.Add(button);
+            AddTujuanFinansialChoiceButton(choiceTFContainer, tujuanFinansial.nama, tujuanFinansial.nama, tujuanFinansial.nama);
         }
+    }
+
+    private void AddTujuanFinansialChoiceButton(VisualElement choiceTFContainer, string tujuanKey, string spriteName, string label)
+    {
+        var button = new Button
+        {
+            name = tujuanKey
+        };
+        button.AddToClassList("choice-button");
+        button.AddToClassList("item-choice-button");
+        button.text = string.Empty;
+
+        Sprite tujuanFinansialSprite = LoadTujuanFinansialButtonSprite(spriteName);
+        if (tujuanFinansialSprite != null)
+        {
+            button.style.backgroundImage = new StyleBackground(tujuanFinansialSprite);
+        }
+        else
+        {
+            button.text = label;
+            Debug.LogWarning("Sprite tujuan finansial tidak ditemukan untuk: " + label);
+        }
+
+        choiceTFContainer.Add(button);
+        tujuanFinansialChoiceButtons.Add(button);
     }
 
     private Sprite LoadJualMasakanButtonSprite(string masakanName)
@@ -683,6 +738,21 @@ public partial class UIManagerPlay
         choiceContainers["Choice1"].AddToClassList("show-choice");
     }
 
+    // Varian harga dipilih setelah jenis kebutuhan, jadi Back kembali ke daftar jenis kebutuhan.
+    private void BackFromChoiceKJumlah(ClickEvent evt)
+    {
+        if (choiceController != null && choiceController.IsSubmittingKebutuhan)
+        {
+            return;
+        }
+
+        HideDialogContainer();
+        SetChoiceBackground("ChoiceK");
+        choiceContainers["ChoiceKJumlah"].RemoveFromClassList("show-choice");
+        UpdateKebutuhanPage();
+        choiceContainers["ChoiceK"].AddToClassList("show-choice");
+    }
+
     private void BackFromChoiceJM(ClickEvent evt)
     {
         HideDialogContainer();
@@ -856,19 +926,32 @@ public partial class UIManagerPlay
         nextKebutuhanButton.style.display = hasNextPage ? DisplayStyle.Flex : DisplayStyle.None;
     }
 
-    private bool CanSelectKebutuhanForActivePlayer(string kebutuhanName)
+    // kebutuhanKey berisi family kartu ruleset session, atau nama lokal bila tanpa katalog.
+    private bool CanSelectKebutuhanForActivePlayer(string kebutuhanKey)
     {
-        if (GameState.Instance == null || DataManager.Instance == null || DataManager.Instance.kebutuhanDict == null)
+        if (GameState.Instance == null)
         {
             return false;
         }
 
-        if (!DataManager.Instance.kebutuhanDict.TryGetValue(kebutuhanName, out KebutuhanData kebutuhanData))
+        string tipe;
+        List<NarafinSetupNeed> variants = NarafinActiveSession.GetNeedVariants(NarafinActiveSession.Catalog, kebutuhanKey);
+        if (variants.Count > 0)
+        {
+            tipe = variants[0].tipe;
+        }
+        else if (DataManager.Instance != null
+                 && DataManager.Instance.kebutuhanDict != null
+                 && DataManager.Instance.kebutuhanDict.TryGetValue(kebutuhanKey, out KebutuhanData kebutuhanData))
+        {
+            tipe = kebutuhanData.tipe;
+        }
+        else
         {
             return false;
         }
 
-        if (string.Equals(kebutuhanData.tipe, "primer", System.StringComparison.OrdinalIgnoreCase))
+        if (string.Equals(tipe, "primer", System.StringComparison.OrdinalIgnoreCase) || !GameState.Instance.RequirePrimaryBeforeOthers)
         {
             return true;
         }

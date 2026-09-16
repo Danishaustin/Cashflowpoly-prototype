@@ -375,7 +375,8 @@ public class LoginManager : MonoBehaviour
         return new NarafinSetupStartResult
         {
             Success = true,
-            Players = stateResult.Players
+            Players = stateResult.Players,
+            SetupEvents = sequenceResult.Events
         };
     }
 
@@ -599,6 +600,22 @@ public class LoginManager : MonoBehaviour
         ClearLastAuthError();
         Debug.Log("Register player berhasil. User ID: " + result.Session.user_id);
         return true;
+    }
+
+    public Task<NarafinSessionStateResult> GetActiveSessionStateAsync()
+    {
+        if (!IsSignedIn() || NarafinRuntimeConfig.UseOfflineMode || string.IsNullOrWhiteSpace(NarafinActiveSession.SessionId))
+        {
+            return Task.FromResult(new NarafinSessionStateResult
+            {
+                Success = false,
+                ErrorCode = "SESSION_STATE_UNAVAILABLE",
+                ErrorMessage = "State session tidak tersedia.",
+                Players = new List<NarafinSessionStatePlayer>()
+            });
+        }
+
+        return apiClient.GetSessionStateAsync(AccessToken, NarafinActiveSession.SessionId);
     }
 
     public Task<NarafinSessionOperationResult> PostEventAsync(string rawJsonBody)

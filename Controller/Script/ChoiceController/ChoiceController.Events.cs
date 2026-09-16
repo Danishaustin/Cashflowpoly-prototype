@@ -9,6 +9,7 @@ public partial class ChoiceController
 {
     private static readonly Queue<NarafinQueuedEvent> PendingNarafinEvents = new Queue<NarafinQueuedEvent>();
     private static bool isSendingNarafinEvents;
+    private bool isSendingAkhirGiliran;
 
     private static string BuildBahanMasakanPayload(string cardId, string ingredientName, int amount)
     {
@@ -40,7 +41,29 @@ public partial class ChoiceController
         }
 
         string eventJson = BuildEventJson("PLAYER", actionType, payloadJson, player, actionSlot, userId);
+        return await SendEventJsonNowAsync(eventJson, actionType);
+    }
 
+    // Event sistem (mis. BukaHargaEmas) dikirim langsung dan menunggu respons server.
+    private async Task<NarafinSessionOperationResult> SendSystemEventNowAsync(string actionType, string payloadJson)
+    {
+        if (LoginManager.Instance == null)
+        {
+            return CreateEventFailure("LOGIN_NOT_READY", "Sistem login belum siap.");
+        }
+
+        if (string.IsNullOrWhiteSpace(NarafinPlayerPrefs.ApiSessionId))
+        {
+            return CreateEventFailure("SESSION_MISSING", "Session belum tersedia.");
+        }
+
+        string eventJson = BuildEventJson("SYSTEM", actionType, payloadJson, 0, 0, string.Empty);
+        return await SendEventJsonNowAsync(eventJson, actionType);
+    }
+
+    // Menunggu antrean event lain selesai agar sequence_number tetap berurutan, lalu mengirim event dan menunggu respons.
+    private static async Task<NarafinSessionOperationResult> SendEventJsonNowAsync(string eventJson, string actionType)
+    {
         while (isSendingNarafinEvents)
         {
             await Task.Yield();
@@ -55,6 +78,7 @@ public partial class ChoiceController
             if (result.Success)
             {
                 NarafinPlayerPrefs.ConfirmEventSequenceNumber(sequenceNumber);
+                result.EventId = ExtractEventId(sequencedJson);
             }
             else
             {
@@ -91,10 +115,78 @@ public partial class ChoiceController
         PostPlayerEvent(player, "JualMasakan", payload);
     }
 
-    private void PostJumatBerkahEvent(int player, int amount)
+    // Donasi Jumat dikirim di slot 0 dan wajib tepat satu kali per pemain sesuai urutan.
+    private static string BuildJumatBerkahPayload(int amount)
     {
-        string payload = "{\"amount\":" + amount.ToString(CultureInfo.InvariantCulture) + "}";
-        PostPlayerEvent(player, "JumatBerkah", payload, 0);
+        return "{\"amount\":" + amount.ToString(CultureInfo.InvariantCulture) + "}";
+    }
+
+    // Harga emas Sabtu wajib dibuka sistem dengan nilai dari Kartu Harga Emas ruleset.
+    private static string BuildBukaHargaEmasPayload(int goldPrice)
+    {
+        return "{\"gold_price\":" + goldPrice.ToString(CultureInfo.InvariantCulture) + "}";
+    }
+
+    // unit_price wajib sama dengan harga yang dibuka hari itu dan amount = unit_price x qty;
+    // di luar hari Sabtu transaksi wajib merujuk kartu risiko GOLD_TRADE lewat risk_event_id.
+    private static string BuildGoldTradePayload(string tradeType, int unitPrice, int qty, string riskEventId = null)
+    {
+        return "{"
+            + JsonStringField("trade_type", tradeType)
+            + ",\"unit_price\":" + unitPrice.ToString(CultureInfo.InvariantCulture)
+            + ",\"qty\":" + qty.ToString(CultureInfo.InvariantCulture)
+            + ",\"amount\":" + (unitPrice * qty).ToString(CultureInfo.InvariantCulture)
+            + (string.IsNullOrEmpty(riskEventId) ? string.Empty : "," + JsonStringField("risk_event_id", riskEventId))
+            + "}";
+    }
+
+    // Satu card_id per kartu bahan yang dipakai; income wajib lebih dari 0.
+    private static string BuildJualMasakanPayload(string orderCardId, IEnumerable<string> ingredientCardIds, int income)
+    {
+        return "{"
+            + JsonStringField("order_card_id", orderCardId)
+            + ",\"required_ingredient_card_ids\":" + BuildStringArrayJson(ingredientCardIds)
+            + ",\"income\":" + income.ToString(CultureInfo.InvariantCulture)
+            + "}";
+    }
+
+    // Efek risiko diambil server dari katalog; klien hanya menyebut kartu dan event JualMasakan sumbernya.
+    private static string BuildRisikoKehidupanPayload(string riskCode, string sourceOrderEventId)
+    {
+        return "{"
+            + JsonStringField("risk_id", riskCode)
+            + "," + JsonStringField("source_order_event_id", sourceOrderEventId)
+            + "," + JsonStringField("note", "Risiko Kehidupan")
+            + "}";
+    }
+
+    private static string BuildRiskEventPayload(string riskEventId)
+    {
+        return "{" + JsonStringField("risk_event_id", riskEventId) + "}";
+    }
+
+    // Server menghitung direction/amount opsi darurat; extraFieldsJson berisi detail opsi tanpa kurung kurawal.
+    private static string BuildOpsiDaruratPayload(string riskEventId, string optionType, string extraFieldsJson)
+    {
+        return "{"
+            + JsonStringField("risk_event_id", riskEventId)
+            + "," + JsonStringField("option_type", optionType)
+            + (string.IsNullOrEmpty(extraFieldsJson) ? string.Empty : "," + extraFieldsJson)
+            + "}";
+    }
+
+    private static string ExtractEventId(string eventJson)
+    {
+        const string marker = "\"event_id\":\"";
+        int start = string.IsNullOrEmpty(eventJson) ? -1 : eventJson.IndexOf(marker, StringComparison.Ordinal);
+        if (start < 0)
+        {
+            return string.Empty;
+        }
+
+        start += marker.Length;
+        int end = eventJson.IndexOf('"', start);
+        return end > start ? eventJson.Substring(start, end - start) : string.Empty;
     }
 
     private void PostInvestasiEmasEvent(int player, string tradeType, int qty, int unitPrice, int amount)
@@ -108,10 +200,9 @@ public partial class ChoiceController
         PostPlayerEvent(player, "InvestasiEmas", payload, 0);
     }
 
-    private void PostKerjaLepasEvent(int player, int income)
+    private static string BuildKerjaLepasPayload(int income)
     {
-        string payload = "{\"amount\":" + income.ToString(CultureInfo.InvariantCulture) + "}";
-        PostPlayerEvent(player, "KerjaLepas", payload);
+        return "{\"amount\":" + income.ToString(CultureInfo.InvariantCulture) + "}";
     }
 
     private void PostKebutuhanEvent(int player, string kebutuhanName, int amount, int happiness)
@@ -122,6 +213,25 @@ public partial class ChoiceController
             + ",\"happiness\":" + happiness.ToString(CultureInfo.InvariantCulture)
             + "}";
         PostPlayerEvent(player, "Kebutuhan", payload);
+    }
+
+    // Harga dan poin wajib sama dengan katalog; need_tier wajib agar kartu diterima server.
+    private static string BuildKebutuhanPayload(NarafinSetupNeed need)
+    {
+        return "{"
+            + JsonStringField("card_id", need.id)
+            + ",\"amount\":" + need.hargaBeli.ToString(CultureInfo.InvariantCulture)
+            + ",\"points\":" + need.poinKebahagiaan.ToString(CultureInfo.InvariantCulture)
+            + "," + JsonStringField("need_tier", NarafinActiveSession.GetNeedTierCode(need.tipe))
+            + "}";
+    }
+
+    private static string BuildMenabungPayload(string goalId, int amount)
+    {
+        return "{"
+            + JsonStringField("goal_id", goalId)
+            + ",\"amount\":" + amount.ToString(CultureInfo.InvariantCulture)
+            + "}";
     }
 
     private void PostMenabungEvent(int player, int amount)
@@ -140,33 +250,36 @@ public partial class ChoiceController
         PostPlayerEvent(player, "TujuanFinansial", payload);
     }
 
-    private void PostPinjamanSyariahEvent(int player, string loanAction, int amount)
+    // Detail pinjaman wajib sama dengan katalog ruleset; loan_id unik per kartu dibuat oleh klien.
+    private static string BuildPinjamanSyariahPayload(string loanId, NarafinSetupLoan loan)
     {
-        if (loanAction == "RETURN")
-        {
-            string returnPayload = "{"
-                + JsonStringField("loan_id", "LOAN-001")
-                + ",\"amount\":" + amount.ToString(CultureInfo.InvariantCulture)
-                + "}";
-            PostPlayerEvent(player, "BayarPinjaman", returnPayload);
-            return;
-        }
-
-        string payload = "{"
-            + JsonStringField("loan_code", "LOAN-001")
-            + "," + JsonStringField("loan_action", loanAction)
-            + ",\"amount\":" + amount.ToString(CultureInfo.InvariantCulture)
+        return "{"
+            + JsonStringField("loan_id", loanId)
+            + "," + JsonStringField("loan_code", loan.loan_code)
+            + ",\"principal\":" + loan.principal.ToString(CultureInfo.InvariantCulture)
+            + ",\"repayment_amount\":" + loan.repayment_amount.ToString(CultureInfo.InvariantCulture)
+            + ",\"duration_days\":" + loan.duration_days.ToString(CultureInfo.InvariantCulture)
+            + ",\"penalty_points\":" + loan.penalty_points.ToString(CultureInfo.InvariantCulture)
             + "}";
-        PostPlayerEvent(player, "PinjamanSyariah", payload);
     }
 
-    private void PostAsuransiEvent(int player, int premium)
+    private static string BuildBayarPinjamanPayload(string loanId, int amount)
     {
-        string payload = "{"
-            + JsonStringField("product_code", "INS-001")
-            + ",\"amount\":" + premium.ToString(CultureInfo.InvariantCulture)
+        return "{"
+            + JsonStringField("loan_id", loanId)
+            + ",\"amount\":" + amount.ToString(CultureInfo.InvariantCulture)
             + "}";
-        PostPlayerEvent(player, "Asuransi", payload);
+    }
+
+    // premium wajib sama dengan katalog; policy_id unik per polis dibuat oleh klien.
+    private static string BuildAsuransiPayload(string policyId, string productCode, int premium, string coverageType)
+    {
+        return "{"
+            + JsonStringField("policy_id", policyId)
+            + "," + JsonStringField("product_code", productCode)
+            + ",\"premium\":" + premium.ToString(CultureInfo.InvariantCulture)
+            + "," + JsonStringField("coverage_type", coverageType)
+            + "}";
     }
 
     private void PostRisikoKehidupanEvent(int player, bool investasiEmasSelected, bool bayarBankSelected, bool dapatCoinSelected, bool perubahanHargaSelected, int bankAmount, int rewardAmount, int priceDelta)
@@ -183,41 +296,61 @@ public partial class ChoiceController
         PostPlayerEvent(player, "RisikoKehidupan", payload);
     }
 
-    private void PostAkhirGiliranEvent(int usedActions, int remainingActions)
+    // Akhir hari ditunggu agar kegagalannya terlihat pemain; server menghitung sendiri pemakaian slot
+    // dari riwayat aksi, jadi payload hanya berisi catatan.
+    private async Task PostAkhirGiliranForDayEndAsync()
     {
-        string payload = "{"
-            + "\"used\":" + usedActions.ToString(CultureInfo.InvariantCulture)
-            + ",\"remaining\":" + remainingActions.ToString(CultureInfo.InvariantCulture)
-            + "}";
-        PostSystemEvent("AkhirGiliran", payload, 0, 0);
+        if (isSendingAkhirGiliran)
+        {
+            return;
+        }
+
+        string note = "Akhir giliran hari " + (GameState.Instance != null ? GameState.Instance.day : 0);
+
+        NarafinSessionOperationResult result;
+        isSendingAkhirGiliran = true;
+        try
+        {
+            result = await SendSystemEventNowAsync("AkhirGiliran", "{" + JsonStringField("note", note) + "}");
+        }
+        catch (Exception ex)
+        {
+            Debug.LogWarning("Gagal mengirim akhir giliran: " + ex.Message);
+            result = CreateEventFailure("EVENT_SEND_FAILED", "Gagal menghubungi server.");
+        }
+        finally
+        {
+            isSendingAkhirGiliran = false;
+        }
+
+        if (this == null || result.Success)
+        {
+            return;
+        }
+
+        view.AddSystemTextToDialog("Hari gagal ditutup di server: " + result.ErrorMessage);
     }
 
-    private void PostAkhirGiliranIfDayWillAdvance(int currentTurn)
+    private Task PostAkhirGiliranIfDayWillAdvanceAsync(int currentTurn)
     {
         if (GameState.Instance == null ||
             GameState.Instance.movesLeft > 1 ||
             !GameState.Instance.IsLastPlayerInTurnOrder(currentTurn))
         {
-            return;
+            return Task.CompletedTask;
         }
 
-        PostAkhirGiliranForDayEnd();
+        return PostAkhirGiliranForDayEndAsync();
     }
 
-    private void PostAkhirGiliranForDayEndIfLastPlayer(int currentTurn)
+    private Task PostAkhirGiliranForDayEndIfLastPlayerAsync(int currentTurn)
     {
         if (GameState.Instance == null || !GameState.Instance.IsLastPlayerInTurnOrder(currentTurn))
         {
-            return;
+            return Task.CompletedTask;
         }
 
-        PostAkhirGiliranForDayEnd();
-    }
-
-    private void PostAkhirGiliranForDayEnd()
-    {
-        int usedActions = Mathf.Max(0, GameState.Instance.playerCount) * Mathf.Max(1, GameState.Instance.ActionsPerTurn);
-        PostAkhirGiliranEvent(usedActions, 0);
+        return PostAkhirGiliranForDayEndAsync();
     }
 
     private void PostPlayerEvent(int player, string actionType, string payloadJson)

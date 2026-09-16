@@ -93,6 +93,7 @@
                 <ui:Label tabindex="-1" text="Keputusan Player 1" parse-escape-sequences="true" display-tooltip-when-elided="true" name="EmasActionDecisionText" class="menabung-title-text" />
                 <ui:Button text="Beli Emas" parse-escape-sequences="true" display-tooltip-when-elided="true" name="BeliEmasInvestasi" class="choice-button" />
                 <ui:Button text="Jual Emas" parse-escape-sequences="true" display-tooltip-when-elided="true" name="JualEmasInvestasi" class="choice-button" />
+                <ui:Button text="Lewati" parse-escape-sequences="true" display-tooltip-when-elided="true" name="LewatiEmasInvestasi" class="choice-button" />
             </ui:VisualElement>
             <ui:VisualElement name="ChoiceJumlahEmas" class="choice-list" style="justify-content: center; align-items: stretch;">
                 <ui:Label tabindex="-1" text="Jumlah Emas" parse-escape-sequences="true" display-tooltip-when-elided="true" class="text" style="width: 100%;" />
@@ -147,6 +148,7 @@
                     </ui:VisualElement>
                     <ui:Toggle label="Pinjaman Syariah" name="RisikoPinjamanSyariahToggle" class="risk-toggle" />
                 </ui:VisualElement>
+                <ui:ScrollView name="RisikoKartuList" class="risk-content risk-card-list" style="display: none;" />
                 <ui:VisualElement style="flex-grow: 0; height: 14%; width: auto; flex-direction: row; justify-content: center;">
                     <ui:Button text="Next" parse-escape-sequences="true" display-tooltip-when-elided="true" name="NextButtonRisikoKehidupan" class="choice-button" style="width: 30%;" />
                 </ui:VisualElement>
@@ -198,6 +200,7 @@
                 <ui:VisualElement name="ConfirmContainer" style="flex-grow: 0; height: 20%; width: auto; flex-direction: row; justify-content: center;">
                     <ui:Button text="Confirm" parse-escape-sequences="true" display-tooltip-when-elided="true" name="ConfirmButtonK" class="choice-button" style="width: 30%;" />
                 </ui:VisualElement>
+                <ui:Button text="Back" parse-escape-sequences="true" display-tooltip-when-elided="true" name="BackChoiceKJumlahButton" class="item-back-button" />
             </ui:VisualElement>
             <ui:VisualElement name="ChoiceFinalHappiness" class="choice-list" style="flex-grow: 1; justify-content: center; align-items: stretch;">
                 <ui:Label tabindex="-1" text="Poin Kebahagiaan Akhir" parse-escape-sequences="true" display-tooltip-when-elided="true" class="text" style="width: 100%;" />

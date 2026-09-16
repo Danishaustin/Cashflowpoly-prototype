@@ -144,7 +144,7 @@ public partial class UIManagerPlay
                 break;
             case "JumatBerkah":
                 choiceContainers["JumatBerkah"].AddToClassList("show-choice");
-                GameState.Instance.SetSavingText(GameState.Instance.Coins > 0 ? 1 : 0);
+                GameState.Instance.SetSavingText(Mathf.Min(GameState.Instance.Coins, Mathf.Max(1, GameState.Instance.DonationMinAmount)));
                 UpdateJumatBerkahText(GameState.Instance.SavingText);
                 break;
             case "ChoiceKJumlah":
@@ -216,7 +216,13 @@ public partial class UIManagerPlay
                 continue;
             }
 
-            button.SetEnabled(canUseLoanFeature);
+            bool canUseButton = canUseLoanFeature;
+            if (string.Equals(button.name, "KembalikanPinjamanSyariah", System.StringComparison.OrdinalIgnoreCase))
+            {
+                canUseButton = canUseLoanFeature && GameState.Instance.GetPinjamanSyariahCards(GameState.Instance.turn) > 0;
+            }
+
+            button.SetEnabled(canUseButton);
         }
     }
 
@@ -240,14 +246,17 @@ public partial class UIManagerPlay
                 continue;
             }
 
+            int player = GameState.Instance.turn;
             bool canUseButton = true;
             if (string.Equals(button.name, "BeliEmasInvestasi", System.StringComparison.OrdinalIgnoreCase))
             {
-                canUseButton = GameState.Instance.GoldTradeAllowBuy;
+                int hargaEmas = GameState.Instance.HargaEmasSaatIni;
+                canUseButton = GameState.Instance.GoldTradeAllowBuy
+                    && (hargaEmas <= 0 || GameState.Instance.GetCoins(player) >= hargaEmas);
             }
             else if (string.Equals(button.name, "JualEmasInvestasi", System.StringComparison.OrdinalIgnoreCase))
             {
-                canUseButton = GameState.Instance.GoldTradeAllowSell;
+                canUseButton = GameState.Instance.GoldTradeAllowSell && GameState.Instance.GetEmas(player) > 0;
             }
 
             button.SetEnabled(canUseButton);

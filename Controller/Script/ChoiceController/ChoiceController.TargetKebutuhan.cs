@@ -109,6 +109,7 @@ public partial class ChoiceController
         if (hasServerPlayers)
         {
             ApplyServerCoins(result.Players);
+            ApplyServerSetupAssets(result.Players, result.SetupEvents);
         }
 
         targetKebutuhanSelectionOrder.Clear();
@@ -131,5 +132,92 @@ public partial class ChoiceController
 
             GameState.Instance.SetCoins(serverPlayer.player_order_no, serverPlayer.coins);
         }
+    }
+
+    // Pinjaman dan polis awal dibaca dari event setup server agar loan_id dan policy_id asli bisa dipakai.
+    private void ApplyServerSetupAssets(IEnumerable<NarafinSessionStatePlayer> serverPlayers, IEnumerable<NarafinSessionEventSummary> setupEvents)
+    {
+        if (setupEvents == null)
+        {
+            Debug.LogWarning("Event setup tidak tersedia; pinjaman dan asuransi awal memakai data lokal.");
+            return;
+        }
+
+        foreach (NarafinSessionStatePlayer serverPlayer in serverPlayers)
+        {
+            if (serverPlayer == null || serverPlayer.player_order_no < 1 || serverPlayer.player_order_no > GameState.Instance.playerCount)
+            {
+                continue;
+            }
+
+            List<PinjamanSyariahHolding> loans = new List<PinjamanSyariahHolding>();
+            string policyId = string.Empty;
+            int policyUsageLimit = 0;
+
+            foreach (NarafinSessionEventSummary setupEvent in setupEvents)
+            {
+                if (setupEvent?.payload == null
+                    || !string.Equals(setupEvent.user_id, serverPlayer.user_id, StringComparison.OrdinalIgnoreCase))
+                {
+                    continue;
+                }
+
+                if (setupEvent.action_type == "SetupPinjamanAwal" && !string.IsNullOrWhiteSpace(setupEvent.payload.loan_id))
+                {
+                    loans.Add(new PinjamanSyariahHolding
+                    {
+                        LoanId = setupEvent.payload.loan_id,
+                        LoanCode = setupEvent.payload.loan_code,
+                        ItemName = GetPinjamanSyariahItemName(setupEvent.payload.loan_code),
+                        Principal = setupEvent.payload.principal,
+                        RepaymentAmount = setupEvent.payload.repayment_amount
+                    });
+                }
+                else if (setupEvent.action_type == "SetupAsuransiAwal" && !string.IsNullOrWhiteSpace(setupEvent.payload.policy_id))
+                {
+                    policyId = setupEvent.payload.policy_id;
+                    policyUsageLimit = GetAsuransiUsageLimit(setupEvent.payload.product_code);
+                }
+            }
+
+            GameState.Instance.SetPinjamanSyariahList(serverPlayer.player_order_no, loans);
+            GameState.Instance.SetAsuransiPolicy(serverPlayer.player_order_no, policyId, policyUsageLimit);
+        }
+    }
+
+    private static int GetAsuransiUsageLimit(string productCode)
+    {
+        NarafinRulesetSetupDefinition catalog = NarafinActiveSession.Catalog;
+        if (catalog?.insurance_products != null)
+        {
+            foreach (NarafinSetupInsurance product in catalog.insurance_products)
+            {
+                if (product != null && string.Equals(product.product_code, productCode, StringComparison.Ordinal))
+                {
+                    return Mathf.Max(1, product.usage_limit);
+                }
+            }
+        }
+
+        return 1;
+    }
+
+    private static string GetPinjamanSyariahItemName(string loanCode)
+    {
+        NarafinRulesetSetupDefinition catalog = NarafinActiveSession.Catalog;
+        if (catalog?.sharia_loans != null)
+        {
+            foreach (NarafinSetupLoan loan in catalog.sharia_loans)
+            {
+                if (loan != null
+                    && string.Equals(loan.loan_code, loanCode, StringComparison.Ordinal)
+                    && !string.IsNullOrWhiteSpace(loan.item_name))
+                {
+                    return loan.item_name;
+                }
+            }
+        }
+
+        return "Pinjaman Syariah";
     }
 }

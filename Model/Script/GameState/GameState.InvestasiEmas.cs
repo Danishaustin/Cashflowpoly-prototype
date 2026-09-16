@@ -39,6 +39,12 @@ public partial class GameState
         playerEmas[turn] = Mathf.Max(0, playerEmas[turn] + amount);
     }
 
+    public void ChangeEmas(int player, int amount)
+    {
+        EnsureInvestasiEmasPlayer(player);
+        playerEmas[player] = Mathf.Max(0, playerEmas[player] + amount);
+    }
+
     public bool AdvanceInvestasiEmasTurn()
     {
         if (!IsLastPlayerInTurnOrder(turn))

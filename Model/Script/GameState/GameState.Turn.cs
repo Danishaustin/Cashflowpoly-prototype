@@ -86,6 +86,22 @@ public partial class GameState
         return SaturdayEnabled && GetDayOfWeek(day) == 6;
     }
 
+    public bool IsHariMingguLibur()
+    {
+        return SundayIsHoliday && GetDayOfWeek(day) == 7;
+    }
+
+    // Minggu libur dilewati seluruhnya: tidak ada giliran pemain pada hari itu.
+    public void LewatiHariMinggu()
+    {
+        if (!IsHariMingguLibur())
+        {
+            return;
+        }
+
+        NextDay();
+    }
+
     public bool IsGameOver()
     {
         return isGameOver;

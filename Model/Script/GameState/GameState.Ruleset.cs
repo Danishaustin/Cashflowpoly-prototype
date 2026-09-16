@@ -42,9 +42,14 @@ public partial class GameState
     public bool LoanEnabled { get; private set; } = true;
     public bool InsuranceEnabled { get; private set; } = true;
     public int FreelanceIncome { get; private set; } = 1;
+    public int DonationMinAmount { get; private set; } = 1;
+    public int DonationMaxAmount { get; private set; } = 999999;
     public bool FridayEnabled { get; private set; } = true;
     public bool SaturdayEnabled { get; private set; } = true;
     public bool SundayEnabled { get; private set; } = true;
+
+    // sunday_feature REST/LIBUR: hari Minggu tidak dimainkan, cukup dicatat sebagai hari libur.
+    public bool SundayIsHoliday { get; private set; }
 
     private void InitializeRulesetActions()
     {
@@ -77,7 +82,9 @@ public partial class GameState
             gold_trade_allow_sell = sessionSettings.gold_trade_allow_sell,
             loan_enabled = sessionSettings.loan_enabled,
             insurance_enabled = sessionSettings.insurance_enabled,
-            freelance_income = sessionSettings.freelance_income
+            freelance_income = sessionSettings.freelance_income,
+            donation_min_amount = sessionSettings.donation_min_amount,
+            donation_max_amount = sessionSettings.donation_max_amount
         });
 
         Debug.Log(
@@ -202,6 +209,16 @@ public partial class GameState
         LoanEnabled = settings.loan_enabled;
         InsuranceEnabled = settings.insurance_enabled;
         FreelanceIncome = settings.freelance_income;
+
+        if (settings.donation_min_amount > 0)
+        {
+            DonationMinAmount = settings.donation_min_amount;
+        }
+
+        if (settings.donation_max_amount > 0)
+        {
+            DonationMaxAmount = settings.donation_max_amount;
+        }
     }
 
     private void ApplyPlayerOrdering(RulesetPlayerOrderingData playerOrdering)
@@ -214,6 +231,20 @@ public partial class GameState
         FridayEnabled = playerOrdering.friday_enabled;
         SaturdayEnabled = playerOrdering.saturday_enabled;
         SundayEnabled = playerOrdering.sunday_enabled;
+        SundayIsHoliday = IsHolidayFeature(playerOrdering.sunday_feature);
+    }
+
+    private static bool IsHolidayFeature(string feature)
+    {
+        switch ((feature ?? string.Empty).Trim().ToUpperInvariant())
+        {
+            case "REST":
+            case "LIBUR":
+            case "HOLIDAY":
+                return true;
+            default:
+                return false;
+        }
     }
 
     private void ApplyRulesetActions(List<RulesetActionData> actions)
@@ -306,6 +337,8 @@ public partial class GameState
         public bool loan_enabled;
         public bool insurance_enabled;
         public int freelance_income;
+        public int donation_min_amount;
+        public int donation_max_amount;
     }
 
     [Serializable]

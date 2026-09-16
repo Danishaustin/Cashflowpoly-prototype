@@ -41,6 +41,11 @@ public partial class ChoiceController
 
     private void HandleChoiceRisikoKehidupan(string selectedChoice)
     {
+        if (HandleChoiceRisikoKehidupanServer(selectedChoice))
+        {
+            return;
+        }
+
         switch (selectedChoice)
         {
             case "DecreaseButtonRisikoCoin":
@@ -150,7 +155,7 @@ public partial class ChoiceController
 
         if (view.IsRisikoUseAsuransiSelected())
         {
-            GameState.Instance.SetAsuransiDimiliki(player, false);
+            GameState.Instance.UseAsuransiPolicy(player);
         }
         else if (view.IsRisikoBayarBankSelected())
         {

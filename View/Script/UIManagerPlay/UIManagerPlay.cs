@@ -94,6 +94,7 @@ public partial class UIManagerPlay : MonoBehaviour
     private Button previousBahanButton;
     private Button nextBahanButton;
     private Button backChoiceKButton;
+    private Button backChoiceKJumlahButton;
     private Button previousKebutuhanButton;
     private Button nextKebutuhanButton;
     private Button backChoiceJMButton;
@@ -223,6 +224,7 @@ public partial class UIManagerPlay : MonoBehaviour
         previousBahanButton = root.Q<Button>("PreviousBahanButton");
         nextBahanButton = root.Q<Button>("NextBahanButton");
         backChoiceKButton = root.Q<Button>("BackChoiceKButton");
+        backChoiceKJumlahButton = root.Q<Button>("BackChoiceKJumlahButton");
         previousKebutuhanButton = root.Q<Button>("PreviousKebutuhanButton");
         nextKebutuhanButton = root.Q<Button>("NextKebutuhanButton");
         backChoiceJMButton = root.Q<Button>("BackChoiceJMButton");
@@ -350,6 +352,7 @@ public partial class UIManagerPlay : MonoBehaviour
         previousBahanButton.RegisterCallback<ClickEvent>(ShowPreviousBahanPage);
         nextBahanButton.RegisterCallback<ClickEvent>(ShowNextBahanPage);
         backChoiceKButton.RegisterCallback<ClickEvent>(BackFromChoiceK);
+        backChoiceKJumlahButton.RegisterCallback<ClickEvent>(BackFromChoiceKJumlah);
         previousKebutuhanButton.RegisterCallback<ClickEvent>(ShowPreviousKebutuhanPage);
         nextKebutuhanButton.RegisterCallback<ClickEvent>(ShowNextKebutuhanPage);
         backChoiceJMButton.RegisterCallback<ClickEvent>(BackFromChoiceJM);
@@ -406,6 +409,7 @@ public partial class UIManagerPlay : MonoBehaviour
         {
             if (button == backChoiceBMButton || button == previousBahanButton || button == nextBahanButton
                 || button == backChoiceKButton || button == previousKebutuhanButton || button == nextKebutuhanButton
+                || button == backChoiceKJumlahButton
                 || button == backChoiceJMButton || button == previousJualMasakanButton || button == nextJualMasakanButton
                 || button == backChoicePSButton
                 || button == backChoiceMenabungButton
@@ -426,7 +430,8 @@ public partial class UIManagerPlay : MonoBehaviour
                 continue;
             }
 
-            if (specialButtons.Contains(button.name))
+            if (specialButtons.Contains(button.name)
+                || (button.name != null && button.name.StartsWith(RisikoKartuButtonPrefix, System.StringComparison.Ordinal)))
             {
                 button.RegisterCallback<ClickEvent>(evt => OnChoiceTFClicked(evt, container));
                 continue;

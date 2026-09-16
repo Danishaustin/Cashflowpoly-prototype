@@ -1,37 +1,109 @@
+using System;
+using System.Threading.Tasks;
 using UnityEngine;
 
 public partial class ChoiceController
 {
-    private const int HargaAsuransi = 1;
+    // Nilai coverage_type yang dipakai server untuk polis pembagian awal.
+    private const string AsuransiCoverageType = "MULTIRISK";
+
+    private bool isSubmittingAsuransi;
 
     private void HandleChoiceAsuransi()
     {
+        if (isSubmittingAsuransi)
+        {
+            return;
+        }
+
         if (GameState.Instance != null && !GameState.Instance.InsuranceEnabled)
         {
             ShowSystemDialogThen("Fitur asuransi tidak tersedia pada ruleset ini.\n", () => view.ShowChoice("Choice1"));
             return;
         }
 
-        if (GameState.Instance.AsuransiDimiliki)
+        int player = GameState.Instance.turn;
+        if (GameState.Instance.GetAsuransiDimiliki(player))
         {
-            view.AddTextToDialog("Kamu sudah memiliki kartu asuransi.\n");
+            view.AddTextToDialog("Kamu masih memiliki polis asuransi aktif.\n");
             view.ShowChoice("Choice1");
             return;
         }
 
-        if (GameState.Instance.Coins < HargaAsuransi)
+        _ = BeliAsuransiAsync(player);
+    }
+
+    // Produk pertama pada katalog ruleset session, sama dengan pembagian awal.
+    private static NarafinSetupInsurance GetAsuransiProduct()
+    {
+        NarafinSetupInsurance product = NarafinActiveSession.GetFirstInsurance(NarafinActiveSession.Catalog);
+        if (product != null)
         {
-            view.AddTextToDialog("Uang tidak cukup untuk membeli asuransi.\n");
+            return product;
+        }
+
+        return new NarafinSetupInsurance
+        {
+            product_code = "INS-001",
+            item_name = "Asuransi",
+            premium = 1,
+            usage_limit = 1
+        };
+    }
+
+    private async Task BeliAsuransiAsync(int player)
+    {
+        NarafinSetupInsurance product = GetAsuransiProduct();
+        string itemName = string.IsNullOrWhiteSpace(product.item_name) ? "Asuransi" : product.item_name;
+        int premium = product.premium;
+
+        string spendBlockedMessage = GameState.Instance.GetSpendBlockedMessage(player, premium);
+        if (spendBlockedMessage != null)
+        {
+            view.AddTextToDialog("Tidak bisa membeli asuransi. " + spendBlockedMessage + "\n");
             view.ShowChoice("Choice1");
             return;
         }
 
-        GameState.Instance.ChangeCoins(-HargaAsuransi);
-        GameState.Instance.SetAsuransiDimiliki(true);
-        view.UpdateCoins(GameState.Instance.Coins);
-        PostAsuransiEvent(GameState.Instance.turn, HargaAsuransi);
+        string policyId = product.product_code + ":unity:" + Guid.NewGuid().ToString("N");
 
-        string resultText = "Membeli kartu asuransi seharga " + HargaAsuransi + " coin.\n";
+        NarafinSessionOperationResult result;
+        isSubmittingAsuransi = true;
+        view.AddSystemTextToDialog("Mencatat pembelian " + itemName + "...");
+        try
+        {
+            result = await SendPlayerEventNowAsync(
+                player,
+                "Asuransi",
+                BuildAsuransiPayload(policyId, product.product_code, premium, AsuransiCoverageType),
+                GetCurrentActionSlot());
+        }
+        catch (Exception ex)
+        {
+            Debug.LogWarning("Gagal mengirim pembelian asuransi: " + ex.Message);
+            result = CreateEventFailure("EVENT_SEND_FAILED", "Gagal menghubungi server.");
+        }
+        finally
+        {
+            isSubmittingAsuransi = false;
+        }
+
+        if (this == null)
+        {
+            return;
+        }
+
+        if (!result.Success)
+        {
+            ShowSystemDialogThen(itemName + " ditolak: " + result.ErrorMessage + "\n", () => view.ShowChoice("Choice1"));
+            return;
+        }
+
+        GameState.Instance.ChangeCoins(player, -premium);
+        GameState.Instance.SetAsuransiPolicy(player, policyId, product.usage_limit);
+        view.UpdateCoins(GameState.Instance.GetCoins(player));
+
+        string resultText = "Membeli " + itemName + " seharga " + premium + " koin.\n";
         if (Narasi("MembeliAsuransi", 0, () =>
         {
             ShowSystemDialogThen(resultText, UpdateMove);

@@ -229,9 +229,8 @@ public partial class NarasiController
             return false;
         }
 
-        if (HasItems(prerequisite.tujuanFinansialDimiliki) && !HasAllStrings(
-            prerequisite.tujuanFinansialDimiliki,
-            GameState.Instance.GetTujuanFinansialList(GameState.Instance.turn)))
+        if (HasItems(prerequisite.tujuanFinansialDimiliki)
+            && !GameState.Instance.HasAllTujuanFinansial(GameState.Instance.turn, prerequisite.tujuanFinansialDimiliki))
         {
             return false;
         }
@@ -253,30 +252,12 @@ public partial class NarasiController
 
     private int CountKebutuhanByName(string namaKebutuhan)
     {
-        var kebutuhanList = GameState.Instance.GetKebutuhanList(GameState.Instance.turn);
-        int count = 0;
-
-        foreach (var kebutuhanGroup in kebutuhanList.Values)
-        {
-            count += kebutuhanGroup.Count(kebutuhan =>
-                string.Equals(kebutuhan, namaKebutuhan, StringComparison.OrdinalIgnoreCase));
-        }
-
-        return count;
+        return GameState.Instance.CountKebutuhanByName(GameState.Instance.turn, namaKebutuhan);
     }
 
     private int CountKebutuhanByType(string tipeKebutuhan)
     {
-        var kebutuhanList = GameState.Instance.GetKebutuhanList(GameState.Instance.turn);
-        foreach (var kv in kebutuhanList)
-        {
-            if (string.Equals(kv.Key, tipeKebutuhan, StringComparison.OrdinalIgnoreCase))
-            {
-                return kv.Value.Count;
-            }
-        }
-
-        return 0;
+        return GameState.Instance.CountKebutuhanByTipe(GameState.Instance.turn, tipeKebutuhan);
     }
 
     private bool HasAllBahan(List<string> bahanDimiliki)
