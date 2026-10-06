@@ -33,20 +33,6 @@ public partial class GameState
             return localName;
         }
 
-        string idKey = NarafinActiveSession.NormalizeName(order.id);
-        string nameKey = NarafinActiveSession.NormalizeName(order.nama);
-        if (DataManager.Instance != null && DataManager.Instance.resepDict != null)
-        {
-            foreach (string resepName in DataManager.Instance.resepDict.Keys)
-            {
-                string resepKey = NarafinActiveSession.NormalizeName(resepName);
-                if (resepKey == idKey || resepKey == nameKey)
-                {
-                    return resepName;
-                }
-            }
-        }
-
         StringBuilder builder = new StringBuilder(order.id.Length);
         foreach (string part in order.id.Split('_'))
         {

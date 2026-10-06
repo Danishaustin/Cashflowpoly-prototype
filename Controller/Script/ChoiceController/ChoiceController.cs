@@ -50,11 +50,11 @@ public partial class ChoiceController : MonoBehaviour
             case "JumatBerkah":
                 JumatBerkah(selectedChoice);
                 break;
+            case "ChoiceConfirm":
+                HandleChoiceConfirm(selectedChoice);
+                break;
             case "ChoiceKJumlah":
                 HandleChoiceKJumlah(selectedChoice);
-                break;
-            case "ChoiceFinalHappiness":
-                HandleChoiceFinalHappiness(selectedChoice);
                 break;
             case "ChoiceTargetKebutuhan":
                 HandleChoiceTargetKebutuhan(selectedChoice);
@@ -90,7 +90,7 @@ public partial class ChoiceController : MonoBehaviour
             case "TujuanFinansial":
                 if (UseTujuanFinansialCatalog)
                 {
-                    view.ShowChoice("TujuanFinansial");
+                    StartMenabung();
                     break;
                 }
 

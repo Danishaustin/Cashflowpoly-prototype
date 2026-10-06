@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -74,7 +75,7 @@ public partial class UIManagerPlay
                 if (GameState.Instance.IsGameOver())
                 {
                     HideDialogContainer();
-                    choiceController.StartFinalHappinessInput();
+                    choiceController.ShowGameFinished();
                     return;
                 }
                 HideDialogContainer();
@@ -150,27 +151,76 @@ public partial class UIManagerPlay
             case "ChoiceKJumlah":
                 choiceContainers["ChoiceKJumlah"].AddToClassList("show-choice");
                 break;
-            case "FinalHappiness":
-                choiceContainers["ChoiceFinalHappiness"].AddToClassList("show-choice");
-                break;
             default:
                 break;
         }
     }
 
-    public void ShowGameOverSummary()
+    // Layar akhir: hanya keterangan bahwa permainan berakhir, plus tombol kembali ke Home.
+    public void ShowGameFinishedPanel(string message)
+    {
+        HideDialogContainer();
+        HideAllChoiceContainers();
+
+        if (selesaiText != null)
+        {
+            selesaiText.text = message;
+        }
+
+        choiceContainers["PermainanSelesai"].AddToClassList("show-choice");
+    }
+
+    // Panel konfirmasi tampil di atas layar aksi yang sedang terbuka, lalu ditutup lagi setelah dijawab.
+    public void ShowActionConfirm(string message)
     {
         HideDialogContainer();
 
-        string summary = "Permainan selesai!";
-        for (int player = 1; player <= GameState.Instance.playerCount; player++)
+        if (choiceConfirmText != null)
         {
-            string playerName = PlayerPrefs.GetString("PlayerName_" + player, "Player " + player);
-            summary += " | " + playerName + ": " + GameState.Instance.GetHappiness(player);
+            choiceConfirmText.text = message;
         }
 
-        AddSystemTextToDialog(summary);
-        choiceContainers["PermainanSelesai"].AddToClassList("show-choice");
+        VisualElement confirmContainer = choiceContainers["ChoiceConfirm"];
+        confirmContainer.AddToClassList("show-choice");
+        confirmContainer.BringToFront();
+    }
+
+    public void HideActionConfirm()
+    {
+        choiceContainers["ChoiceConfirm"].RemoveFromClassList("show-choice");
+    }
+
+    // Baris skor akhir: judul memakai gaya tebal, sisanya baris biasa.
+    public void ShowGameFinishedScores(List<string> rows)
+    {
+        if (selesaiScoreList == null)
+        {
+            return;
+        }
+
+        selesaiScoreList.Clear();
+        bool hasRows = rows != null && rows.Count > 0;
+        selesaiScoreList.style.display = hasRows ? DisplayStyle.Flex : DisplayStyle.None;
+
+        if (hasRows)
+        {
+            foreach (string row in rows)
+            {
+                bool isTitle = row.StartsWith("#");
+                Label label = new Label(isTitle ? row.Substring(1) : row);
+                label.AddToClassList(isTitle ? "selesai-score-title" : "selesai-score-row");
+                selesaiScoreList.Add(label);
+            }
+        }
+
+    }
+
+    public void SetGameFinishedRetryVisible(bool isVisible)
+    {
+        if (selesaiRetryButton != null)
+        {
+            selesaiRetryButton.style.display = isVisible ? DisplayStyle.Flex : DisplayStyle.None;
+        }
     }
 
     private void UpdateAsuransiButtonState()

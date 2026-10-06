@@ -31,6 +31,8 @@ public partial class UIManagerPlay
             options.Add(uniqueLabel);
         }
 
+        // Urut abjad agar kartu fisik yang ditarik mudah dicari; lookup label ke risk_code tidak terpengaruh urutan.
+        options.Sort(System.StringComparer.InvariantCultureIgnoreCase);
         risikoKartuDropdown.choices = options;
         risikoKartuDropdown.SetValueWithoutNotify(options.Count > 0 ? options[0] : string.Empty);
     }

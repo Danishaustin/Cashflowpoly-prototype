@@ -16,12 +16,6 @@ public partial class UIManagerPlay
             return;
         }
 
-        if (DataManager.Instance == null || DataManager.Instance.bahanDict == null)
-        {
-            Debug.LogWarning("Data bahan belum siap.");
-            return;
-        }
-
         initialBahanContainer.Clear();
         foreach (BahanChoiceOption option in GetBahanChoiceOptions())
         {
@@ -116,21 +110,7 @@ public partial class UIManagerPlay
             return options;
         }
 
-        if (DataManager.Instance == null || DataManager.Instance.bahanDict == null)
-        {
-            Debug.LogWarning("Data bahan belum siap.");
-            return options;
-        }
-
-        foreach (BahanMakananData bahan in DataManager.Instance.bahanDict.Values)
-        {
-            options.Add(new BahanChoiceOption
-            {
-                Key = bahan.nama,
-                DisplayName = bahan.nama
-            });
-        }
-
+        Debug.LogWarning("Katalog bahan ruleset session kosong, tombol bahan tidak dibuat.");
         return options;
     }
 
@@ -170,31 +150,12 @@ public partial class UIManagerPlay
         }
     }
 
-    // Sprite bahan memakai nama lokal ("Nasi.png") sedangkan ruleset bisa memakai nama lain ("Nasi Putih"),
-    // jadi dicoba nama dari server dulu lalu nama bahan lokal yang dipetakan ke card_id yang sama.
+    // Nama berkas sprite diambil dari id bahan katalog lewat NarafinSpriteMap; nama server dipakai
+    // sebagai percobaan terakhir untuk ruleset yang id-nya belum terdaftar.
     private Sprite LoadBahanSprite(string bahanKey, string displayName)
     {
-        Sprite sprite = LoadBahanButtonSprite(displayName);
-        if (sprite != null || DataManager.Instance == null || DataManager.Instance.bahanDict == null || GameState.Instance == null)
-        {
-            return sprite;
-        }
-
-        foreach (string localName in DataManager.Instance.bahanDict.Keys)
-        {
-            if (GameState.Instance.ResolveBahanKey(localName) != bahanKey)
-            {
-                continue;
-            }
-
-            sprite = LoadBahanButtonSprite(localName);
-            if (sprite != null)
-            {
-                return sprite;
-            }
-        }
-
-        return null;
+        Sprite sprite = LoadBahanButtonSprite(NarafinSpriteMap.GetIngredientSpriteName(bahanKey, displayName));
+        return sprite != null ? sprite : LoadBahanButtonSprite(displayName);
     }
 
     private Sprite LoadBahanButtonSprite(string bahanName)
@@ -237,16 +198,7 @@ public partial class UIManagerPlay
             return;
         }
 
-        if (DataManager.Instance == null || DataManager.Instance.kebutuhanDict == null)
-        {
-            Debug.LogWarning("Data kebutuhan belum siap.");
-            return;
-        }
-
-        foreach (var kebutuhan in DataManager.Instance.kebutuhanDict.Values)
-        {
-            AddKebutuhanChoiceButton(choiceKContainer, kebutuhan.nama, kebutuhan.nama, kebutuhan.nama);
-        }
+        Debug.LogWarning("Katalog kebutuhan ruleset session kosong, tombol kebutuhan tidak dibuat.");
     }
 
     private void AddKebutuhanChoiceButton(VisualElement choiceKContainer, string kebutuhanKey, string spriteName, string label)
@@ -312,16 +264,7 @@ public partial class UIManagerPlay
             return;
         }
 
-        if (DataManager.Instance == null || DataManager.Instance.resepDict == null)
-        {
-            Debug.LogWarning("Data resep belum siap.");
-            return;
-        }
-
-        foreach (var resep in DataManager.Instance.resepDict.Values)
-        {
-            AddJualMasakanChoiceButton(choiceJMContainer, resep.nama, resep.nama, string.Empty);
-        }
+        Debug.LogWarning("Katalog pesanan ruleset session kosong, tombol jual masakan tidak dibuat.");
     }
 
     private void AddJualMasakanChoiceButton(VisualElement choiceJMContainer, string resepKey, string spriteName, string label)
@@ -372,16 +315,7 @@ public partial class UIManagerPlay
             return;
         }
 
-        if (DataManager.Instance == null || DataManager.Instance.tujuanFinansialDict == null)
-        {
-            Debug.LogWarning("Data tujuan finansial belum siap.");
-            return;
-        }
-
-        foreach (var tujuanFinansial in DataManager.Instance.tujuanFinansialDict.Values)
-        {
-            AddTujuanFinansialChoiceButton(choiceTFContainer, tujuanFinansial.nama, tujuanFinansial.nama, tujuanFinansial.nama);
-        }
+        Debug.LogWarning("Katalog tujuan finansial ruleset session kosong, tombol tujuan tidak dibuat.");
     }
 
     private void AddTujuanFinansialChoiceButton(VisualElement choiceTFContainer, string tujuanKey, string spriteName, string label)
@@ -473,24 +407,13 @@ public partial class UIManagerPlay
             for (int i = 0; i < missionCount; i++)
             {
                 NarafinSetupMission mission = missions[i];
-                AddTargetKebutuhanButton(targetKebutuhanContainer, mission.id, LoadMissionSprite(mission.nama), FormatItemName(mission.nama));
+                AddTargetKebutuhanButton(targetKebutuhanContainer, mission.id, LoadMissionSprite(mission.id, mission.nama), FormatItemName(mission.nama));
             }
 
             return;
         }
 
-        if (DataManager.Instance == null || DataManager.Instance.targetKebutuhanList == null)
-        {
-            Debug.LogWarning("Data target kebutuhan belum siap.");
-            return;
-        }
-
-        int itemCount = Mathf.Min(4, DataManager.Instance.targetKebutuhanList.Count);
-        for (int i = 0; i < itemCount; i++)
-        {
-            var target = DataManager.Instance.targetKebutuhanList[i];
-            AddTargetKebutuhanButton(targetKebutuhanContainer, target.id, LoadTargetKebutuhanSprite(target.nama), target.nama);
-        }
+        Debug.LogWarning("Katalog misi ruleset session kosong, tombol target kebutuhan tidak dibuat.");
     }
 
     private void AddTargetKebutuhanButton(VisualElement targetKebutuhanContainer, string targetId, Sprite targetSprite, string label)
@@ -532,32 +455,19 @@ public partial class UIManagerPlay
 
     // Misi ruleset memakai nama singkat (mis. "jam"), sprite lokal memakai nama target lengkap
     // ("Target Kebutuhan Jam Tangan"), jadi sprite dicari dari pemetaan lalu dari target lokal yang namanya memuat nama misi.
-    private Sprite LoadMissionSprite(string missionName)
+    // Sprite misi dikunci id misi katalog; nama misi hanya dipakai bila id-nya belum terdaftar di peta.
+    private Sprite LoadMissionSprite(string missionId, string missionName)
     {
+        Sprite sprite = LoadTargetKebutuhanSprite(NarafinSpriteMap.GetMissionSpriteName(missionId, missionName));
+        if (sprite != null)
+        {
+            return sprite;
+        }
+
         string missionKey = NarafinActiveSession.NormalizeName(missionName);
-        if (MissionSpriteNames.TryGetValue(missionKey, out string spriteName))
-        {
-            Sprite mappedSprite = LoadTargetKebutuhanSprite(spriteName);
-            if (mappedSprite != null)
-            {
-                return mappedSprite;
-            }
-        }
-
-        if (missionKey.Length == 0 || DataManager.Instance == null || DataManager.Instance.targetKebutuhanList == null)
-        {
-            return null;
-        }
-
-        foreach (TargetKebutuhanData target in DataManager.Instance.targetKebutuhanList)
-        {
-            if (target != null && NarafinActiveSession.NormalizeName(target.nama).Contains(missionKey))
-            {
-                return LoadTargetKebutuhanSprite(target.nama);
-            }
-        }
-
-        return null;
+        return MissionSpriteNames.TryGetValue(missionKey, out string spriteName)
+            ? LoadTargetKebutuhanSprite(spriteName)
+            : null;
     }
 
     private Sprite LoadTargetKebutuhanSprite(string targetName)
@@ -722,20 +632,29 @@ public partial class UIManagerPlay
     }
 
 
-    private void BackFromChoiceBM(ClickEvent evt)
+    // Kembali ke Choice1 harus menyegarkan keadaan tombol, sama seperti ShowChoice("Choice1").
+    // Tanpa ini tombol yang semestinya mati — mis. Asuransi saat polis sudah dimiliki — kembali hidup.
+    private void ShowChoice1AfterBack(string fromContainerId)
     {
         HideDialogContainer();
         SetChoiceBackground("Choice1");
-        choiceContainers["ChoiceBM"].RemoveFromClassList("show-choice");
+        if (!string.IsNullOrEmpty(fromContainerId) && choiceContainers.ContainsKey(fromContainerId))
+        {
+            choiceContainers[fromContainerId].RemoveFromClassList("show-choice");
+        }
+
+        UpdateMainChoiceButtonStates();
         choiceContainers["Choice1"].AddToClassList("show-choice");
+    }
+
+    private void BackFromChoiceBM(ClickEvent evt)
+    {
+        ShowChoice1AfterBack("ChoiceBM");
     }
 
     private void BackFromChoiceK(ClickEvent evt)
     {
-        HideDialogContainer();
-        SetChoiceBackground("Choice1");
-        choiceContainers["ChoiceK"].RemoveFromClassList("show-choice");
-        choiceContainers["Choice1"].AddToClassList("show-choice");
+        ShowChoice1AfterBack("ChoiceK");
     }
 
     // Varian harga dipilih setelah jenis kebutuhan, jadi Back kembali ke daftar jenis kebutuhan.
@@ -755,26 +674,30 @@ public partial class UIManagerPlay
 
     private void BackFromChoiceJM(ClickEvent evt)
     {
-        HideDialogContainer();
-        SetChoiceBackground("Choice1");
-        choiceContainers["ChoiceJM"].RemoveFromClassList("show-choice");
-        choiceContainers["Choice1"].AddToClassList("show-choice");
+        ShowChoice1AfterBack("ChoiceJM");
     }
 
     private void BackFromChoicePS(ClickEvent evt)
     {
+        ShowChoice1AfterBack("ChoicePS");
+    }
+
+    private void BackFromChoiceKL(ClickEvent evt)
+    {
+        ShowChoice1AfterBack("ChoiceKL");
+    }
+
+    // Kembali ke pilihan beli, jual, atau lewati pada investasi emas.
+    private void BackFromChoiceJumlahEmas(ClickEvent evt)
+    {
         HideDialogContainer();
-        SetChoiceBackground("Choice1");
-        choiceContainers["ChoicePS"].RemoveFromClassList("show-choice");
-        choiceContainers["Choice1"].AddToClassList("show-choice");
+        choiceContainers["ChoiceJumlahEmas"].RemoveFromClassList("show-choice");
+        choiceController?.BackToInvestasiEmasAction();
     }
 
     private void BackFromChoiceMenabung(ClickEvent evt)
     {
-        HideDialogContainer();
-        SetChoiceBackground("Choice1");
-        choiceContainers["ChoiceMenabung"].RemoveFromClassList("show-choice");
-        choiceContainers["Choice1"].AddToClassList("show-choice");
+        ShowChoice1AfterBack("ChoiceMenabung");
     }
 
     private void BackFromChoiceTF(ClickEvent evt)
@@ -782,14 +705,12 @@ public partial class UIManagerPlay
         if (showOnlyAffordableTujuanFinansial)
         {
             choiceContainers["ChoiceTF"].RemoveFromClassList("show-choice");
-            choiceController.CancelPendingTujuanFinansialConfirmation();
+            choiceController.BackFromTujuanFinansialList();
             return;
         }
 
-        SetChoiceBackground("Choice1");
         showOnlyAffordableTujuanFinansial = false;
-        choiceContainers["ChoiceTF"].RemoveFromClassList("show-choice");
-        choiceContainers["Choice1"].AddToClassList("show-choice");
+        ShowChoice1AfterBack("ChoiceTF");
     }
 
     private void ShowPreviousBahanPage(ClickEvent evt)
@@ -939,12 +860,6 @@ public partial class UIManagerPlay
         if (variants.Count > 0)
         {
             tipe = variants[0].tipe;
-        }
-        else if (DataManager.Instance != null
-                 && DataManager.Instance.kebutuhanDict != null
-                 && DataManager.Instance.kebutuhanDict.TryGetValue(kebutuhanKey, out KebutuhanData kebutuhanData))
-        {
-            tipe = kebutuhanData.tipe;
         }
         else
         {
@@ -1119,17 +1034,21 @@ public partial class UIManagerPlay
 
     private bool IsTujuanFinansialAffordable(string tujuanName)
     {
-        if (string.IsNullOrEmpty(tujuanName) || GameState.Instance == null || DataManager.Instance == null || DataManager.Instance.tujuanFinansialDict == null)
+        if (string.IsNullOrEmpty(tujuanName) || GameState.Instance == null)
         {
             return false;
         }
 
-        if (!DataManager.Instance.tujuanFinansialDict.TryGetValue(tujuanName, out TujuanFinansialData tujuan))
+        // Tombol tujuan dari katalog ruleset memakai goal_id; tabungan pemain aktif yang dipakai sebagai batas.
+        NarafinSetupFinancialGoal catalogGoal = NarafinActiveSession.FindFinancialGoal(NarafinActiveSession.Catalog, tujuanName);
+        if (catalogGoal != null)
         {
-            return false;
+            int player = GameState.Instance.turn;
+            return !GameState.Instance.IsTujuanFinansialDimiliki(player, catalogGoal.id)
+                && GameState.Instance.GetSaving(player) >= catalogGoal.hargaBeli;
         }
 
-        return GameState.Instance.Saving >= tujuan.hargaBeli;
+        return false;
     }
 
 }

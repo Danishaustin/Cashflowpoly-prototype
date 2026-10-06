@@ -64,6 +64,14 @@ public partial class GameState
                 return "JualMasakan";
             case "BeliKebutuhan":
                 return "Kebutuhan";
+            case "Intro Hari":
+                return "IntroHari";
+            case "Ending Hari":
+                return "EndingHari";
+            case "Pinjaman":
+                return "PinjamanSyariah";
+            case "InvestasiEmas":
+                return "BeliEmas";
             default:
                 return aksi;
         }

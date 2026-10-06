@@ -19,6 +19,21 @@
             "id": "narasi_004",
             "name": "Narasi 004",
             "file": "narasi_004"
+        },
+        {
+            "id": "narasi_007",
+            "name": "Narasi 007",
+            "file": "narasi_007"
+        },
+        {
+            "id": "narasi_005",
+            "name": "atmaja_gauntlet01",
+            "file": "narasi_005"
+        },
+        {
+            "id": "narasi_dummy",
+            "name": "Dummy Uji Narasi",
+            "file": "narasi_dummy"
         }
     ]
 }

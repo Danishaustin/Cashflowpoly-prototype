@@ -3,16 +3,21 @@ public partial class GameState
     // Day, turn, movement, and game-over progression.
     public void NextDay()
     {
+        // Permainan berakhir setelah aksi terakhir pemain terakhir pada finish_day, jadi hari tidak melewatinya.
+        if (day >= finishDay)
+        {
+            isGameOver = true;
+            return;
+        }
+
         day++;
         turn = GetFirstPlayerInTurnOrder();
         movesLeft = ActionsPerTurn;
         NormalizeDayAfterAdvance();
 
-        // Permainan baru berakhir setelah melewati finish_day, jadi pemain masih bisa beraksi pada finish_day.
         if (day > finishDay)
         {
             isGameOver = true;
-            return;
         }
     }
 
@@ -87,15 +92,30 @@ public partial class GameState
         return SaturdayEnabled && GetDayOfWeek(day) == 6;
     }
 
+    public bool IsHariSabtuLibur()
+    {
+        return SaturdayIsHoliday && GetDayOfWeek(day) == 6;
+    }
+
     public bool IsHariMingguLibur()
     {
         return SundayIsHoliday && GetDayOfWeek(day) == 7;
     }
 
-    // Minggu libur dilewati seluruhnya: tidak ada giliran pemain pada hari itu.
+    // Hari libur dilewati seluruhnya: tidak ada giliran pemain pada hari itu.
     public void LewatiHariMinggu()
     {
         if (!IsHariMingguLibur())
+        {
+            return;
+        }
+
+        NextDay();
+    }
+
+    public void LewatiHariSabtu()
+    {
+        if (!IsHariSabtuLibur())
         {
             return;
         }

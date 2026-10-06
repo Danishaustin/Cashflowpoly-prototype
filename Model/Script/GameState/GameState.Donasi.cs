@@ -5,6 +5,7 @@ public partial class GameState
 {
     // Tracks Peduli Donasi totals and rankings per event.
     private int peduliDonasiEventKe;
+    private Dictionary<int, int> lastPeduliDonasiAmounts;
     private List<int> currentPeduliDonasiOrder;
     private Dictionary<int, int> playerDonasiJuara1Cards;
     private Dictionary<int, int> playerDonasiJuara2Cards;
@@ -15,6 +16,7 @@ public partial class GameState
         JuaraPeduliDonasi = new Dictionary<int, List<int>>();
         playerPeduliDonasi = new Dictionary<int, int>();
         currentPeduliDonasiOrder = new List<int>();
+        lastPeduliDonasiAmounts = new Dictionary<int, int>();
         playerDonasiJuara1Cards = new Dictionary<int, int>();
         playerDonasiJuara2Cards = new Dictionary<int, int>();
         playerDonasiJuara3Cards = new Dictionary<int, int>();
@@ -75,6 +77,12 @@ public partial class GameState
         return playerPeduliDonasi[player];
     }
 
+    // Donasi pada event Jumat terakhir; dipakai untuk mengumumkan juara ke server.
+    public int GetPeduliDonasiTerakhir(int player)
+    {
+        return lastPeduliDonasiAmounts != null && lastPeduliDonasiAmounts.TryGetValue(player, out int amount) ? amount : 0;
+    }
+
     public bool AdvancePeduliDonasiTurn()
     {
         if (!IsLastPlayerInTurnOrder(turn))
@@ -120,6 +128,7 @@ public partial class GameState
     private void FinalizePeduliDonasiEvent()
     {
         var ranking = BuildPeduliDonasiRanking();
+        lastPeduliDonasiAmounts = new Dictionary<int, int>(playerPeduliDonasi);
         peduliDonasiEventKe++;
         JuaraPeduliDonasi[peduliDonasiEventKe] = ranking;
 
@@ -148,6 +157,12 @@ public partial class GameState
         }
 
         currentPeduliDonasiOrder.Clear();
+
+        // Juara dihitung per hari Jumat, jadi total donasi tiap pemain dikosongkan untuk Jumat berikutnya.
+        foreach (int player in new List<int>(playerPeduliDonasi.Keys))
+        {
+            playerPeduliDonasi[player] = 0;
+        }
     }
 
     // Donasi Jumat wajib untuk setiap pemain dan server tidak bisa menutup hari Jumat bila ada pemain yang
@@ -188,19 +203,11 @@ public partial class GameState
         return null;
     }
 
+    // Peringkat donasi Jumat. Sesuai rulebook, bila nilainya seri pemenangnya adalah pemain dengan
+    // angka Tie Breaker terbesar, yaitu nomor giliran terbesar (#4 > #3 > #2 > #1).
     private List<int> BuildPeduliDonasiRanking()
     {
         var ranking = new List<int>();
-        var orderMap = new Dictionary<int, int>();
-
-        for (int i = 0; i < currentPeduliDonasiOrder.Count; i++)
-        {
-            int player = currentPeduliDonasiOrder[i];
-            if (!orderMap.ContainsKey(player))
-            {
-                orderMap[player] = i;
-            }
-        }
 
         for (int player = 1; player <= playerCount; player++)
         {
@@ -214,28 +221,7 @@ public partial class GameState
         ranking.Sort((a, b) =>
         {
             int donationCompare = playerPeduliDonasi[b].CompareTo(playerPeduliDonasi[a]);
-            if (donationCompare != 0)
-            {
-                return donationCompare;
-            }
-
-            bool hasOrderA = orderMap.TryGetValue(a, out int orderA);
-            bool hasOrderB = orderMap.TryGetValue(b, out int orderB);
-            if (hasOrderA && hasOrderB)
-            {
-                int orderCompare = orderA.CompareTo(orderB);
-                if (orderCompare != 0)
-                {
-                    return orderCompare;
-                }
-            }
-
-            if (hasOrderA != hasOrderB)
-            {
-                return hasOrderA ? -1 : 1;
-            }
-
-            return a.CompareTo(b);
+            return donationCompare != 0 ? donationCompare : b.CompareTo(a);
         });
 
         return ranking;

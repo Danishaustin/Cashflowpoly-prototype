@@ -132,9 +132,33 @@ public partial class UIManager
         BeginNewEditNarasiDialog();
     }
 
-    private async void OnEditNarasiDeleteClicked(ClickEvent evt)
+    private void OnEditNarasiDeleteClicked(ClickEvent evt)
     {
         Debug.Log("Edit Narasi Delete clicked!");
+        if (isEditNarasiLoading)
+        {
+            return;
+        }
+
+        string dialogId = string.IsNullOrWhiteSpace(editNarasiSelectedDialogId)
+            ? editNarasiDialogDropdown?.value
+            : editNarasiSelectedDialogId;
+
+        if (string.IsNullOrWhiteSpace(dialogId) || dialogId == EmptyDialogOption || dialogId == NewDialogOption)
+        {
+            ShowErrorPopup("Pilih dialog yang ingin dihapus.");
+            return;
+        }
+
+        ShowConfirmPopup(
+            "Hapus Dialog",
+            "Hapus dialog \"" + dialogId + "\"?\nAksi ini tidak bisa dikembalikan.",
+            "Hapus",
+            () => DeleteEditNarasiDialogConfirmed());
+    }
+
+    private async void DeleteEditNarasiDialogConfirmed()
+    {
         if (isEditNarasiLoading)
         {
             return;
@@ -190,9 +214,33 @@ public partial class UIManager
         }
     }
 
-    private async void OnEditNarasiPackDeleteClicked(ClickEvent evt)
+    private void OnEditNarasiPackDeleteClicked(ClickEvent evt)
     {
         Debug.Log("Edit Narasi Pack Delete clicked!");
+        if (isEditNarasiLoading)
+        {
+            return;
+        }
+
+        string selectedOption = editNarasiPackDropdown?.value;
+        if (string.IsNullOrWhiteSpace(selectedOption)
+            || selectedOption == EmptyNarasiPackOption
+            || !editNarasiPackLookup.TryGetValue(selectedOption, out NarasiPackData selectedPack))
+        {
+            ShowErrorPopup("Pilih paket narasi yang ingin dihapus.");
+            return;
+        }
+
+        string packName = string.IsNullOrWhiteSpace(selectedPack.name) ? selectedPack.file : selectedPack.name;
+        ShowConfirmPopup(
+            "Hapus Paket Narasi",
+            "Hapus paket narasi \"" + packName + "\"?\nAksi ini tidak bisa dikembalikan.",
+            "Hapus",
+            () => DeleteNarasiPackConfirmed());
+    }
+
+    private async void DeleteNarasiPackConfirmed()
+    {
         if (isEditNarasiLoading)
         {
             return;

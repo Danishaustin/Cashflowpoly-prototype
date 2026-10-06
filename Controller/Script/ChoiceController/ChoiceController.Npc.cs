@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 
 public partial class ChoiceController
 {
@@ -19,6 +20,24 @@ public partial class ChoiceController
         }
 
         ShowSystemDialogThen(resultText, onComplete);
+    }
+
+    // Narasi tanpa teks hasil aksi, dipakai Intro Hari dan Ending Hari. Mengembalikan true bila narasi diputar.
+    private bool PlayNarasiIfAnyThen(string aksi, int aksiKe, Action onComplete)
+    {
+        return NarasiController.Instance != null
+            && NarasiController.Instance.PlayDialogKarakterThen(aksi, aksiKe, string.Empty, onComplete);
+    }
+
+    private Task PlayNarasiIfAnyAsync(string aksi, int aksiKe)
+    {
+        TaskCompletionSource<bool> completion = new TaskCompletionSource<bool>();
+        if (!PlayNarasiIfAnyThen(aksi, aksiKe, () => completion.TrySetResult(true)))
+        {
+            completion.TrySetResult(true);
+        }
+
+        return completion.Task;
     }
 
     private int GetActivePlayerTurn()

@@ -222,7 +222,31 @@ public partial class UIManager
         }
     }
 
-    private async void OnEditQuestPackDeleteClicked(ClickEvent evt)
+    private void OnEditQuestPackDeleteClicked(ClickEvent evt)
+    {
+        if (isEditQuestLoading)
+        {
+            return;
+        }
+
+        string selectedOption = editQuestPackDropdown?.value;
+        if (string.IsNullOrWhiteSpace(selectedOption)
+            || selectedOption == EmptyQuestPackOption
+            || !editQuestPackLookup.TryGetValue(selectedOption, out QuestPackData confirmPack))
+        {
+            ShowErrorPopup("Pilih paket quest yang ingin dihapus.");
+            return;
+        }
+
+        string packName = string.IsNullOrWhiteSpace(confirmPack.name) ? confirmPack.file : confirmPack.name;
+        ShowConfirmPopup(
+            "Hapus Paket Quest",
+            "Hapus paket quest \"" + packName + "\"?\nAksi ini tidak bisa dikembalikan.",
+            "Hapus",
+            () => DeleteQuestPackConfirmed());
+    }
+
+    private async void DeleteQuestPackConfirmed()
     {
         if (isEditQuestLoading)
         {
@@ -324,7 +348,31 @@ public partial class UIManager
         }
     }
 
-    private async void OnEditQuestDeleteClicked(ClickEvent evt)
+    private void OnEditQuestDeleteClicked(ClickEvent evt)
+    {
+        if (isEditQuestLoading)
+        {
+            return;
+        }
+
+        string questId = string.IsNullOrWhiteSpace(editQuestSelectedId)
+            ? editQuestDropdown?.value
+            : editQuestSelectedId;
+
+        if (string.IsNullOrWhiteSpace(questId) || questId == EmptyQuestOption || questId == NewQuestOption)
+        {
+            ShowErrorPopup("Pilih quest yang ingin dihapus.");
+            return;
+        }
+
+        ShowConfirmPopup(
+            "Hapus Quest",
+            "Hapus quest \"" + questId + "\"?\nAksi ini tidak bisa dikembalikan.",
+            "Hapus",
+            () => DeleteEditQuestConfirmed());
+    }
+
+    private async void DeleteEditQuestConfirmed()
     {
         if (isEditQuestLoading)
         {

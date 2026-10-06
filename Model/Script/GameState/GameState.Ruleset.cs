@@ -29,7 +29,7 @@ public partial class GameState
     public IReadOnlyCollection<string> ActiveActionIds => activeActionIds;
 
     public int ActionsPerTurn { get; private set; } = 2;
-    public int MinPlayers { get; private set; } = 3;
+    public int MinPlayers { get; private set; } = 2;
     public int MaxPlayers { get; private set; } = 4;
     public int InitialCoins { get; private set; } = 20;
     public int InitialHappiness { get; private set; } = 0;
@@ -46,6 +46,10 @@ public partial class GameState
     public int DonationMaxAmount { get; private set; } = 999999;
     public bool FridayEnabled { get; private set; } = true;
     public bool SaturdayEnabled { get; private set; } = true;
+
+    // Sabtu yang tidak dipakai ruleset diperlakukan seperti Minggu libur, sesuai rulebook mode Pemula
+    // yang hanya bermain Senin sampai Jumat.
+    public bool SaturdayIsHoliday { get; private set; }
     public bool SundayEnabled { get; private set; } = true;
 
     // sunday_feature REST/LIBUR: hari Minggu tidak dimainkan, cukup dicatat sebagai hari libur.
@@ -87,11 +91,41 @@ public partial class GameState
             donation_max_amount = sessionSettings.donation_max_amount
         });
 
+        ApplyActiveSessionPlayerOrdering();
+
         Debug.Log(
             "Settings ruleset session dipakai"
             + " | actions_per_turn=" + ActionsPerTurn
             + " | max_ingredient_total=" + MaxIngredientTotal
             + " | max_same_ingredient=" + MaxSameIngredient);
+    }
+
+    // player_ordering dari ruleset session menimpa file lokal bila server benar-benar mengirimkannya.
+    // JsonUtility mengisi objek kosong saat field tidak ada, jadi ordering_code dipakai sebagai penanda.
+    private void ApplyActiveSessionPlayerOrdering()
+    {
+        NarafinRulesetPlayerOrdering ordering = NarafinActiveSession.Catalog?.player_ordering;
+        if (ordering == null || string.IsNullOrWhiteSpace(ordering.ordering_code))
+        {
+            return;
+        }
+
+        ApplyPlayerOrdering(new RulesetPlayerOrderingData
+        {
+            ordering_code = ordering.ordering_code,
+            friday_feature = ordering.friday_feature,
+            friday_enabled = ordering.friday_enabled,
+            saturday_feature = ordering.saturday_feature,
+            saturday_enabled = ordering.saturday_enabled,
+            sunday_feature = ordering.sunday_feature,
+            sunday_enabled = ordering.sunday_enabled
+        });
+
+        Debug.Log(
+            "Player ordering ruleset session dipakai"
+            + " | jumat=" + ordering.friday_feature
+            + " | sabtu=" + ordering.saturday_feature
+            + " | minggu=" + ordering.sunday_feature);
     }
 
     private void LoadRulesetConfiguration()
@@ -100,6 +134,18 @@ public partial class GameState
 
         string mode = PlayerPrefs.GetString(RulesetModePlayerPrefsKey, "Mahir");
         string resourcePath = GetRulesetResourcePath(mode);
+        if (string.IsNullOrWhiteSpace(resourcePath))
+        {
+            // Mode Custom tidak punya file lokal sendiri. Tanpa baseline ini player_ordering tidak pernah
+            // terisi, sehingga hari Minggu tidak diperlakukan libur. Baseline diambil dari mode ruleset
+            // session (MAHIR/PEMULA); settings dan player_ordering dari server tetap menimpanya.
+            resourcePath = GetRulesetResourcePath(NarafinActiveSession.Mode);
+            if (!string.IsNullOrWhiteSpace(resourcePath))
+            {
+                Debug.Log("Ruleset custom memakai baseline lokal " + resourcePath + " untuk mode " + NarafinActiveSession.Mode);
+            }
+        }
+
         if (string.IsNullOrWhiteSpace(resourcePath))
         {
             LoadFallbackRulesetValues();
@@ -230,6 +276,7 @@ public partial class GameState
 
         FridayEnabled = playerOrdering.friday_enabled;
         SaturdayEnabled = playerOrdering.saturday_enabled;
+        SaturdayIsHoliday = !playerOrdering.saturday_enabled || IsHolidayFeature(playerOrdering.saturday_feature);
         SundayEnabled = playerOrdering.sunday_enabled;
         SundayIsHoliday = IsHolidayFeature(playerOrdering.sunday_feature);
     }

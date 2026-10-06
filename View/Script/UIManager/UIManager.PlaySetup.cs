@@ -22,7 +22,7 @@ public partial class UIManager
     // Player count, player names, validation, and starting the play scene.
     private void SetupPlayerCountDropdown()
     {
-        playerCountDropdown.choices = new List<string>() { "3", "4" };
+        playerCountDropdown.choices = new List<string>() { "2", "3", "4" };
         playerCountDropdown.value = "3";
         playerCountDropdown.RegisterValueChangedCallback(evt => UpdatePlayerNameInputs());
         UpdatePlayerNameInputs();
@@ -548,7 +548,7 @@ public partial class UIManager
     {
         if (int.TryParse(playerCountDropdown.value, out int playerCount))
         {
-            return Mathf.Clamp(playerCount, 3, 4);
+            return Mathf.Clamp(playerCount, 2, 4);
         }
 
         return 3;

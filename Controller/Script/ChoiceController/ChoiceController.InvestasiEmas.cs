@@ -6,7 +6,6 @@ using UnityEngine;
 
 public partial class ChoiceController
 {
-    private const int HargaEmasMaxInput = 100;
     private const int JumlahEmasMaxInput = 99;
 
     private string investasiEmasMode = "";
@@ -20,24 +19,54 @@ public partial class ChoiceController
     // risk_event_id kartu risiko GOLD_TRADE; kosong berarti transaksi emas hari Sabtu.
     private string goldTradeRiskEventId = string.Empty;
 
+    // event_id BukaHargaEmas yang terakhir diterima server, beserta harinya. Opsi darurat SELL_GOLD wajib
+    // menyertakan gold_price_event_id yang menunjuk event harga pada day_index yang sama.
+    private string hargaEmasEventId = string.Empty;
+    private int hargaEmasEventDay;
+
     // Sabtu (atau kartu risiko GOLD_TRADE): Instruktur membuka harga dari Kartu Harga Emas ruleset, lalu setiap
     // pemain berurutan memilih beli, jual, atau lewati. Alur emas dari panel risiko lama tetap memakai alur lama.
-    private bool UseGoldTradeServerFlow => !investasiEmasDariRisiko && hargaEmasOptions.Count > 0;
 
     private bool IsGoldTradeFromRisikoServer => !string.IsNullOrEmpty(goldTradeRiskEventId);
+
+    // Server hanya mengizinkan BukaHargaEmas pada hari Sabtu atau saat ada risiko emas aktif, jadi pada hari
+    // lain harga emas tidak pernah terbuka dan jual emas darurat memang tidak tersedia.
+    private bool HasHargaEmasHariIni =>
+        !string.IsNullOrEmpty(hargaEmasEventId)
+        && GameState.Instance != null
+        && hargaEmasEventDay == GameState.Instance.day;
+
+    // Harga emas selalu berasal dari Kartu Harga Emas ruleset; tanpa kartu itu transaksi emas tidak tersedia.
+    private bool LoadHargaEmasOptionsFromCatalog()
+    {
+        hargaEmasOptions.Clear();
+        hargaEmasOptions.AddRange(NarafinActiveSession.GetGoldPrices(NarafinActiveSession.Catalog));
+        hargaEmasOptionIndex = 0;
+        return hargaEmasOptions.Count > 0;
+    }
+
+    private void ShowHargaEmasPanel()
+    {
+        GameState.Instance.SetHargaEmasText(hargaEmasOptions[hargaEmasOptionIndex]);
+        view.UpdateHargaEmasText(GameState.Instance.HargaEmasText);
+        view.ShowChoice("HargaEmas");
+    }
 
     private void ShowInvestasiEmasHargaInput()
     {
         investasiEmasDariRisiko = false;
         goldTradeRiskEventId = string.Empty;
-        hargaEmasOptions.Clear();
-        hargaEmasOptions.AddRange(NarafinActiveSession.GetGoldPrices(NarafinActiveSession.Catalog));
-        hargaEmasOptionIndex = 0;
 
-        int initialPrice = hargaEmasOptions.Count > 0 ? hargaEmasOptions[0] : Mathf.Max(1, GameState.Instance.HargaEmasSaatIni);
-        GameState.Instance.SetHargaEmasText(initialPrice);
-        view.UpdateHargaEmasText(GameState.Instance.HargaEmasText);
-        view.ShowChoice("HargaEmas");
+        // Ruleset yang mengaktifkan Sabtu tetapi tanpa Kartu Harga Emas: harinya ditutup, bukan memakai harga bebas.
+        if (!LoadHargaEmasOptionsFromCatalog())
+        {
+            ShowInvestasiEmasDialogThen(
+                "Kartu Harga Emas tidak tersedia pada ruleset ini. Hari investasi emas dilewati.\n",
+                () => _ = LewatiHariSabtuAsync());
+            return;
+        }
+
+        ShowHargaEmasPanel();
     }
 
     private void ShowInvestasiEmasHargaInputFromRisikoServer(string riskEventId)
@@ -55,17 +84,25 @@ public partial class ChoiceController
         view.UpdatePlayerStats();
     }
 
+    // Panel risiko tanpa katalog life_risks tidak punya risk_event_id, sedangkan server hanya mengizinkan
+    // BukaHargaEmas di luar hari Sabtu bila ada efek Risiko Kehidupan emas yang aktif (diuji 3 Okt 2026:
+    // 422 "Harga emas hanya dibuka pada Sabtu atau saat efek Risiko Kehidupan emas aktif", dan transaksinya
+    // 400 "Weekday harus SAT" bila tanpa risk_event_id). Jadi transaksinya tidak mungkin tercatat; dilewati
+    // dengan keterangan, bukan dicoba lalu gagal berulang di panel harga.
     private void ShowInvestasiEmasHargaInputFromRisiko()
     {
         investasiEmasDariRisiko = true;
         investasiEmasRisikoOriginalTurn = GameState.Instance.turn;
         investasiEmasRisikoOriginalMovesLeft = GameState.Instance.movesLeft;
-        GameState.Instance.SetTurnAndMoves(1, GameState.Instance.ActionsPerTurn);
-        view.UpdatePlayerTurn(GameState.Instance.turn);
-        view.UpdatePlayerStats();
-        GameState.Instance.SetHargaEmasText(Mathf.Max(1, GameState.Instance.HargaEmasSaatIni));
-        view.UpdateHargaEmasText(GameState.Instance.HargaEmasText);
-        view.ShowChoice("HargaEmas");
+
+        ShowInvestasiEmasDialogThen(
+            "Transaksi emas dari kartu risiko hanya tersedia pada ruleset yang memuat katalog Risiko Kehidupan. Investasi emas dilewati.\n",
+            FinishInvestasiEmasFromRisiko);
+    }
+
+    public void BackToInvestasiEmasAction()
+    {
+        ShowInvestasiEmasActionChoice();
     }
 
     private void ShowInvestasiEmasActionChoice()
@@ -77,12 +114,6 @@ public partial class ChoiceController
     {
         if (isSubmittingInvestasiEmas)
         {
-            return;
-        }
-
-        if (!UseGoldTradeServerFlow)
-        {
-            HandleChoiceHargaEmasLegacy(selectedChoice);
             return;
         }
 
@@ -154,6 +185,8 @@ public partial class ChoiceController
         }
 
         GameState.Instance.SetHargaEmasSaatIni(goldPrice);
+        hargaEmasEventId = result.EventId ?? string.Empty;
+        hargaEmasEventDay = GameState.Instance.day;
         ShowInvestasiEmasDialogThen("Harga emas hari ini adalah " + goldPrice + " koin.\n", ShowInvestasiEmasActionChoice);
     }
 
@@ -187,8 +220,11 @@ public partial class ChoiceController
                 ShowJumlahEmasInput();
                 break;
             case "LewatiEmasInvestasi":
-                // Transaksi emas dari kartu risiko bersifat pilihan, jadi melewatinya tidak perlu dicatat.
-                if (investasiEmasDariRisiko || IsGoldTradeFromRisikoServer)
+                // Putaran emas dari kartu risiko WAJIB dicatat: server menuntut tepat satu keputusan per
+                // pemain per putaran, dan selama belum lengkap seluruh aktivitas sesudahnya ditolak 422.
+                // Jalur investasiEmasDariRisiko adalah cadangan tanpa katalog yang tidak pernah membuka
+                // harga emas, jadi di sana tidak ada putaran server yang perlu ditutup.
+                if (investasiEmasDariRisiko)
                 {
                     AdvanceInvestasiEmas();
                     return;
@@ -205,7 +241,7 @@ public partial class ChoiceController
 
     private void ShowJumlahEmasInput()
     {
-        GameState.Instance.SetJumlahEmasText(UseGoldTradeServerFlow ? Mathf.Min(1, GetMaxJumlahEmas()) : 0);
+        GameState.Instance.SetJumlahEmasText(Mathf.Min(1, GetMaxJumlahEmas()));
         view.UpdateJumlahEmasText(GameState.Instance.JumlahEmasText);
         view.ShowChoice("JumlahEmas");
     }
@@ -228,8 +264,8 @@ public partial class ChoiceController
             return;
         }
 
-        int minAmount = UseGoldTradeServerFlow ? Mathf.Min(1, GetMaxJumlahEmas()) : 0;
-        int maxAmount = UseGoldTradeServerFlow ? GetMaxJumlahEmas() : JumlahEmasMaxInput;
+        int minAmount = Mathf.Min(1, GetMaxJumlahEmas());
+        int maxAmount = GetMaxJumlahEmas();
 
         switch (selectedChoice)
         {
@@ -270,15 +306,24 @@ public partial class ChoiceController
             return;
         }
 
+        int amount = GameState.Instance.JumlahEmasText;
+        int hargaSatuan = GameState.Instance.HargaEmasSaatIni;
+
         if (investasiEmasMode == "Beli")
         {
-            BuyInvestasiEmas();
+            AskConfirmation(
+                "Beli " + amount + " emas seharga " + (amount * hargaSatuan) + " koin?",
+                BuyInvestasiEmas,
+                ShowInvestasiEmasActionChoice);
             return;
         }
 
         if (investasiEmasMode == "Jual")
         {
-            SellInvestasiEmas();
+            AskConfirmation(
+                "Jual " + amount + " emas seharga " + (amount * hargaSatuan) + " koin?",
+                SellInvestasiEmas,
+                ShowInvestasiEmasActionChoice);
             return;
         }
 
@@ -295,12 +340,6 @@ public partial class ChoiceController
             ShowInvestasiEmasDialogThen(
                 "Coin tidak cukup untuk membeli " + amount + " emas.\n",
                 ShowInvestasiEmasActionChoice);
-            return;
-        }
-
-        if (!UseGoldTradeServerFlow)
-        {
-            BuyInvestasiEmasLegacy(amount, cost);
             return;
         }
 
@@ -324,12 +363,6 @@ public partial class ChoiceController
             ShowInvestasiEmasDialogThen(
                 "Emas tidak cukup untuk menjual " + amount + " emas.\n",
                 ShowInvestasiEmasActionChoice);
-            return;
-        }
-
-        if (!UseGoldTradeServerFlow)
-        {
-            SellInvestasiEmasLegacy(amount);
             return;
         }
 
@@ -377,10 +410,17 @@ public partial class ChoiceController
     {
         int player = GameState.Instance.turn;
         string playerName = GetPlayerName(player);
+        // Putaran emas akibat kartu risiko wajib merujuk risk_event_id, sama seperti beli/jual: tanpa itu
+        // trigger server menolak dan putaran tidak pernah lengkap, sehingga aktivitas hari itu terhalang.
+        // Pada hari Sabtu tidak ada risiko tertunda, dan menyertakan risk_event_id di sana justru ditolak.
+        string lewatiPayload = string.IsNullOrEmpty(goldTradeRiskEventId)
+            ? "{}"
+            : BuildRiskEventPayload(goldTradeRiskEventId);
+
         NarafinSessionOperationResult result = await SendInvestasiEmasEventAsync(
             player,
             "LewatiTransaksiEmas",
-            "{}",
+            lewatiPayload,
             "Mencatat pilihan emas " + playerName + "...");
 
         if (this == null)
@@ -452,10 +492,20 @@ public partial class ChoiceController
 
     private async Task AdvanceInvestasiEmasSabtuAsync()
     {
+        bool isHariBerganti = GameState.Instance.IsLastPlayerInTurnOrder(GameState.Instance.turn);
         await PostAkhirGiliranForDayEndIfLastPlayerAsync(GameState.Instance.turn);
         if (this == null)
         {
             return;
+        }
+
+        if (isHariBerganti)
+        {
+            await PlayEndingHariRollingAsync();
+            if (this == null)
+            {
+                return;
+            }
         }
 
         bool isInvestasiEmasSelesai = GameState.Instance.AdvanceInvestasiEmasTurn();
@@ -499,83 +549,16 @@ public partial class ChoiceController
             return;
         }
 
+        FinishInvestasiEmasFromRisiko();
+    }
+
+    private void FinishInvestasiEmasFromRisiko()
+    {
         investasiEmasDariRisiko = false;
         PostCurrentRisikoKehidupanEvent(risikoOriginalTurn);
         GameState.Instance.SetTurnAndMoves(investasiEmasRisikoOriginalTurn, investasiEmasRisikoOriginalMovesLeft);
         view.UpdatePlayerTurn(GameState.Instance.turn);
         view.UpdatePlayerStats();
         UpdateMove();
-    }
-
-    // Alur lama (tanpa Kartu Harga Emas di katalog, atau emas dari panel risiko lama): harga bebas dan event tidak ditunggu.
-    private void HandleChoiceHargaEmasLegacy(string selectedChoice)
-    {
-        switch (selectedChoice)
-        {
-            case "MinButtonHargaEmas":
-                GameState.Instance.SetHargaEmasText(1);
-                break;
-            case "MaxButtonHargaEmas":
-                GameState.Instance.SetHargaEmasText(HargaEmasMaxInput);
-                break;
-            case "IncreaseButtonHargaEmas":
-                if (GameState.Instance.HargaEmasText < HargaEmasMaxInput)
-                {
-                    GameState.Instance.ChangeHargaEmasText(1);
-                }
-                break;
-            case "DecreaseButtonHargaEmas":
-                if (GameState.Instance.HargaEmasText > 1)
-                {
-                    GameState.Instance.ChangeHargaEmasText(-1);
-                }
-                break;
-            case "ConfirmButtonHargaEmas":
-                if (GameState.Instance.HargaEmasText <= 0)
-                {
-                    ShowInvestasiEmasDialogThen("Harga emas harus lebih dari 0.\n", () => view.ShowChoice("HargaEmas"));
-                    return;
-                }
-
-                GameState.Instance.SetHargaEmasSaatIni(GameState.Instance.HargaEmasText);
-                ShowInvestasiEmasDialogThen(
-                    "Harga emas hari ini adalah " + GameState.Instance.HargaEmasSaatIni + " koin.\n",
-                    ShowInvestasiEmasActionChoice);
-                return;
-            default:
-                Debug.Log("Pilihan harga emas tidak valid");
-                break;
-        }
-
-        view.UpdateHargaEmasText(GameState.Instance.HargaEmasText);
-    }
-
-    private void BuyInvestasiEmasLegacy(int amount, int cost)
-    {
-        int player = GameState.Instance.turn;
-        GameState.Instance.ChangeCoins(-cost);
-        GameState.Instance.ChangeEmas(amount);
-        view.UpdateCoins(GameState.Instance.Coins);
-        PostInvestasiEmasEvent(player, "BUY", amount, GameState.Instance.HargaEmasSaatIni, cost);
-
-        ShowInvestasiEmasDialogThen(
-            GetPlayerName(player) + " membeli " + amount + " emas seharga "
-            + cost + " koin. Emas saat ini: " + GameState.Instance.Emas + "\n",
-            AdvanceInvestasiEmas);
-    }
-
-    private void SellInvestasiEmasLegacy(int amount)
-    {
-        int player = GameState.Instance.turn;
-        int income = GameState.Instance.HargaEmasSaatIni * amount;
-        GameState.Instance.ChangeCoins(income);
-        GameState.Instance.ChangeEmas(-amount);
-        view.UpdateCoins(GameState.Instance.Coins);
-        PostInvestasiEmasEvent(player, "SELL", amount, GameState.Instance.HargaEmasSaatIni, income);
-
-        ShowInvestasiEmasDialogThen(
-            GetPlayerName(player) + " menjual " + amount + " emas dan mendapatkan "
-            + income + " koin. Emas tersisa: " + GameState.Instance.Emas + "\n",
-            AdvanceInvestasiEmas);
     }
 }

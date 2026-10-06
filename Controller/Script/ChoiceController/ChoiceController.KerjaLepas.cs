@@ -14,7 +14,10 @@ public partial class ChoiceController
             return;
         }
 
-        _ = KerjaLepasAsync();
+        AskConfirmation(
+            "Lakukan kerja lepas untuk mendapat " + GameState.Instance.FreelanceIncome + " koin?",
+            () => _ = KerjaLepasAsync(),
+            () => view.ShowChoice("Choice1"));
     }
 
     // Pendapatan kerja lepas mengikuti freelance_income ruleset session dan baru dicatat setelah server menerima.

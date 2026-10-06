@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
 
 public partial class NarasiController
 {
@@ -23,7 +24,9 @@ public partial class NarasiController
             .Where(dialogKarakter => !HasPlayedDialog(dialogKarakter.id, activePlayerTurn))
             .Where(dialogKarakter => HasTriggerPrerequisite(dialogKarakter, aksi, aksiValue))
             .Where(IsPrerequisiteMet)
-            .OrderByDescending(CountValidPrerequisites)
+            // Dialog yang menyebut lebih sedikit pemain menang lebih dulu, lalu yang syaratnya lebih banyak.
+            .OrderBy(CountGiliranPemainTersebut)
+            .ThenByDescending(CountSyaratTerisi)
             .FirstOrDefault();
     }
 
@@ -63,9 +66,48 @@ public partial class NarasiController
         return true;
     }
 
-    private int CountValidPrerequisites(DialogKarakterData dialogKarakter)
+    // Jumlah pemain yang disebut giliranPemain. Dialog tanpa syarat itu dianggap paling tidak spesifik,
+    // sehingga dialog khusus satu pemain selalu menang atas dialog multi-pemain maupun dialog umum.
+    private int CountGiliranPemainTersebut(DialogKarakterData dialogKarakter)
     {
-        return GetDialogPrerequisites(dialogKarakter).Count;
+        int jumlahTersedikit = int.MaxValue;
+        foreach (DialogPrerequisiteData prerequisite in GetDialogPrerequisites(dialogKarakter))
+        {
+            if (!HasGiliranPemain(prerequisite))
+            {
+                continue;
+            }
+
+            jumlahTersedikit = Mathf.Min(jumlahTersedikit, prerequisite.giliranPemain.Count);
+        }
+
+        return jumlahTersedikit;
+    }
+
+    // Jumlah syarat yang benar-benar terisi, dihitung per field dan bukan per entri, supaya dialog
+    // bersyarat {uang, hariKe, mingguKe} menang atas dialog bersyarat {hariKe, mingguKe} saja.
+    private int CountSyaratTerisi(DialogKarakterData dialogKarakter)
+    {
+        int jumlah = 0;
+        foreach (DialogPrerequisiteData prerequisite in GetDialogPrerequisites(dialogKarakter))
+        {
+            if (prerequisite.uang > 0) { jumlah++; }
+            if (prerequisite.kebahagiaan > 0) { jumlah++; }
+            if (prerequisite.tabungan > 0) { jumlah++; }
+            if (prerequisite.emas > 0) { jumlah++; }
+            if (prerequisite.kartuPinjaman > 0) { jumlah++; }
+            if (prerequisite.mingguKe > 0) { jumlah++; }
+            if (prerequisite.hariKe > 0) { jumlah++; }
+            if (prerequisite.asuransiStatus != AsuransiPrerequisiteStatus.TidakDipakai) { jumlah++; }
+            if (HasGiliranPemain(prerequisite)) { jumlah++; }
+            if (!string.IsNullOrWhiteSpace(prerequisite.questId)) { jumlah++; }
+            if (HasItems(prerequisite.bahanDimiliki)) { jumlah++; }
+            if (HasItems(prerequisite.kebutuhanDimiliki)) { jumlah++; }
+            if (HasItems(prerequisite.tujuanFinansialDimiliki)) { jumlah++; }
+            if (HasItems(prerequisite.masakanDijual)) { jumlah++; }
+        }
+
+        return jumlah;
     }
 
     private List<DialogPrerequisiteData> GetDialogPrerequisites(DialogKarakterData dialogKarakter)
@@ -80,6 +122,11 @@ public partial class NarasiController
             .ToList();
     }
 
+    private static bool HasGiliranPemain(DialogPrerequisiteData prerequisite)
+    {
+        return prerequisite?.giliranPemain != null && prerequisite.giliranPemain.Count > 0;
+    }
+
     private bool IsActiveDialogPrerequisite(DialogPrerequisiteData prerequisite)
     {
         return prerequisite != null
@@ -88,13 +135,16 @@ public partial class NarasiController
                 || prerequisite.tabungan > 0
                 || prerequisite.emas > 0
                 || prerequisite.kartuPinjaman > 0
-                || prerequisite.asuransiDimiliki
+                || prerequisite.asuransiStatus != AsuransiPrerequisiteStatus.TidakDipakai
                 || HasItems(prerequisite.bahanDimiliki)
                 || HasItems(prerequisite.kebutuhanDimiliki)
                 || HasItems(prerequisite.tujuanFinansialDimiliki)
                 || HasItems(prerequisite.masakanDijual)
                 || prerequisite.hariKe > 0
                 || prerequisite.mingguKe > 0
+                // JsonUtility tidak pernah menghasilkan null untuk List: field yang tidak ditulis di JSON
+                // menjadi daftar kosong. Jadi "dipakai" berarti benar-benar menyebut nomor pemain.
+                || HasGiliranPemain(prerequisite)
                 || !string.IsNullOrWhiteSpace(prerequisite.questId));
     }
 
@@ -140,7 +190,18 @@ public partial class NarasiController
             return false;
         }
 
-        if (prerequisite.asuransiDimiliki && !GameState.Instance.GetAsuransiDimiliki(GameState.Instance.turn))
+        if (prerequisite.asuransiStatus != AsuransiPrerequisiteStatus.TidakDipakai)
+        {
+            bool punyaAsuransi = GameState.Instance.GetAsuransiDimiliki(GameState.Instance.turn);
+            bool harusPunya = prerequisite.asuransiStatus == AsuransiPrerequisiteStatus.HarusDimiliki;
+            if (punyaAsuransi != harusPunya)
+            {
+                return false;
+            }
+        }
+
+        // Daftar kosong berarti tidak ada giliran yang dipilih, jadi dialognya tidak diputar sama sekali.
+        if (HasGiliranPemain(prerequisite) && !prerequisite.giliranPemain.Contains(GameState.Instance.turn))
         {
             return false;
         }
@@ -225,9 +286,12 @@ public partial class NarasiController
             return false;
         }
 
+        // Nama ruleset ("nasi goreng") dan nama lokal ("NasiGoreng") menunjuk kartu yang sama,
+        // jadi pembandingannya memakai bentuk ternormalisasi: tanpa spasi, tanpa tanda baca, huruf kecil.
         foreach (string requiredItem in requiredItems.Where(item => !string.IsNullOrWhiteSpace(item)))
         {
-            if (!ownedItems.Any(ownedItem => string.Equals(ownedItem, requiredItem, StringComparison.OrdinalIgnoreCase)))
+            string requiredKey = NarafinActiveSession.NormalizeName(requiredItem);
+            if (!ownedItems.Any(ownedItem => NarafinActiveSession.NormalizeName(ownedItem) == requiredKey))
             {
                 return false;
             }

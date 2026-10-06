@@ -10,7 +10,7 @@ public class LoginManager : MonoBehaviour
 
     private const string InstructorRole = "INSTRUCTOR";
     private const string RoleNotAllowedErrorCode = "AUTH_ROLE_NOT_ALLOWED";
-    private const string PemulaDefaultRulesetName = "Ruleset PEMULA Default";
+    private const string PemulaDefaultRulesetName = "Ruleset PEMULA Default v2";
     private const string MahirDefaultRulesetName = "Ruleset MAHIR Default v2";
     private const string PemulaDefaultRulesetResource = "Data/rulesetPemula";
     private const string MahirDefaultRulesetResource = "Data/rulesetMahir";
@@ -62,6 +62,15 @@ public class LoginManager : MonoBehaviour
 
         apiClient = new NarafinApiClient();
         ugsAuthBridge = new NarafinUgsAuthBridge();
+
+        // Awake hanya berjalan sekali per proses aplikasi, jadi ini titik "aplikasi baru dibuka".
+        // Sesi lama dibersihkan agar penutupan paksa tetap berakhir di menu login.
+        if (NarafinRuntimeConfig.ClearSessionOnAppStart)
+        {
+            ClearSession();
+            return;
+        }
+
         LoadPersistedSession();
     }
 
@@ -220,25 +229,22 @@ public class LoginManager : MonoBehaviour
         Debug.Log("Ruleset resolved. mode: " + resolvedRuleset.Mode + ", ruleset_id: " + resolvedRuleset.RulesetId + ", ruleset_version_id: " + resolvedRuleset.RulesetVersionId + ", version: " + resolvedRuleset.Version);
 
         NarafinRulesetSetupDefinition setupCatalog = null;
-        if (!NarafinRuntimeConfig.UseOfflineMode)
+        // Katalog divalidasi sebelum session dibuat agar tidak tertinggal session yang tidak bisa di-setup.
+        NarafinRulesetSetupCatalogResult catalogResult = await apiClient.GetRulesetSetupCatalogAsync(
+            AccessToken,
+            resolvedRuleset.RulesetId,
+            resolvedRuleset.Version);
+        if (!catalogResult.Success)
         {
-            // Katalog divalidasi sebelum session dibuat agar tidak tertinggal session yang tidak bisa di-setup.
-            NarafinRulesetSetupCatalogResult catalogResult = await apiClient.GetRulesetSetupCatalogAsync(
-                AccessToken,
-                resolvedRuleset.RulesetId,
-                resolvedRuleset.Version);
-            if (!catalogResult.Success)
-            {
-                return CreatePlaySessionFailure(catalogResult.ErrorCode, catalogResult.ErrorMessage);
-            }
-
-            if (!TryValidateSetupCatalog(resolvedRuleset.Mode, catalogResult.Definition, selectedPlayers.Count, out string catalogError))
-            {
-                return CreatePlaySessionFailure("SETUP_VALIDATION_ERROR", catalogError);
-            }
-
-            setupCatalog = catalogResult.Definition;
+            return CreatePlaySessionFailure(catalogResult.ErrorCode, catalogResult.ErrorMessage);
         }
+
+        if (!TryValidateSetupCatalog(resolvedRuleset.Mode, catalogResult.Definition, selectedPlayers.Count, out string catalogError))
+        {
+            return CreatePlaySessionFailure("SETUP_VALIDATION_ERROR", catalogError);
+        }
+
+        setupCatalog = catalogResult.Definition;
 
         NarafinSessionCreateResult createResult = await apiClient.CreateSessionAsync(AccessToken, sessionName.Trim(), resolvedRuleset.Mode, resolvedRuleset.RulesetVersionId);
         if (!createResult.Success)
@@ -263,25 +269,22 @@ public class LoginManager : MonoBehaviour
         }
 
         List<NarafinSessionStatePlayer> sessionPlayers = new List<NarafinSessionStatePlayer>();
-        if (!NarafinRuntimeConfig.UseOfflineMode)
+        NarafinSessionStateResult stateResult = await apiClient.GetSessionStateAsync(AccessToken, createResult.SessionId);
+        if (!stateResult.Success)
         {
-            NarafinSessionStateResult stateResult = await apiClient.GetSessionStateAsync(AccessToken, createResult.SessionId);
-            if (!stateResult.Success)
-            {
-                return CreatePlaySessionFailure(stateResult.ErrorCode, stateResult.ErrorMessage);
-            }
-
-            foreach (NarafinPlayerSummary selectedPlayer in selectedPlayers)
-            {
-                NarafinSessionStatePlayer sessionPlayer = FindSessionPlayer(stateResult.Players, selectedPlayer.user_id);
-                if (sessionPlayer == null || string.IsNullOrWhiteSpace(sessionPlayer.session_player_id))
-                {
-                    return CreatePlaySessionFailure("SETUP_VALIDATION_ERROR", "session_player_id untuk player \"" + selectedPlayer.display_name + "\" tidak ditemukan.");
-                }
-            }
-
-            sessionPlayers = stateResult.Players;
+            return CreatePlaySessionFailure(stateResult.ErrorCode, stateResult.ErrorMessage);
         }
+
+        foreach (NarafinPlayerSummary selectedPlayer in selectedPlayers)
+        {
+            NarafinSessionStatePlayer sessionPlayer = FindSessionPlayer(stateResult.Players, selectedPlayer.user_id);
+            if (sessionPlayer == null || string.IsNullOrWhiteSpace(sessionPlayer.session_player_id))
+            {
+                return CreatePlaySessionFailure("SETUP_VALIDATION_ERROR", "session_player_id untuk player \"" + selectedPlayer.display_name + "\" tidak ditemukan.");
+            }
+        }
+
+        sessionPlayers = stateResult.Players;
 
         string rulesetVersionId = resolvedRuleset.RulesetVersionId ?? createResult.RulesetVersionId;
         NarafinPlayerPrefs.StorePlaySession(createResult.SessionId, rulesetVersionId, selectedPlayers);
@@ -293,6 +296,8 @@ public class LoginManager : MonoBehaviour
             resolvedRuleset.Mode,
             setupCatalog,
             sessionPlayers);
+
+        NarafinHeartbeatRunner.GetOrCreate(gameObject)?.StartForActiveSession();
 
         return new NarafinPlaySessionResult
         {
@@ -316,16 +321,6 @@ public class LoginManager : MonoBehaviour
         if (string.IsNullOrWhiteSpace(sessionId))
         {
             return CreateSetupStartFailure("SESSION_MISSING", "Session belum dibuat. Kembali ke menu utama dan mulai ulang.");
-        }
-
-        if (NarafinRuntimeConfig.UseOfflineMode)
-        {
-            NarafinActiveSession.MarkStarted();
-            return new NarafinSetupStartResult
-            {
-                Success = true,
-                Players = new List<NarafinSessionStatePlayer>()
-            };
         }
 
         // Jika start sudah berhasil tetapi sinkronisasi gagal, percobaan ulang cukup menyinkronkan ulang.
@@ -357,26 +352,30 @@ public class LoginManager : MonoBehaviour
             NarafinActiveSession.MarkStarted();
         }
 
-        NarafinSessionEventSequenceResult sequenceResult = await apiClient.GetLastSessionEventSequenceAsync(AccessToken, sessionId);
-        if (!sequenceResult.Success)
-        {
-            return CreateSetupStartFailure(sequenceResult.ErrorCode, "Session berhasil dimulai, tetapi gagal menyinkronkan urutan event: " + sequenceResult.ErrorMessage);
-        }
-
-        NarafinPlayerPrefs.SetLastEventSequenceNumber(sequenceResult.LastSequenceNumber);
-        Debug.Log("Narafin event sequence disinkronkan. Sequence terakhir: " + sequenceResult.LastSequenceNumber);
-
+        // Nomor urut dan versi state diambil dari /state, bukan dihitung dari jumlah event.
         NarafinSessionStateResult stateResult = await apiClient.GetSessionStateAsync(AccessToken, sessionId);
         if (!stateResult.Success)
         {
             return CreateSetupStartFailure(stateResult.ErrorCode, "Session berhasil dimulai, tetapi gagal membaca state awal: " + stateResult.ErrorMessage);
         }
 
+        NarafinActiveSession.SetStateVersion(stateResult.StateVersion);
+        NarafinPlayerPrefs.SetLastEventSequenceNumber(Mathf.Max(0, stateResult.NextSequenceNumber - 1));
+        NarafinHeartbeatRunner.GetOrCreate(gameObject)?.StartForActiveSession();
+        Debug.Log("Narafin event sequence disinkronkan dari state. Sequence berikutnya: " + stateResult.NextSequenceNumber);
+
+        // Event setup (mis. SetupPinjamanAwal) tetap dibaca untuk mengisi data awal pemain.
+        NarafinSessionEventSequenceResult setupEventsResult = await apiClient.GetLastSessionEventSequenceAsync(AccessToken, sessionId);
+        if (!setupEventsResult.Success)
+        {
+            return CreateSetupStartFailure(setupEventsResult.ErrorCode, "Session berhasil dimulai, tetapi gagal membaca event setup: " + setupEventsResult.ErrorMessage);
+        }
+
         return new NarafinSetupStartResult
         {
             Success = true,
             Players = stateResult.Players,
-            SetupEvents = sequenceResult.Events
+            SetupEvents = setupEventsResult.Events
         };
     }
 
@@ -469,6 +468,10 @@ public class LoginManager : MonoBehaviour
         NarafinSetupLoan loan = NarafinActiveSession.IsMahir ? NarafinActiveSession.GetFirstLoan(catalog) : null;
         NarafinSetupInsurance insurance = NarafinActiveSession.IsMahir ? NarafinActiveSession.GetFirstInsurance(catalog) : null;
 
+        // Kartu emas awal hanya dibagikan bila ruleset memuat Kartu Harga Emas. Ruleset PEMULA tidak,
+        // dan mengirim gold_quantity di situ ditolak server dengan DISALLOWED_FOR_MODE.
+        bool usesGold = NarafinActiveSession.GetGoldPrices(catalog).Count > 0;
+
         List<NarafinSessionSetupPlayer> setupPlayers = new List<NarafinSessionSetupPlayer>();
         for (int i = 0; i < sessionPlayers.Count; i++)
         {
@@ -497,7 +500,7 @@ public class LoginManager : MonoBehaviour
                 session_player_id = sessionPlayer.session_player_id,
                 tie_breaker_code = tieBreakers[i].tie_breaker_code,
                 ingredient_card_id = ingredientCardId,
-                gold_quantity = 1,
+                gold_quantity = usesGold ? 1 : (int?)null,
                 mission_id = missionIds[i],
                 loan_code = loan?.loan_code,
                 insurance_product_code = insurance?.product_code
@@ -525,7 +528,10 @@ public class LoginManager : MonoBehaviour
             json.Append("{\"session_player_id\":").Append(JsonString(player.session_player_id));
             json.Append(",\"tie_breaker_code\":").Append(JsonString(player.tie_breaker_code));
             json.Append(",\"ingredient_card_id\":").Append(JsonString(player.ingredient_card_id));
-            json.Append(",\"gold_quantity\":").Append(player.gold_quantity);
+            if (player.gold_quantity.HasValue)
+            {
+                json.Append(",\"gold_quantity\":").Append(player.gold_quantity.Value);
+            }
             json.Append(",\"mission_id\":").Append(JsonString(player.mission_id));
             json.Append(",\"loan_code\":").Append(JsonNullableString(player.loan_code));
             json.Append(",\"insurance_product_code\":").Append(JsonNullableString(player.insurance_product_code));
@@ -602,9 +608,91 @@ public class LoginManager : MonoBehaviour
         return true;
     }
 
+    // Poin kebahagiaan akhir dibaca dari analitik backend setelah sesi ditutup.
+    public Task<NarafinSessionAnalyticsResult> GetActiveSessionAnalyticsAsync()
+    {
+        if (!IsSignedIn() || string.IsNullOrWhiteSpace(NarafinActiveSession.SessionId))
+        {
+            return Task.FromResult(new NarafinSessionAnalyticsResult
+            {
+                Success = false,
+                ErrorCode = "SESSION_MISSING",
+                ErrorMessage = "Session belum tersedia.",
+                Players = new List<NarafinAnalyticsPlayer>()
+            });
+        }
+
+        return apiClient.GetSessionAnalyticsAsync(AccessToken, NarafinActiveSession.SessionId);
+    }
+
+    // Permainan berakhir lewat endpoint khusus, bukan event. Heartbeat dihentikan setelahnya.
+    public async Task<NarafinSessionEndResult> EndActiveSessionAsync()
+    {
+        string sessionId = NarafinActiveSession.SessionId;
+        if (!IsSignedIn() || string.IsNullOrWhiteSpace(sessionId))
+        {
+            return new NarafinSessionEndResult
+            {
+                Success = false,
+                ErrorCode = "SESSION_MISSING",
+                ErrorMessage = "Session belum tersedia."
+            };
+        }
+
+        NarafinSessionEndResult result = await apiClient.EndSessionAsync(AccessToken, sessionId);
+        NarafinHeartbeatRunner.Instance?.Stop();
+
+        if (result.Success || result.AlreadyClosed)
+        {
+            NarafinActiveSession.MarkSessionEnded(result.Status);
+            Debug.Log("Session Narafin diakhiri. Status: " + (string.IsNullOrWhiteSpace(result.Status) ? "(tidak disebutkan)" : result.Status));
+        }
+        else
+        {
+            Debug.LogWarning("Gagal mengakhiri session Narafin: " + result.ErrorCode + " - " + result.ErrorMessage);
+        }
+
+        return result;
+    }
+
+    // Nomor urut event berikutnya selalu berasal dari server; hitungan lokal hanya cache antar event.
+    public async Task<bool> RefreshEventSequenceFromServerAsync()
+    {
+        NarafinSessionStateResult stateResult = await GetActiveSessionStateAsync();
+        if (!stateResult.Success)
+        {
+            Debug.LogWarning("Gagal menyegarkan nomor urut event: " + stateResult.ErrorCode + " - " + stateResult.ErrorMessage);
+            return false;
+        }
+
+        NarafinActiveSession.SetStateVersion(stateResult.StateVersion);
+        if (stateResult.NextSequenceNumber <= 0)
+        {
+            return false;
+        }
+
+        NarafinPlayerPrefs.SetLastEventSequenceNumber(stateResult.NextSequenceNumber - 1);
+        return true;
+    }
+
+    public Task<NarafinSessionHeartbeatResult> SendSessionHeartbeatAsync()
+    {
+        if (!IsSignedIn() || string.IsNullOrWhiteSpace(NarafinActiveSession.SessionId))
+        {
+            return Task.FromResult(new NarafinSessionHeartbeatResult
+            {
+                Success = false,
+                ErrorCode = "SESSION_MISSING",
+                ErrorMessage = "Session belum tersedia."
+            });
+        }
+
+        return apiClient.PostSessionHeartbeatAsync(AccessToken, NarafinActiveSession.SessionId);
+    }
+
     public Task<NarafinSessionStateResult> GetActiveSessionStateAsync()
     {
-        if (!IsSignedIn() || NarafinRuntimeConfig.UseOfflineMode || string.IsNullOrWhiteSpace(NarafinActiveSession.SessionId))
+        if (!IsSignedIn() || NarafinActiveSession.IsServerOffline || string.IsNullOrWhiteSpace(NarafinActiveSession.SessionId))
         {
             return Task.FromResult(new NarafinSessionStateResult
             {
@@ -616,6 +704,23 @@ public class LoginManager : MonoBehaviour
         }
 
         return apiClient.GetSessionStateAsync(AccessToken, NarafinActiveSession.SessionId);
+    }
+
+    // Semua event session aktif, dipakai untuk membaca nilai yang dibuat server (mis. loan_id dari opsi darurat).
+    public Task<NarafinSessionEventSequenceResult> GetActiveSessionEventsAsync()
+    {
+        if (!IsSignedIn() || NarafinActiveSession.IsServerOffline || string.IsNullOrWhiteSpace(NarafinActiveSession.SessionId))
+        {
+            return Task.FromResult(new NarafinSessionEventSequenceResult
+            {
+                Success = false,
+                ErrorCode = "SESSION_EVENTS_UNAVAILABLE",
+                ErrorMessage = "Event session tidak tersedia.",
+                Events = new List<NarafinSessionEventSummary>()
+            });
+        }
+
+        return apiClient.GetLastSessionEventSequenceAsync(AccessToken, NarafinActiveSession.SessionId);
     }
 
     public Task<NarafinSessionOperationResult> PostEventAsync(string rawJsonBody)
@@ -783,6 +888,7 @@ public class LoginManager : MonoBehaviour
 
     private void ClearSession()
     {
+        NarafinHeartbeatRunner.Instance?.Stop();
         GetOrCreateUgsAuthBridge().SignOut();
         ClearCachedFields();
 
@@ -974,6 +1080,8 @@ public class LoginManager : MonoBehaviour
         }
 
         Debug.Log("Ruleset default belum ada, membuat baru untuk mode: " + normalizedMode);
+        // Template lokal diunggah apa adanya. Bila server menolak mekaniknya (mis. Sabtu dimatikan pada mode
+        // PEMULA), errornya sengaja dibiarkan muncul supaya ketahuan dan gampang dicabut setelah backend diperbaiki.
         NarafinRulesetCreateResult createResult = await apiClient.CreateRulesetAsync(AccessToken, templateAsset.text);
         if (!createResult.Success)
         {

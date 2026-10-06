@@ -117,16 +117,7 @@ public partial class GameState
     // Nama file sprite lokal untuk sebuah family kartu kebutuhan, mis. "gameboy" -> "GameConsole".
     public static string GetKebutuhanSpriteName(string family, string nama)
     {
-        string familyKey = NarafinActiveSession.NormalizeName(family);
-        foreach (KeyValuePair<string, string> localFamily in LocalKebutuhanFamilies)
-        {
-            if (NarafinActiveSession.NormalizeName(localFamily.Value) == familyKey)
-            {
-                return localFamily.Key;
-            }
-        }
-
-        return (nama ?? string.Empty).Replace(" ", string.Empty);
+        return NarafinSpriteMap.GetNeedSpriteName(family, nama);
     }
 
     private static bool MatchesKebutuhan(string kebutuhan, string targetKey)

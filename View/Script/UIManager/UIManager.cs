@@ -47,10 +47,18 @@ public partial class UIManager : MonoBehaviour
     private TextField editNarasiNpcNameInput;
     private DropdownField editNarasiActionTypeInput;
     private DropdownField editNarasiNpcSpriteInput;
-    private TextField editNarasiRequiredBahanInput;
-    private TextField editNarasiRequiredKebutuhanInput;
-    private TextField editNarasiRequiredTujuanFinansialInput;
-    private TextField editNarasiRequiredMasakanInput;
+    private DropdownField editNarasiRequiredBahanDropdown;
+    private Button editNarasiRequiredBahanAddButton;
+    private VisualElement editNarasiRequiredBahanList;
+    private DropdownField editNarasiRequiredKebutuhanDropdown;
+    private Button editNarasiRequiredKebutuhanAddButton;
+    private VisualElement editNarasiRequiredKebutuhanList;
+    private DropdownField editNarasiRequiredTujuanFinansialDropdown;
+    private Button editNarasiRequiredTujuanFinansialAddButton;
+    private VisualElement editNarasiRequiredTujuanFinansialList;
+    private DropdownField editNarasiRequiredMasakanDropdown;
+    private Button editNarasiRequiredMasakanAddButton;
+    private VisualElement editNarasiRequiredMasakanList;
     private Button editNarasiLineRemove1;
     private Button editNarasiLineRemove2;
     private TextField editNarasiLineText1;
@@ -63,7 +71,8 @@ public partial class UIManager : MonoBehaviour
     private IntegerField editNarasiLoanCardInput;
     private IntegerField editNarasiWeekInput;
     private IntegerField editNarasiDayInput;
-    private Toggle editNarasiHasInsuranceToggle;
+    private DropdownField editNarasiHasInsuranceDropdown;
+    private readonly Toggle[] editNarasiGiliranPemainToggles = new Toggle[4];
     private VisualElement editNarasiNpcSpritePreview;
     private DropdownField rulesetModeDropdown;
     private DropdownField rulesetDropdown;
@@ -186,18 +195,10 @@ public partial class UIManager : MonoBehaviour
         SetupPlayerCountDropdown();
 
         // Display DialogKarakter loading status
-        if (DataManager.Instance != null)
-        {
-            dialogKarakterStatusText.text = DataManager.Instance.DialogKarakterLoadStatus;
-            if (!DataManager.Instance.IsDialogKarakterLoaded)
-            {
-                dialogKarakterStatusText.style.color = new Color(255, 100, 100);  // Red for error
-            }
-            else
-            {
-                dialogKarakterStatusText.style.color = new Color(100, 200, 100);  // Green for success
-            }
-        }
+        dialogKarakterStatusText.text = NarasiSessionContext.DialogKarakterLoadStatus;
+        dialogKarakterStatusText.style.color = NarasiSessionContext.IsDialogKarakterLoaded
+            ? new Color(100, 200, 100)
+            : new Color(255, 100, 100);
 
         // LoginManager hidup di GameObject terpisah yang bertahan lintas scene; tanpa itu Home tidak bisa dipakai.
         if (LoginManager.Instance == null)
@@ -257,10 +258,18 @@ public partial class UIManager : MonoBehaviour
         editNarasiNpcNameInput = root.Q<TextField>("EditNarasiNpcNameInput");
         editNarasiActionTypeInput = root.Q<DropdownField>("EditNarasiActionTypeInput");
         editNarasiNpcSpriteInput = root.Q<DropdownField>("EditNarasiNpcSpriteInput");
-        editNarasiRequiredBahanInput = root.Q<TextField>("EditNarasiRequiredBahanInput");
-        editNarasiRequiredKebutuhanInput = root.Q<TextField>("EditNarasiRequiredKebutuhanInput");
-        editNarasiRequiredTujuanFinansialInput = root.Q<TextField>("EditNarasiRequiredTujuanFinansialInput");
-        editNarasiRequiredMasakanInput = root.Q<TextField>("EditNarasiRequiredMasakanInput");
+        editNarasiRequiredBahanDropdown = root.Q<DropdownField>("EditNarasiRequiredBahanDropdown");
+        editNarasiRequiredBahanAddButton = root.Q<Button>("EditNarasiRequiredBahanAddButton");
+        editNarasiRequiredBahanList = root.Q<VisualElement>("EditNarasiRequiredBahanList");
+        editNarasiRequiredKebutuhanDropdown = root.Q<DropdownField>("EditNarasiRequiredKebutuhanDropdown");
+        editNarasiRequiredKebutuhanAddButton = root.Q<Button>("EditNarasiRequiredKebutuhanAddButton");
+        editNarasiRequiredKebutuhanList = root.Q<VisualElement>("EditNarasiRequiredKebutuhanList");
+        editNarasiRequiredTujuanFinansialDropdown = root.Q<DropdownField>("EditNarasiRequiredTujuanFinansialDropdown");
+        editNarasiRequiredTujuanFinansialAddButton = root.Q<Button>("EditNarasiRequiredTujuanFinansialAddButton");
+        editNarasiRequiredTujuanFinansialList = root.Q<VisualElement>("EditNarasiRequiredTujuanFinansialList");
+        editNarasiRequiredMasakanDropdown = root.Q<DropdownField>("EditNarasiRequiredMasakanDropdown");
+        editNarasiRequiredMasakanAddButton = root.Q<Button>("EditNarasiRequiredMasakanAddButton");
+        editNarasiRequiredMasakanList = root.Q<VisualElement>("EditNarasiRequiredMasakanList");
         editNarasiLineRemove1 = root.Q<Button>("EditNarasiLineRemove1");
         editNarasiLineRemove2 = root.Q<Button>("EditNarasiLineRemove2");
         editNarasiLineText1 = root.Q<TextField>("EditNarasiLineText1");
@@ -273,7 +282,11 @@ public partial class UIManager : MonoBehaviour
         editNarasiLoanCardInput = root.Q<IntegerField>("EditNarasiLoanCardInput");
         editNarasiWeekInput = root.Q<IntegerField>("EditNarasiWeekInput");
         editNarasiDayInput = root.Q<IntegerField>("EditNarasiDayInput");
-        editNarasiHasInsuranceToggle = root.Q<Toggle>("EditNarasiHasInsuranceToggle");
+        editNarasiHasInsuranceDropdown = root.Q<DropdownField>("EditNarasiHasInsuranceDropdown");
+        for (int player = 1; player <= editNarasiGiliranPemainToggles.Length; player++)
+        {
+            editNarasiGiliranPemainToggles[player - 1] = root.Q<Toggle>("EditNarasiGiliranPemain" + player + "Toggle");
+        }
         editNarasiNpcSpritePreview = root.Q<VisualElement>("EditNarasiNpcSpritePreview");
         rulesetModeDropdown = root.Q<DropdownField>("RulesetModeDropdown");
         rulesetDropdown = root.Q<DropdownField>("RulesetDropdown");
@@ -346,6 +359,9 @@ public partial class UIManager : MonoBehaviour
         playLoadingSpinner = root.Q<VisualElement>("PlayLoadingSpinner");
         errorPopupOverlay = root.Q<VisualElement>("ErrorPopupOverlay");
         errorPopupCard = root.Q<VisualElement>("ErrorPopupCard");
+
+        // narasi global dummy: hapus baris ini bila peragaan sudah tidak dipakai
+        BindNarasiGlobalDummy(root);
     }
 
     private void RegisterCallbacks()
@@ -383,6 +399,11 @@ public partial class UIManager : MonoBehaviour
         rulesetDropdown?.RegisterValueChangedCallback(OnRulesetDropdownChanged);
         editNarasiDialogDropdown?.RegisterValueChangedCallback(OnEditNarasiDialogChanged);
         editNarasiNpcSpriteInput?.RegisterValueChangedCallback(OnEditNarasiNpcSpriteChanged);
+        editNarasiActionTypeInput?.RegisterValueChangedCallback(OnEditNarasiActionTypeChanged);
+        editNarasiRequiredBahanAddButton?.RegisterCallback<ClickEvent>(OnEditNarasiRequiredBahanAddClicked);
+        editNarasiRequiredKebutuhanAddButton?.RegisterCallback<ClickEvent>(OnEditNarasiRequiredKebutuhanAddClicked);
+        editNarasiRequiredTujuanFinansialAddButton?.RegisterCallback<ClickEvent>(OnEditNarasiRequiredTujuanFinansialAddClicked);
+        editNarasiRequiredMasakanAddButton?.RegisterCallback<ClickEvent>(OnEditNarasiRequiredMasakanAddClicked);
         RegisterPlayerNameCallbacks();
         if (playerSuggestionButtons != null)
         {
@@ -395,6 +416,9 @@ public partial class UIManager : MonoBehaviour
 
         addPlayerContainer.RegisterCallback<TransitionEndEvent>(OnAddPlayerTransitionEnd);
         loginContainer.RegisterCallback<TransitionEndEvent>(OnLoginTransitionEnd);
+
+        // narasi global dummy: hapus baris ini bila peragaan sudah tidak dipakai
+        RegisterNarasiGlobalDummyCallbacks();
     }
 
     private void SetupMobileKeyboardFocusHandlers()

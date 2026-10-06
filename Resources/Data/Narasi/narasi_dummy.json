@@ -1,0 +1,1178 @@
+{
+    "dialogKarakter": [
+        {
+            "id": "dmy_intro_d1",
+            "prerequisite": [
+                {
+                    "mingguKe": 1,
+                    "hariKe": 1
+                }
+            ],
+            "aksi": "IntroHari",
+            "aksiValue": 0,
+            "npcName": "Narator Uji",
+            "npcSprite": "penjual_bahan",
+            "questId": "",
+            "questState": "",
+            "lines": [
+                {
+                    "speaker": "NPC",
+                    "text": "Selamat datang di uji coba narasi. Saya Narator Uji, pemandu kalian hari ini."
+                },
+                {
+                    "speaker": "PLAYER",
+                    "text": "Baik, saya siap memulai hari pertama."
+                },
+                {
+                    "speaker": "NPC",
+                    "text": "Dialog ini memakai tiga baris bergantian NPC dan pemain. Pastikan nama di atas kotak dialog ikut berganti."
+                }
+            ]
+        },
+        {
+            "id": "dmy_intro_d2_p1",
+            "prerequisite": [
+                {
+                    "giliranPemain": [
+                        1
+                    ]
+                },
+                {
+                    "mingguKe": 1,
+                    "hariKe": 2
+                }
+            ],
+            "aksi": "IntroHari",
+            "aksiValue": 0,
+            "npcName": "Penjaga Bank",
+            "npcSprite": "penjaga_bank",
+            "questId": "",
+            "questState": "",
+            "lines": [
+                {
+                    "speaker": "NPC",
+                    "text": "Hari kedua. Dialog ini hanya untuk pemain giliran ke-1."
+                },
+                {
+                    "speaker": "PLAYER",
+                    "text": "Berarti pemain kedua akan mendapat sapaan yang berbeda."
+                }
+            ]
+        },
+        {
+            "id": "dmy_intro_d2_p2",
+            "prerequisite": [
+                {
+                    "giliranPemain": [
+                        2
+                    ]
+                },
+                {
+                    "mingguKe": 1,
+                    "hariKe": 2
+                }
+            ],
+            "aksi": "IntroHari",
+            "aksiValue": 0,
+            "npcName": "Pembeli Masakan",
+            "npcSprite": "pembeli_masakan",
+            "questId": "",
+            "questState": "",
+            "lines": [
+                {
+                    "speaker": "NPC",
+                    "text": "Hari kedua. Dialog ini hanya untuk pemain giliran ke-2."
+                },
+                {
+                    "speaker": "PLAYER",
+                    "text": "Sapaan saya memang berbeda dari pemain pertama."
+                }
+            ]
+        },
+        {
+            "id": "dmy_intro_d3_kaya",
+            "prerequisite": [
+                {
+                    "uang": 60
+                },
+                {
+                    "mingguKe": 1,
+                    "hariKe": 3
+                }
+            ],
+            "aksi": "IntroHari",
+            "aksiValue": 0,
+            "npcName": "Penjaga Bank",
+            "npcSprite": "penjaga_bank",
+            "questId": "",
+            "questState": "",
+            "lines": [
+                {
+                    "speaker": "NPC",
+                    "text": "Uang Anda minimal 60 koin, jadi dialog bersyarat inilah yang menang atas dialog umum hari ketiga."
+                }
+            ]
+        },
+        {
+            "id": "dmy_intro_d3_umum",
+            "prerequisite": [
+                {
+                    "mingguKe": 1,
+                    "hariKe": 3
+                }
+            ],
+            "aksi": "IntroHari",
+            "aksiValue": 0,
+            "npcName": "Narator Uji",
+            "npcSprite": "penjual_bahan",
+            "questId": "",
+            "questState": "",
+            "lines": [
+                {
+                    "speaker": "NPC",
+                    "text": "Hari ketiga tanpa syarat apa pun. Jika pesan ini yang muncul, berarti uang Anda di bawah 60 koin."
+                }
+            ]
+        },
+        {
+            "id": "dmy_intro_d4_minggu1",
+            "prerequisite": [
+                {
+                    "mingguKe": 1,
+                    "hariKe": 4
+                }
+            ],
+            "aksi": "IntroHari",
+            "aksiValue": 0,
+            "npcName": "Narator Uji",
+            "npcSprite": "penjual_kebutuhan",
+            "questId": "",
+            "questState": "",
+            "lines": [
+                {
+                    "speaker": "NPC",
+                    "text": "Hari keempat pada minggu pertama. Dialog ini menguji syarat mingguKe sekaligus hariKe."
+                }
+            ]
+        },
+        {
+            "id": "dmy_intro_d5_jumat",
+            "prerequisite": [
+                {
+                    "hariKe": 5,
+                    "mingguKe": 1
+                }
+            ],
+            "aksi": "IntroHari",
+            "aksiValue": 0,
+            "npcName": "Narator Uji",
+            "npcSprite": "penjual_kebutuhan",
+            "questId": "",
+            "questState": "",
+            "lines": [
+                {
+                    "speaker": "NPC",
+                    "text": "Hari Jumat. Narasi awal hari tetap diputar sesudah keterangan sistem tentang donasi."
+                }
+            ]
+        },
+        {
+            "id": "dmy_intro_d6_sabtu",
+            "prerequisite": [
+                {
+                    "hariKe": 6,
+                    "mingguKe": 1
+                }
+            ],
+            "aksi": "IntroHari",
+            "aksiValue": 0,
+            "npcName": "Narator Uji",
+            "npcSprite": "penjaga_bank",
+            "questId": "",
+            "questState": "",
+            "lines": [
+                {
+                    "speaker": "NPC",
+                    "text": "Hari Sabtu. Narasi awal hari muncul sebelum panel investasi emas atau sebelum hari Sabtu dilewati."
+                }
+            ]
+        },
+        {
+            "id": "dmy_intro_d7_minggu",
+            "prerequisite": [
+                {
+                    "hariKe": 7,
+                    "mingguKe": 1
+                }
+            ],
+            "aksi": "IntroHari",
+            "aksiValue": 0,
+            "npcName": "Narator Uji",
+            "npcSprite": "pembeli_masakan",
+            "questId": "",
+            "questState": "",
+            "lines": [
+                {
+                    "speaker": "NPC",
+                    "text": "Hari Minggu libur. Narasi awal hari tetap diputar walaupun tidak ada aksi sama sekali."
+                }
+            ]
+        },
+        {
+            "id": "dmy_intro_cadangan",
+            "prerequisite": [],
+            "aksi": "IntroHari",
+            "aksiValue": 0,
+            "npcName": "Narator Uji",
+            "npcSprite": "penjual_bahan",
+            "questId": "",
+            "questState": "",
+            "lines": [
+                {
+                    "speaker": "NPC",
+                    "text": "Narasi awal hari cadangan. Muncul pada hari yang tidak punya dialog khusus, misalnya hari ke-8 ke atas."
+                }
+            ]
+        },
+        {
+            "id": "dmy_ending_d1",
+            "prerequisite": [
+                {
+                    "mingguKe": 1,
+                    "hariKe": 1
+                }
+            ],
+            "aksi": "EndingHari",
+            "aksiValue": 0,
+            "npcName": "Narator Uji",
+            "npcSprite": "penjual_bahan",
+            "questId": "",
+            "questState": "",
+            "lines": [
+                {
+                    "speaker": "PLAYER",
+                    "text": "Hari pertama selesai. Narasi akhir hari diputar sebelum harinya benar-benar berganti."
+                },
+                {
+                    "speaker": "NPC",
+                    "text": "Sampai jumpa besok."
+                }
+            ]
+        },
+        {
+            "id": "dmy_ending_d4_minggu1",
+            "prerequisite": [
+                {
+                    "mingguKe": 1,
+                    "hariKe": 4
+                }
+            ],
+            "aksi": "EndingHari",
+            "aksiValue": 0,
+            "npcName": "Narator Uji",
+            "npcSprite": "penjaga_bank",
+            "questId": "",
+            "questState": "",
+            "lines": [
+                {
+                    "speaker": "NPC",
+                    "text": "Penutup hari keempat pada minggu pertama; syarat mingguKe diuji lagi di jalur akhir hari."
+                }
+            ]
+        },
+        {
+            "id": "dmy_ending_d6_sabtu",
+            "prerequisite": [
+                {
+                    "hariKe": 6,
+                    "mingguKe": 1
+                }
+            ],
+            "aksi": "EndingHari",
+            "aksiValue": 0,
+            "npcName": "Narator Uji",
+            "npcSprite": "penjaga_bank",
+            "questId": "",
+            "questState": "",
+            "lines": [
+                {
+                    "speaker": "NPC",
+                    "text": "Penutup hari Sabtu. Jalur ini dipanggil dari investasi emas atau dari hari Sabtu yang dilewati."
+                }
+            ]
+        },
+        {
+            "id": "dmy_ending_d7_minggu",
+            "prerequisite": [
+                {
+                    "hariKe": 7,
+                    "mingguKe": 1
+                }
+            ],
+            "aksi": "EndingHari",
+            "aksiValue": 0,
+            "npcName": "Narator Uji",
+            "npcSprite": "pembeli_masakan",
+            "questId": "",
+            "questState": "",
+            "lines": [
+                {
+                    "speaker": "NPC",
+                    "text": "Penutup hari Minggu. Jika muncul, berarti jalur hari libur juga memutar narasi akhir hari."
+                }
+            ]
+        },
+        {
+            "id": "dmy_ending_cadangan",
+            "prerequisite": [],
+            "aksi": "EndingHari",
+            "aksiValue": 0,
+            "npcName": "Narator Uji",
+            "npcSprite": "penjual_bahan",
+            "questId": "",
+            "questState": "",
+            "lines": [
+                {
+                    "speaker": "NPC",
+                    "text": "Narasi akhir hari cadangan untuk hari tanpa dialog khusus, termasuk hari terakhir sebelum permainan ditutup."
+                }
+            ]
+        },
+        {
+            "id": "dmy_bahan_1",
+            "prerequisite": [],
+            "aksi": "BahanMasakan",
+            "aksiValue": 1,
+            "npcName": "Penjual Bahan",
+            "npcSprite": "penjual_bahan",
+            "questId": "dmy_quest_belanja",
+            "questState": "AKTIF",
+            "lines": [
+                {
+                    "speaker": "NPC",
+                    "text": "Pembelian bahan pertama dalam permainan. Setelah dialog ini, quest Belanja Perdana berubah menjadi Aktif."
+                },
+                {
+                    "speaker": "PLAYER",
+                    "text": "Saya akan cek daftar quest sesudah ini."
+                }
+            ]
+        },
+        {
+            "id": "dmy_bahan_2_quest",
+            "prerequisite": [
+                {
+                    "questId": "dmy_quest_belanja",
+                    "questState": "AKTIF"
+                }
+            ],
+            "aksi": "BahanMasakan",
+            "aksiValue": 2,
+            "npcName": "Penjual Bahan",
+            "npcSprite": "penjual_bahan",
+            "questId": "dmy_quest_belanja",
+            "questState": "SELESAI",
+            "lines": [
+                {
+                    "speaker": "NPC",
+                    "text": "Pembelian bahan kedua, dan quest Belanja Perdana sedang Aktif."
+                },
+                {
+                    "speaker": "PLAYER",
+                    "text": "Kalau begitu quest ini saya tutup sekarang."
+                },
+                {
+                    "speaker": "NPC",
+                    "text": "Setelah dialog ini statusnya menjadi Selesai."
+                }
+            ]
+        },
+        {
+            "id": "dmy_bahan_punya_telur",
+            "prerequisite": [
+                {
+                    "bahanDimiliki": [
+                        "telur"
+                    ]
+                }
+            ],
+            "aksi": "BahanMasakan",
+            "aksiValue": 0,
+            "npcName": "Penjual Bahan",
+            "npcSprite": "penjual_bahan",
+            "questId": "",
+            "questState": "",
+            "lines": [
+                {
+                    "speaker": "NPC",
+                    "text": "Anda sudah punya Telur, jadi dialog bersyarat ini menang atas dialog umum pembelian bahan."
+                }
+            ]
+        },
+        {
+            "id": "dmy_bahan_umum",
+            "prerequisite": [],
+            "aksi": "BahanMasakan",
+            "aksiValue": 0,
+            "npcName": "Penjual Tanpa Sprite",
+            "npcSprite": "sprite_sengaja_tidak_ada",
+            "questId": "",
+            "questState": "",
+            "lines": [
+                {
+                    "speaker": "NPC",
+                    "text": "Dialog umum pembelian bahan. Sprite NPC-nya sengaja tidak ada di Resources untuk menguji penanganan sprite hilang."
+                }
+            ]
+        },
+        {
+            "id": "dmy_kebutuhan_1",
+            "prerequisite": [],
+            "aksi": "Kebutuhan",
+            "aksiValue": 1,
+            "npcName": "Penjual Kebutuhan",
+            "npcSprite": "penjual_kebutuhan",
+            "questId": "",
+            "questState": "",
+            "lines": [
+                {
+                    "speaker": "NPC",
+                    "text": "Pembelian kebutuhan pertama."
+                },
+                {
+                    "speaker": "PLAYER",
+                    "text": "Semoga menambah poin kebahagiaan."
+                }
+            ]
+        },
+        {
+            "id": "dmy_kebutuhan_baju",
+            "prerequisite": [
+                {
+                    "kebutuhanDimiliki": [
+                        "baju"
+                    ],
+                    "kebahagiaan": 3
+                }
+            ],
+            "aksi": "Kebutuhan",
+            "aksiValue": 0,
+            "npcName": "Penjual Kebutuhan",
+            "npcSprite": "penjual_kebutuhan",
+            "questId": "",
+            "questState": "",
+            "lines": [
+                {
+                    "speaker": "NPC",
+                    "text": "Anda punya kartu Baju dan kebahagiaan minimal 3. Dua syarat dalam satu entri prasyarat terpenuhi sekaligus."
+                }
+            ]
+        },
+        {
+            "id": "dmy_kebutuhan_primer",
+            "prerequisite": [
+                {
+                    "kebutuhanDimiliki": [
+                        "primer"
+                    ]
+                }
+            ],
+            "aksi": "Kebutuhan",
+            "aksiValue": 0,
+            "npcName": "Penjual Kebutuhan",
+            "npcSprite": "penjual_kebutuhan",
+            "questId": "",
+            "questState": "",
+            "lines": [
+                {
+                    "speaker": "NPC",
+                    "text": "Anda memiliki kebutuhan bertipe primer. Syarat kebutuhanDimiliki juga cocok dengan nama tipe, bukan hanya nama kartu."
+                }
+            ]
+        },
+        {
+            "id": "dmy_kebutuhan_umum",
+            "prerequisite": [],
+            "aksi": "Kebutuhan",
+            "aksiValue": 0,
+            "npcName": "Penjual Kebutuhan",
+            "npcSprite": "penjual_kebutuhan",
+            "questId": "",
+            "questState": "",
+            "lines": [
+                {
+                    "speaker": "NPC",
+                    "text": "Dialog umum pembelian kebutuhan tanpa syarat."
+                }
+            ]
+        },
+        {
+            "id": "dmy_jual_1",
+            "prerequisite": [],
+            "aksi": "JualMasakan",
+            "aksiValue": 1,
+            "npcName": "Pembeli Masakan",
+            "npcSprite": "pembeli_masakan",
+            "questId": "",
+            "questState": "",
+            "lines": [
+                {
+                    "speaker": "NPC",
+                    "text": "Penjualan masakan pertama. Pembeli selalu senang dengan menu baru."
+                },
+                {
+                    "speaker": "PLAYER",
+                    "text": "Terima kasih sudah membeli."
+                }
+            ]
+        },
+        {
+            "id": "dmy_jual_nasigoreng",
+            "prerequisite": [
+                {
+                    "masakanDijual": [
+                        "nasi_goreng"
+                    ]
+                }
+            ],
+            "aksi": "JualMasakan",
+            "aksiValue": 0,
+            "npcName": "Pembeli Masakan",
+            "npcSprite": "pembeli_masakan",
+            "questId": "",
+            "questState": "",
+            "lines": [
+                {
+                    "speaker": "NPC",
+                    "text": "Anda pernah menjual nasi goreng, jadi syarat masakanDijual terpenuhi."
+                }
+            ]
+        },
+        {
+            "id": "dmy_jual_umum",
+            "prerequisite": [],
+            "aksi": "JualMasakan",
+            "aksiValue": 0,
+            "npcName": "Pembeli Masakan",
+            "npcSprite": "pembeli_masakan",
+            "questId": "",
+            "questState": "",
+            "lines": [
+                {
+                    "speaker": "NPC",
+                    "text": "Dialog umum penjualan masakan."
+                }
+            ]
+        },
+        {
+            "id": "dmy_kerja_1",
+            "prerequisite": [],
+            "aksi": "KerjaLepas",
+            "aksiValue": 1,
+            "npcName": "Narator Uji",
+            "npcSprite": "penjual_bahan",
+            "questId": "",
+            "questState": "",
+            "lines": [
+                {
+                    "speaker": "NPC",
+                    "text": "Kerja lepas pertama. Tenaga ditukar koin."
+                },
+                {
+                    "speaker": "PLAYER",
+                    "text": "Lumayan untuk menambah modal."
+                }
+            ]
+        },
+        {
+            "id": "dmy_kerja_dua_entri",
+            "prerequisite": [
+                {
+                    "uang": 20
+                },
+                {
+                    "giliranPemain": [
+                        1
+                    ]
+                }
+            ],
+            "aksi": "KerjaLepas",
+            "aksiValue": 0,
+            "npcName": "Narator Uji",
+            "npcSprite": "penjaga_bank",
+            "questId": "",
+            "questState": "",
+            "lines": [
+                {
+                    "speaker": "NPC",
+                    "text": "Dialog ini memakai dua entri prasyarat sekaligus: uang minimal 20 DAN giliran pemain ke-1. Keduanya harus benar."
+                }
+            ]
+        },
+        {
+            "id": "dmy_kerja_p2",
+            "prerequisite": [
+                {
+                    "giliranPemain": [
+                        2
+                    ]
+                }
+            ],
+            "aksi": "KerjaLepas",
+            "aksiValue": 0,
+            "npcName": "Narator Uji",
+            "npcSprite": "penjaga_bank",
+            "questId": "",
+            "questState": "",
+            "lines": [
+                {
+                    "speaker": "NPC",
+                    "text": "Dialog kerja lepas khusus pemain giliran ke-2."
+                }
+            ]
+        },
+        {
+            "id": "dmy_kerja_tanpa_baris",
+            "prerequisite": [],
+            "aksi": "KerjaLepas",
+            "aksiValue": 0,
+            "npcName": "Jangan Muncul",
+            "npcSprite": "penjaga_bank",
+            "questId": "",
+            "questState": "",
+            "lines": []
+        },
+        {
+            "id": "dmy_kerja_umum",
+            "prerequisite": [],
+            "aksi": "KerjaLepas",
+            "aksiValue": 0,
+            "npcName": "Narator Uji",
+            "npcSprite": "",
+            "questId": "",
+            "questState": "",
+            "lines": [
+                {
+                    "speaker": "PLAYER",
+                    "text": "Dialog umum kerja lepas: satu baris dari sisi pemain saja, tanpa NPC, dan npcSprite-nya kosong sehingga sprite sebelumnya dipertahankan."
+                }
+            ]
+        },
+        {
+            "id": "dmy_menabung_1",
+            "prerequisite": [],
+            "aksi": "Menabung",
+            "aksiValue": 1,
+            "npcName": "Penjaga Bank",
+            "npcSprite": "penjaga_bank",
+            "questId": "",
+            "questState": "",
+            "lines": [
+                {
+                    "speaker": "NPC",
+                    "text": "Setoran tabungan pertama Anda saya catat."
+                },
+                {
+                    "speaker": "PLAYER",
+                    "text": "Tolong simpan baik-baik."
+                }
+            ]
+        },
+        {
+            "id": "dmy_menabung_tabungan",
+            "prerequisite": [
+                {
+                    "tabungan": 10
+                }
+            ],
+            "aksi": "Menabung",
+            "aksiValue": 0,
+            "npcName": "Penjaga Bank",
+            "npcSprite": "penjaga_bank",
+            "questId": "",
+            "questState": "",
+            "lines": [
+                {
+                    "speaker": "NPC",
+                    "text": "Tabungan Anda sudah minimal 10 koin. Syarat tabungan terpenuhi."
+                }
+            ]
+        },
+        {
+            "id": "dmy_menabung_umum",
+            "prerequisite": [],
+            "aksi": "Menabung",
+            "aksiValue": 0,
+            "npcName": "Penjaga Bank",
+            "npcSprite": "penjaga_bank",
+            "questId": "",
+            "questState": "",
+            "lines": [
+                {
+                    "speaker": "NPC",
+                    "text": "Dialog umum menabung."
+                }
+            ]
+        },
+        {
+            "id": "dmy_tf_1",
+            "prerequisite": [],
+            "aksi": "TujuanFinansial",
+            "aksiValue": 1,
+            "npcName": "Penjaga Bank",
+            "npcSprite": "penjaga_bank",
+            "questId": "dmy_quest_impian",
+            "questState": "AKTIF",
+            "lines": [
+                {
+                    "speaker": "NPC",
+                    "text": "Kartu tujuan finansial pertama. Ini langkah besar."
+                },
+                {
+                    "speaker": "PLAYER",
+                    "text": "Saya ingin menambah yang lain juga."
+                }
+            ]
+        },
+        {
+            "id": "dmy_tf_rumah",
+            "prerequisite": [
+                {
+                    "tujuanFinansialDimiliki": [
+                        "tujuan_35"
+                    ]
+                }
+            ],
+            "aksi": "TujuanFinansial",
+            "aksiValue": 0,
+            "npcName": "Penjaga Bank",
+            "npcSprite": "penjaga_bank",
+            "questId": "dmy_quest_impian",
+            "questState": "SELESAI",
+            "lines": [
+                {
+                    "speaker": "NPC",
+                    "text": "Anda sudah memiliki tujuan Beli Rumah Baru. Syarat tujuanFinansialDimiliki terpenuhi dan quest Kejar Impian ditutup."
+                }
+            ]
+        },
+        {
+            "id": "dmy_tf_umum",
+            "prerequisite": [],
+            "aksi": "TujuanFinansial",
+            "aksiValue": 0,
+            "npcName": "Penjaga Bank",
+            "npcSprite": "penjaga_bank",
+            "questId": "",
+            "questState": "",
+            "lines": [
+                {
+                    "speaker": "NPC",
+                    "text": "Dialog umum pembelian tujuan finansial."
+                }
+            ]
+        },
+        {
+            "id": "dmy_pinjam_1",
+            "prerequisite": [],
+            "aksi": "PinjamanSyariah",
+            "aksiValue": 1,
+            "npcName": "Penjaga Bank",
+            "npcSprite": "penjaga_bank",
+            "questId": "dmy_quest_utang",
+            "questState": "AKTIF",
+            "lines": [
+                {
+                    "speaker": "NPC",
+                    "text": "Pinjaman syariah pertama. Ingat, pinjaman ini wajib dilunasi."
+                },
+                {
+                    "speaker": "PLAYER",
+                    "text": "Saya catat sebagai utang."
+                }
+            ]
+        },
+        {
+            "id": "dmy_pinjam_kartu",
+            "prerequisite": [
+                {
+                    "kartuPinjaman": 1
+                }
+            ],
+            "aksi": "PinjamanSyariah",
+            "aksiValue": 0,
+            "npcName": "Penjaga Bank",
+            "npcSprite": "penjaga_bank",
+            "questId": "",
+            "questState": "",
+            "lines": [
+                {
+                    "speaker": "NPC",
+                    "text": "Anda sudah memegang minimal satu kartu pinjaman. Syarat kartuPinjaman terpenuhi."
+                }
+            ]
+        },
+        {
+            "id": "dmy_pinjam_umum",
+            "prerequisite": [],
+            "aksi": "PinjamanSyariah",
+            "aksiValue": 0,
+            "npcName": "Penjaga Bank",
+            "npcSprite": "penjaga_bank",
+            "questId": "",
+            "questState": "",
+            "lines": [
+                {
+                    "speaker": "NPC",
+                    "text": "Dialog umum pinjaman syariah."
+                }
+            ]
+        },
+        {
+            "id": "dmy_bayar_quest",
+            "prerequisite": [
+                {
+                    "questId": "dmy_quest_utang",
+                    "questState": "AKTIF"
+                }
+            ],
+            "aksi": "BayarPinjaman",
+            "aksiValue": 0,
+            "npcName": "Penjaga Bank",
+            "npcSprite": "penjaga_bank",
+            "questId": "dmy_quest_utang",
+            "questState": "SELESAI",
+            "lines": [
+                {
+                    "speaker": "NPC",
+                    "text": "Quest Lunasi Utang sedang Aktif dan Anda membayar sekarang."
+                },
+                {
+                    "speaker": "PLAYER",
+                    "text": "Dengan ini utang saya beres."
+                },
+                {
+                    "speaker": "NPC",
+                    "text": "Quest-nya saya tandai Selesai."
+                }
+            ]
+        },
+        {
+            "id": "dmy_bayar_umum",
+            "prerequisite": [],
+            "aksi": "BayarPinjaman",
+            "aksiValue": 0,
+            "npcName": "Penjaga Bank",
+            "npcSprite": "penjaga_bank",
+            "questId": "",
+            "questState": "",
+            "lines": [
+                {
+                    "speaker": "NPC",
+                    "text": "Dialog umum pembayaran pinjaman."
+                }
+            ]
+        },
+        {
+            "id": "dmy_asuransi_1",
+            "prerequisite": [],
+            "aksi": "Asuransi",
+            "aksiValue": 1,
+            "npcName": "Penjaga Bank",
+            "npcSprite": "penjaga_bank",
+            "questId": "dmy_quest_aman",
+            "questState": "SELESAI",
+            "lines": [
+                {
+                    "speaker": "NPC",
+                    "text": "Pembelian asuransi pertama. Risiko kehidupan jadi lebih ringan."
+                },
+                {
+                    "speaker": "PLAYER",
+                    "text": "Semoga tidak terpakai."
+                }
+            ]
+        },
+        {
+            "id": "dmy_asuransi_punya",
+            "prerequisite": [
+                {
+                    "asuransiStatus": 1
+                }
+            ],
+            "aksi": "Asuransi",
+            "aksiValue": 0,
+            "npcName": "Penjaga Bank",
+            "npcSprite": "penjaga_bank",
+            "questId": "",
+            "questState": "",
+            "lines": [
+                {
+                    "speaker": "NPC",
+                    "text": "Anda sudah memiliki asuransi. Syarat Has Insurance bernilai True terpenuhi."
+                }
+            ]
+        },
+        {
+            "id": "dmy_asuransi_umum",
+            "prerequisite": [],
+            "aksi": "Asuransi",
+            "aksiValue": 0,
+            "npcName": "Penjaga Bank",
+            "npcSprite": "penjaga_bank",
+            "questId": "",
+            "questState": "",
+            "lines": [
+                {
+                    "speaker": "NPC",
+                    "text": "Dialog umum asuransi."
+                }
+            ]
+        },
+        {
+            "id": "dmy_jumat_1",
+            "prerequisite": [],
+            "aksi": "JumatBerkah",
+            "aksiValue": 1,
+            "npcName": "Narator Uji",
+            "npcSprite": "penjual_kebutuhan",
+            "questId": "",
+            "questState": "",
+            "lines": [
+                {
+                    "speaker": "NPC",
+                    "text": "Donasi Jumat Berkah pertama Anda."
+                },
+                {
+                    "speaker": "PLAYER",
+                    "text": "Semoga bermanfaat bagi yang menerima."
+                }
+            ]
+        },
+        {
+            "id": "dmy_jumat_umum",
+            "prerequisite": [],
+            "aksi": "JumatBerkah",
+            "aksiValue": 0,
+            "npcName": "Narator Uji",
+            "npcSprite": "penjual_kebutuhan",
+            "questId": "",
+            "questState": "",
+            "lines": [
+                {
+                    "speaker": "NPC",
+                    "text": "Dialog umum Jumat Berkah, diputar sebelum teks hasil donasi."
+                }
+            ]
+        },
+        {
+            "id": "dmy_emas_1",
+            "prerequisite": [],
+            "aksi": "BeliEmas",
+            "aksiValue": 1,
+            "npcName": "Penjaga Bank",
+            "npcSprite": "penjaga_bank",
+            "questId": "",
+            "questState": "",
+            "lines": [
+                {
+                    "speaker": "NPC",
+                    "text": "Pembelian emas pertama. Harga emas berubah tiap minggu."
+                },
+                {
+                    "speaker": "PLAYER",
+                    "text": "Saya simpan sebagai cadangan."
+                }
+            ]
+        },
+        {
+            "id": "dmy_emas_punya",
+            "prerequisite": [
+                {
+                    "emas": 1
+                }
+            ],
+            "aksi": "BeliEmas",
+            "aksiValue": 0,
+            "npcName": "Penjaga Bank",
+            "npcSprite": "penjaga_bank",
+            "questId": "",
+            "questState": "",
+            "lines": [
+                {
+                    "speaker": "NPC",
+                    "text": "Anda sudah memegang minimal satu emas. Syarat emas terpenuhi."
+                }
+            ]
+        },
+        {
+            "id": "dmy_emas_umum",
+            "prerequisite": [],
+            "aksi": "BeliEmas",
+            "aksiValue": 0,
+            "npcName": "Penjaga Bank",
+            "npcSprite": "penjaga_bank",
+            "questId": "",
+            "questState": "",
+            "lines": [
+                {
+                    "speaker": "NPC",
+                    "text": "Dialog umum pembelian emas."
+                }
+            ]
+        },
+        {
+            "id": "dmy_jualemas_1",
+            "prerequisite": [],
+            "aksi": "JualEmas",
+            "aksiValue": 1,
+            "npcName": "Penjaga Bank",
+            "npcSprite": "penjaga_bank",
+            "questId": "",
+            "questState": "",
+            "lines": [
+                {
+                    "speaker": "NPC",
+                    "text": "Penjualan emas pertama. Aksi JualEmas sekarang sudah ada di dropdown editor narasi, sejajar dengan BeliEmas."
+                },
+                {
+                    "speaker": "PLAYER",
+                    "text": "Berarti tidak perlu lagi diketik manual."
+                }
+            ]
+        },
+        {
+            "id": "dmy_jualemas_umum",
+            "prerequisite": [],
+            "aksi": "JualEmas",
+            "aksiValue": 0,
+            "npcName": "Penjaga Bank",
+            "npcSprite": "penjaga_bank",
+            "questId": "",
+            "questState": "",
+            "lines": [
+                {
+                    "speaker": "NPC",
+                    "text": "Dialog umum penjualan emas."
+                }
+            ]
+        },
+        {
+            "id": "dmy_risiko_1",
+            "prerequisite": [],
+            "aksi": "RisikoKehidupan",
+            "aksiValue": 1,
+            "npcName": "Narator Uji",
+            "npcSprite": "pembeli_masakan",
+            "questId": "",
+            "questState": "",
+            "lines": [
+                {
+                    "speaker": "NPC",
+                    "text": "Kartu risiko kehidupan pertama. Mari lihat akibatnya."
+                },
+                {
+                    "speaker": "PLAYER",
+                    "text": "Semoga ringan."
+                },
+                {
+                    "speaker": "NPC",
+                    "text": "Teks hasil aksi akan muncul sesudah dialog ini."
+                }
+            ]
+        },
+        {
+            "id": "dmy_risiko_tanpa_asuransi",
+            "prerequisite": [
+                {
+                    "questId": "dmy_quest_aman",
+                    "questState": "BELUM_AKTIF"
+                }
+            ],
+            "aksi": "RisikoKehidupan",
+            "aksiValue": 2,
+            "npcName": "Narator Uji",
+            "npcSprite": "pembeli_masakan",
+            "questId": "dmy_quest_aman",
+            "questState": "GAGAL",
+            "lines": [
+                {
+                    "speaker": "NPC",
+                    "text": "Risiko kedua, dan quest Lindungi Diri masih Belum aktif."
+                },
+                {
+                    "speaker": "PLAYER",
+                    "text": "Saya tanggung sendiri kalau begitu."
+                },
+                {
+                    "speaker": "NPC",
+                    "text": "Quest Lindungi Diri saya tandai Gagal."
+                }
+            ]
+        },
+        {
+            "id": "dmy_risiko_asuransi",
+            "prerequisite": [
+                {
+                    "giliranPemain": [
+                        1,
+                        2
+                    ],
+                    "asuransiStatus": 1
+                }
+            ],
+            "aksi": "RisikoKehidupan",
+            "aksiValue": 0,
+            "npcName": "Narator Uji",
+            "npcSprite": "pembeli_masakan",
+            "questId": "",
+            "questState": "",
+            "lines": [
+                {
+                    "speaker": "NPC",
+                    "text": "Anda punya asuransi dan sedang berada pada giliran 1 atau 2. Dua syarat berbeda dalam satu entri."
+                }
+            ]
+        },
+        {
+            "id": "dmy_risiko_belum_asuransi",
+            "prerequisite": [
+                {
+                    "asuransiStatus": 2
+                }
+            ],
+            "aksi": "RisikoKehidupan",
+            "aksiValue": 0,
+            "npcName": "Narator Uji",
+            "npcSprite": "pembeli_masakan",
+            "questId": "",
+            "questState": "",
+            "lines": [
+                {
+                    "speaker": "NPC",
+                    "text": "Anda belum punya asuransi. Syarat Has Insurance bernilai False memang hanya cocok untuk pemain tanpa polis."
+                },
+                {
+                    "speaker": "PLAYER",
+                    "text": "Berarti kerugiannya saya tanggung sendiri."
+                }
+            ]
+        },
+        {
+            "id": "dmy_risiko_umum",
+            "prerequisite": [],
+            "aksi": "RisikoKehidupan",
+            "aksiValue": 0,
+            "npcName": "Narator Uji",
+            "npcSprite": "pembeli_masakan",
+            "questId": "",
+            "questState": "",
+            "lines": [
+                {
+                    "speaker": "NPC",
+                    "text": "Dialog umum risiko kehidupan. Baris panjang ini sengaja dibuat untuk menguji pemenggalan teks pada kotak dialog, agar terlihat apakah teks terpotong, meluber, atau dipecah menjadi beberapa langkah ketika isinya jauh lebih panjang daripada dialog lain di paket uji ini."
+                }
+            ]
+        }
+    ]
+}

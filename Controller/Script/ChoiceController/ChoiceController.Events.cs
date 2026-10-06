@@ -7,6 +7,11 @@ using UnityEngine;
 
 public partial class ChoiceController
 {
+    private const string RateLimitedErrorCode = "RATE_LIMITED";
+    private const string StateVersionConflictErrorCode = "STATE_VERSION_CONFLICT";
+    private const int MaxRateLimitRetries = 3;
+    private const int RateLimitRetryDelayMs = 1000;
+
     private static readonly Queue<NarafinQueuedEvent> PendingNarafinEvents = new Queue<NarafinQueuedEvent>();
     private static bool isSendingNarafinEvents;
     private bool isSendingAkhirGiliran;
@@ -24,6 +29,21 @@ public partial class ChoiceController
     // agar sequence_number tetap berurutan. Pemanggil baru mengubah state lokal bila hasilnya sukses.
     private async Task<NarafinSessionOperationResult> SendPlayerEventNowAsync(int player, string actionType, string payloadJson, int actionSlot)
     {
+        if (NarafinActiveSession.IsSessionEnded)
+        {
+            return CreateEventFailure("SESSION_ENDED", "Session sudah diakhiri.");
+        }
+
+        if (NarafinActiveSession.IsSessionClosedByServer)
+        {
+            return CreateEventFailure("SESSION_CLOSED", NarafinActiveSession.SessionClosedMessage);
+        }
+
+        if (NarafinActiveSession.IsServerOffline)
+        {
+            return CreateOfflineEventSuccess();
+        }
+
         string userId = NarafinPlayerPrefs.GetApiPlayerUserId(player);
         if (string.IsNullOrWhiteSpace(userId))
         {
@@ -44,9 +64,62 @@ public partial class ChoiceController
         return await SendEventJsonNowAsync(eventJson, actionType);
     }
 
+    // Event SYSTEM yang tetap menyebut pemain penerima, mis. pembelian kartu TujuanFinansial.
+    private async Task<NarafinSessionOperationResult> SendSystemEventForPlayerNowAsync(int player, string actionType, string payloadJson)
+    {
+        if (NarafinActiveSession.IsSessionEnded)
+        {
+            return CreateEventFailure("SESSION_ENDED", "Session sudah diakhiri.");
+        }
+
+        if (NarafinActiveSession.IsSessionClosedByServer)
+        {
+            return CreateEventFailure("SESSION_CLOSED", NarafinActiveSession.SessionClosedMessage);
+        }
+
+        if (NarafinActiveSession.IsServerOffline)
+        {
+            return CreateOfflineEventSuccess();
+        }
+
+        string userId = NarafinPlayerPrefs.GetApiPlayerUserId(player);
+        if (string.IsNullOrWhiteSpace(userId))
+        {
+            return CreateEventFailure("PLAYER_NOT_FOUND", "user_id player " + player + " tidak tersedia.");
+        }
+
+        if (LoginManager.Instance == null)
+        {
+            return CreateEventFailure("LOGIN_NOT_READY", "Sistem login belum siap.");
+        }
+
+        if (string.IsNullOrWhiteSpace(NarafinPlayerPrefs.ApiSessionId))
+        {
+            return CreateEventFailure("SESSION_MISSING", "Session belum tersedia.");
+        }
+
+        string eventJson = BuildEventJson("SYSTEM", actionType, payloadJson, 0, 0, userId);
+        return await SendEventJsonNowAsync(eventJson, actionType);
+    }
+
     // Event sistem (mis. BukaHargaEmas) dikirim langsung dan menunggu respons server.
     private async Task<NarafinSessionOperationResult> SendSystemEventNowAsync(string actionType, string payloadJson)
     {
+        if (NarafinActiveSession.IsSessionEnded)
+        {
+            return CreateEventFailure("SESSION_ENDED", "Session sudah diakhiri.");
+        }
+
+        if (NarafinActiveSession.IsSessionClosedByServer)
+        {
+            return CreateEventFailure("SESSION_CLOSED", NarafinActiveSession.SessionClosedMessage);
+        }
+
+        if (NarafinActiveSession.IsServerOffline)
+        {
+            return CreateOfflineEventSuccess();
+        }
+
         if (LoginManager.Instance == null)
         {
             return CreateEventFailure("LOGIN_NOT_READY", "Sistem login belum siap.");
@@ -64,21 +137,40 @@ public partial class ChoiceController
     // Menunggu antrean event lain selesai agar sequence_number tetap berurutan, lalu mengirim event dan menunggu respons.
     private static async Task<NarafinSessionOperationResult> SendEventJsonNowAsync(string eventJson, string actionType)
     {
-        while (isSendingNarafinEvents)
+        // Sinkronisasi setelah aplikasi dibuka kembali menahan antrean sampai heartbeat dan state selesai.
+        while (isSendingNarafinEvents || NarafinActiveSession.IsEventSendingHeld)
         {
             await Task.Yield();
+        }
+
+        if (NarafinActiveSession.IsSessionClosedByServer)
+        {
+            return CreateEventFailure("SESSION_CLOSED", NarafinActiveSession.SessionClosedMessage);
+        }
+
+        if (NarafinActiveSession.IsServerOffline)
+        {
+            return CreateOfflineEventSuccess();
         }
 
         isSendingNarafinEvents = true;
         try
         {
-            int sequenceNumber = NarafinPlayerPrefs.GetNextEventSequenceNumber();
-            string sequencedJson = eventJson.Replace("\"sequence_number\":0", "\"sequence_number\":" + sequenceNumber);
-            NarafinSessionOperationResult result = await LoginManager.Instance.PostEventAsync(sequencedJson);
+            NarafinSequencedEventResult attempt = await SendWithSequenceAsync(eventJson, actionType);
+            NarafinSessionOperationResult result = attempt.Result;
             if (result.Success)
             {
-                NarafinPlayerPrefs.ConfirmEventSequenceNumber(sequenceNumber);
-                result.EventId = ExtractEventId(sequencedJson);
+                result.EventId = ExtractEventId(attempt.SequencedJson);
+            }
+            else if (IsServerConnectionFailure(result))
+            {
+                // Error koneksi yang tetap gagal setelah nomor urut disegarkan: sisa sesi dijalankan tanpa server.
+                NarafinActiveSession.SwitchToServerOffline(actionType + " - " + result.ErrorCode + " - " + result.ErrorMessage);
+                return new NarafinSessionOperationResult
+                {
+                    Success = true,
+                    EventId = ExtractEventId(attempt.SequencedJson)
+                };
             }
             else
             {
@@ -97,6 +189,106 @@ public partial class ChoiceController
         }
     }
 
+    private struct NarafinSequencedEventResult
+    {
+        public NarafinSessionOperationResult Result;
+        public string SequencedJson;
+    }
+
+    // Nomor urut diambil dari cache lokal yang bersumber dari server. Saat server menolak nomor urut,
+    // nomor diambil ulang dari /state lalu event dikirim sekali lagi. 429 ditunggu dengan jeda bertahap.
+    private static async Task<NarafinSequencedEventResult> SendWithSequenceAsync(string eventJson, string actionType)
+    {
+        bool hasRefreshedSequence = false;
+        int rateLimitRetryCount = 0;
+
+        while (true)
+        {
+            int sequenceNumber = NarafinPlayerPrefs.GetNextEventSequenceNumber();
+            string sequencedJson = eventJson.Replace("\"sequence_number\":0", "\"sequence_number\":" + sequenceNumber);
+            NarafinSessionOperationResult result = await LoginManager.Instance.PostEventAsync(sequencedJson);
+
+            if (result.Success)
+            {
+                NarafinPlayerPrefs.ConfirmEventSequenceNumber(sequenceNumber);
+                return new NarafinSequencedEventResult { Result = result, SequencedJson = sequencedJson };
+            }
+
+            if (result.ErrorCode == RateLimitedErrorCode && rateLimitRetryCount < MaxRateLimitRetries)
+            {
+                rateLimitRetryCount++;
+                await Task.Delay(RateLimitRetryDelayMs * (1 << (rateLimitRetryCount - 1)));
+                continue;
+            }
+
+            if (IsSequenceMismatch(result) && !hasRefreshedSequence)
+            {
+                hasRefreshedSequence = true;
+                Debug.LogWarning("Nomor urut event ditolak server, mengambil ulang dari /state. action_type: " + actionType);
+                if (await LoginManager.Instance.RefreshEventSequenceFromServerAsync())
+                {
+                    continue;
+                }
+            }
+
+            // Konflik versi state hanya perlu penyegaran; pengiriman tidak diulang otomatis.
+            if (result.ErrorCode == StateVersionConflictErrorCode)
+            {
+                await LoginManager.Instance.RefreshEventSequenceFromServerAsync();
+            }
+
+            return new NarafinSequencedEventResult { Result = result, SequencedJson = sequencedJson };
+        }
+    }
+
+    // Nomor urut event, bukan urutan action_slot yang juga memakai kata OUT_OF_SEQUENCE.
+    private static bool IsSequenceMismatch(NarafinSessionOperationResult result)
+    {
+        if (result == null || result.Success)
+        {
+            return false;
+        }
+
+        string text = (result.ErrorCode ?? string.Empty) + " " + (result.ErrorMessage ?? string.Empty);
+        return ContainsIgnoreCase(text, "sequence") && !ContainsIgnoreCase(text, "action_slot");
+    }
+
+    private static NarafinSessionOperationResult CreateOfflineEventSuccess()
+    {
+        return new NarafinSessionOperationResult
+        {
+            Success = true,
+            EventId = Guid.NewGuid().ToString()
+        };
+    }
+
+    // Hanya kegagalan koneksi dan nomor urut yang memindahkan sesi ke mode offline;
+    // pelanggaran aturan permainan (mis. saldo tidak cukup) tetap ditolak seperti biasa.
+    private static bool IsServerConnectionFailure(NarafinSessionOperationResult result)
+    {
+        if (result == null || result.Success)
+        {
+            return false;
+        }
+
+        switch (result.ErrorCode)
+        {
+            case "REQUEST_TIMEOUT":
+            case "SERVER_DOWN":
+            case "SERVER_UNREACHABLE":
+            case "NETWORK_OFFLINE":
+                return true;
+        }
+
+        // Nomor urut yang tetap ditolak setelah disegarkan dari server dianggap sudah tidak bisa dipulihkan.
+        return IsSequenceMismatch(result);
+    }
+
+    private static bool ContainsIgnoreCase(string text, string value)
+    {
+        return !string.IsNullOrEmpty(text) && text.IndexOf(value, StringComparison.OrdinalIgnoreCase) >= 0;
+    }
+
     private static NarafinSessionOperationResult CreateEventFailure(string errorCode, string errorMessage)
     {
         return new NarafinSessionOperationResult
@@ -105,14 +297,6 @@ public partial class ChoiceController
             ErrorCode = errorCode,
             ErrorMessage = errorMessage
         };
-    }
-
-    private void PostJualMasakanEvent(int player, string resepName, IEnumerable<string> requiredBahanNames, int income)
-    {
-        string payload = "{"
-            + JsonStringField("order_card_id", NarafinEventCardIdResolver.ResolveResepCardId(resepName))
-            + "}";
-        PostPlayerEvent(player, "JualMasakan", payload);
     }
 
     // Donasi Jumat dikirim di slot 0 dan wajib tepat satu kali per pemain sesuai urutan.
@@ -189,30 +373,9 @@ public partial class ChoiceController
         return end > start ? eventJson.Substring(start, end - start) : string.Empty;
     }
 
-    private void PostInvestasiEmasEvent(int player, string tradeType, int qty, int unitPrice, int amount)
-    {
-        string payload = "{"
-            + JsonStringField("trade_type", tradeType)
-            + ",\"qty\":" + qty.ToString(CultureInfo.InvariantCulture)
-            + ",\"unit_price\":" + unitPrice.ToString(CultureInfo.InvariantCulture)
-            + ",\"amount\":" + amount.ToString(CultureInfo.InvariantCulture)
-            + "}";
-        PostPlayerEvent(player, "InvestasiEmas", payload, 0);
-    }
-
     private static string BuildKerjaLepasPayload(int income)
     {
         return "{\"amount\":" + income.ToString(CultureInfo.InvariantCulture) + "}";
-    }
-
-    private void PostKebutuhanEvent(int player, string kebutuhanName, int amount, int happiness)
-    {
-        string payload = "{"
-            + JsonStringField("card_id", NarafinEventCardIdResolver.ResolveKebutuhanCardId(kebutuhanName))
-            + ",\"amount\":" + amount.ToString(CultureInfo.InvariantCulture)
-            + ",\"happiness\":" + happiness.ToString(CultureInfo.InvariantCulture)
-            + "}";
-        PostPlayerEvent(player, "Kebutuhan", payload);
     }
 
     // Harga dan poin wajib sama dengan katalog; need_tier wajib agar kartu diterima server.
@@ -226,11 +389,63 @@ public partial class ChoiceController
             + "}";
     }
 
-    private static string BuildMenabungPayload(string goalId, int amount)
+    // Menabung hanya menambah satu saldo tabungan pemain; goal_id opsional dan tidak memesan kartu.
+    // Juara donasi diumumkan klien: server tidak menghitung peringkat sendiri, dan poin wajib sama dengan katalog.
+    private static string BuildUmumkanJuaraDonasiPayload(IReadOnlyList<int> ranking)
+    {
+        StringBuilder builder = new StringBuilder();
+        builder.Append("{\"winners\":[");
+
+        int winnerCount = Mathf.Min(3, ranking.Count);
+        for (int i = 0; i < winnerCount; i++)
+        {
+            int player = ranking[i];
+            int rank = i + 1;
+            if (i > 0)
+            {
+                builder.Append(",");
+            }
+
+            builder.Append("{");
+            builder.Append(JsonStringField("player_name", GetJuaraDonasiPlayerName(player)));
+            builder.Append(",\"rank\":").Append(rank.ToString(CultureInfo.InvariantCulture));
+            builder.Append(",\"points\":").Append(NarafinActiveSession.GetDonationRankPoints(NarafinActiveSession.Catalog, rank).ToString(CultureInfo.InvariantCulture));
+            builder.Append("}");
+        }
+
+        builder.Append("]}");
+        return builder.ToString();
+    }
+
+    // Poin juara donasi dicatat per pemain sebagai event SYSTEM; server yang menambahkan kebahagiaannya.
+    private static string BuildPoinPeringkatDonasiPayload(int rank, int points)
+    {
+        return "{\"rank\":" + rank.ToString(CultureInfo.InvariantCulture)
+            + ",\"points\":" + points.ToString(CultureInfo.InvariantCulture)
+            + "}";
+    }
+
+    // Nama yang dikirim harus nama pemain di server; nama lokal hanya dipakai bila server tidak punya datanya.
+    private static string GetJuaraDonasiPlayerName(int player)
+    {
+        string serverName = NarafinActiveSession.GetServerPlayerName(player);
+        return string.IsNullOrWhiteSpace(serverName)
+            ? PlayerPrefs.GetString("PlayerName_" + player, "Player " + player)
+            : serverName;
+    }
+
+    private static string BuildMenabungPayload(int amount)
+    {
+        return "{\"amount\":" + amount.ToString(CultureInfo.InvariantCulture) + "}";
+    }
+
+    // Pembelian kartu tujuan dicatat sebagai event SYSTEM; server memeriksa cost dan points terhadap katalog.
+    private static string BuildTujuanFinansialPayload(NarafinSetupFinancialGoal goal)
     {
         return "{"
-            + JsonStringField("goal_id", goalId)
-            + ",\"amount\":" + amount.ToString(CultureInfo.InvariantCulture)
+            + JsonStringField("goal_id", goal.id)
+            + ",\"cost\":" + goal.hargaBeli.ToString(CultureInfo.InvariantCulture)
+            + ",\"points\":" + goal.poinKebahagiaan.ToString(CultureInfo.InvariantCulture)
             + "}";
     }
 
@@ -238,16 +453,6 @@ public partial class ChoiceController
     {
         string payload = "{\"amount\":" + amount.ToString(CultureInfo.InvariantCulture) + "}";
         PostPlayerEvent(player, "Menabung", payload);
-    }
-
-    private void PostTujuanFinansialEvent(int player, string tujuanName, int cost, int happiness)
-    {
-        string payload = "{"
-            + JsonStringField("goal_id", NarafinEventCardIdResolver.ResolveTujuanFinansialCardId(tujuanName))
-            + ",\"amount\":" + cost.ToString(CultureInfo.InvariantCulture)
-            + ",\"happiness\":" + happiness.ToString(CultureInfo.InvariantCulture)
-            + "}";
-        PostPlayerEvent(player, "TujuanFinansial", payload);
     }
 
     // Detail pinjaman wajib sama dengan katalog ruleset; loan_id unik per kartu dibuat oleh klien.
@@ -271,12 +476,13 @@ public partial class ChoiceController
             + "}";
     }
 
-    // premium wajib sama dengan katalog; policy_id unik per polis dibuat oleh klien.
-    private static string BuildAsuransiPayload(string policyId, string productCode, int premium, string coverageType)
+    // premium wajib sama dengan katalog. policy_id TIDAK dikirim: proyeksi C# server membaca policy_id
+    // lebih dulu sebagai kode produk, jadi id komposit membuat pencarian produk gagal dan polis tidak
+    // pernah dibuat walau event dijawab 201. Dengan hanya product_code, kedua mesin proyeksi server sepakat.
+    private static string BuildAsuransiPayload(string productCode, int premium, string coverageType)
     {
         return "{"
-            + JsonStringField("policy_id", policyId)
-            + "," + JsonStringField("product_code", productCode)
+            + JsonStringField("product_code", productCode)
             + ",\"premium\":" + premium.ToString(CultureInfo.InvariantCulture)
             + "," + JsonStringField("coverage_type", coverageType)
             + "}";
@@ -302,6 +508,14 @@ public partial class ChoiceController
     {
         if (isSendingAkhirGiliran)
         {
+            return;
+        }
+
+        // Hari terakhir tidak ditutup dengan AkhirGiliran: server menolaknya dan meminta finalisasi
+        // lewat POST /end, yang memang dipanggil klien saat permainan berakhir.
+        if (GameState.Instance != null && GameState.Instance.day >= GameState.Instance.finishDay)
+        {
+            Debug.Log("AkhirGiliran dilewati pada hari terakhir; sesi ditutup lewat POST /end.");
             return;
         }
 
@@ -331,11 +545,17 @@ public partial class ChoiceController
         view.AddSystemTextToDialog("Hari gagal ditutup di server: " + result.ErrorMessage);
     }
 
+    // Hari berganti setelah aksi terakhir pemain terakhir.
+    private bool WillDayAdvanceAfterAction(int currentTurn)
+    {
+        return GameState.Instance != null
+            && GameState.Instance.movesLeft <= 1
+            && GameState.Instance.IsLastPlayerInTurnOrder(currentTurn);
+    }
+
     private Task PostAkhirGiliranIfDayWillAdvanceAsync(int currentTurn)
     {
-        if (GameState.Instance == null ||
-            GameState.Instance.movesLeft > 1 ||
-            !GameState.Instance.IsLastPlayerInTurnOrder(currentTurn))
+        if (!WillDayAdvanceAfterAction(currentTurn))
         {
             return Task.CompletedTask;
         }
@@ -383,7 +603,7 @@ public partial class ChoiceController
         builder.Append("{");
         AppendStringField(builder, "event_id", Guid.NewGuid().ToString(), false);
         AppendStringField(builder, "session_id", NarafinPlayerPrefs.ApiSessionId, true);
-        if (!string.Equals(actorType, "SYSTEM", StringComparison.OrdinalIgnoreCase))
+        if (!string.Equals(actorType, "SYSTEM", StringComparison.OrdinalIgnoreCase) || !string.IsNullOrWhiteSpace(userId))
         {
             AppendStringField(builder, "user_id", userId, true);
         }
@@ -405,6 +625,11 @@ public partial class ChoiceController
 
     private void EnqueueEvent(string eventJson, string actionType)
     {
+        if (NarafinActiveSession.IsServerOffline)
+        {
+            return;
+        }
+
         if (LoginManager.Instance == null)
         {
             Debug.LogWarning("Narafin event dilewati karena LoginManager tidak tersedia. action_type: " + actionType);
@@ -436,6 +661,10 @@ public partial class ChoiceController
         while (PendingNarafinEvents.Count > 0)
         {
             NarafinQueuedEvent queuedEvent = PendingNarafinEvents.Dequeue();
+            if (NarafinActiveSession.IsServerOffline || NarafinActiveSession.IsSessionClosedByServer || NarafinActiveSession.IsSessionEnded)
+            {
+                continue;
+            }
 
             if (LoginManager.Instance == null)
             {
@@ -443,16 +672,17 @@ public partial class ChoiceController
                 continue;
             }
 
-            int sequenceNumber = NarafinPlayerPrefs.GetNextEventSequenceNumber();
-            string eventJson = queuedEvent.Json.Replace("\"sequence_number\":0", "\"sequence_number\":" + sequenceNumber);
-            NarafinSessionOperationResult result = await LoginManager.Instance.PostEventAsync(eventJson);
+            NarafinSessionOperationResult result = (await SendWithSequenceAsync(queuedEvent.Json, queuedEvent.ActionType)).Result;
             if (!result.Success)
             {
-                Debug.LogWarning("Narafin post event gagal. action_type: " + queuedEvent.ActionType + ", error: " + result.ErrorCode + " - " + result.ErrorMessage);
-                continue;
-            }
+                if (IsServerConnectionFailure(result))
+                {
+                    NarafinActiveSession.SwitchToServerOffline(queuedEvent.ActionType + " - " + result.ErrorCode + " - " + result.ErrorMessage);
+                    continue;
+                }
 
-            NarafinPlayerPrefs.ConfirmEventSequenceNumber(sequenceNumber);
+                Debug.LogWarning("Narafin post event gagal. action_type: " + queuedEvent.ActionType + ", error: " + result.ErrorCode + " - " + result.ErrorMessage);
+            }
         }
 
         isSendingNarafinEvents = false;

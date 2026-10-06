@@ -25,6 +25,133 @@ public static class NarafinActiveSession
     public static string Mode { get; private set; } = string.Empty;
     public static NarafinRulesetSetupDefinition Catalog { get; private set; }
     public static bool IsStarted { get; private set; }
+
+    // True setelah server gagal dihubungi (timeout, 5xx, tidak terjangkau) atau nomor urut event ditolak.
+    // Sisa sesi berjalan tanpa server; kembali online saat sesi baru dibuat.
+    public static bool IsServerOffline { get; private set; }
+    private static bool hasPendingOfflineNotice;
+
+    public static void SwitchToServerOffline(string reason)
+    {
+        if (IsServerOffline)
+        {
+            return;
+        }
+
+        IsServerOffline = true;
+        hasPendingOfflineNotice = true;
+        UnityEngine.Debug.LogWarning("Narafin beralih ke mode offline untuk sisa sesi: " + reason);
+    }
+
+    // Mengembalikan true sekali setelah peralihan offline agar pemain diberi tahu satu kali.
+    // Sesi yang ditutup backend (heartbeat 404 atau 409) tidak bisa dilanjutkan sama sekali.
+    public static bool IsSessionClosedByServer { get; private set; }
+    public static string SessionClosedMessage { get; private set; } = string.Empty;
+    public static string HeartbeatExpiresAt { get; private set; } = string.Empty;
+    private static bool hasPendingSessionClosedNotice;
+
+    // Antrean event ditahan selama sinkronisasi setelah aplikasi dibuka kembali.
+    public static bool IsEventSendingHeld { get; private set; }
+
+    public static void MarkSessionClosedByServer(string reason)
+    {
+        if (IsSessionClosedByServer)
+        {
+            return;
+        }
+
+        IsSessionClosedByServer = true;
+        hasPendingSessionClosedNotice = true;
+        SessionClosedMessage = string.IsNullOrWhiteSpace(reason) ? "Sesi sudah ditutup server." : reason;
+        UnityEngine.Debug.LogWarning("Sesi Narafin ditutup server: " + SessionClosedMessage);
+    }
+
+    // Sesi yang sudah diakhiri klien lewat POST /end; event berikutnya tidak dikirim, tanpa pesan peringatan.
+    public static bool IsSessionEnded { get; private set; }
+    public static string SessionEndStatus { get; private set; } = string.Empty;
+
+    public static void MarkSessionEnded(string status)
+    {
+        IsSessionEnded = true;
+        SessionEndStatus = status ?? string.Empty;
+    }
+
+    // Mengembalikan true sekali agar pemain diberi tahu satu kali bahwa sesi dihentikan.
+    public static bool ConsumeSessionClosedNotice()
+    {
+        if (!hasPendingSessionClosedNotice)
+        {
+            return false;
+        }
+
+        hasPendingSessionClosedNotice = false;
+        return true;
+    }
+
+    // Poin juara donasi dari ruleset session; server menolak nilai yang tidak sama dengan katalog.
+    public static int GetDonationRankPoints(NarafinRulesetSetupDefinition catalog, int rank)
+    {
+        if (catalog?.donation_rank_points == null)
+        {
+            return 0;
+        }
+
+        foreach (NarafinSetupDonationRankPoint rankPoint in catalog.donation_rank_points)
+        {
+            if (rankPoint != null && rankPoint.rank == rank)
+            {
+                return rankPoint.points;
+            }
+        }
+
+        return 0;
+    }
+
+    // Nama pemain seperti yang terdaftar di server; dipakai pada payload juara donasi.
+    public static string GetServerPlayerName(int playerOrderNo)
+    {
+        foreach (NarafinSessionStatePlayer player in players)
+        {
+            if (player != null && player.player_order_no == playerOrderNo)
+            {
+                return player.name ?? string.Empty;
+            }
+        }
+
+        return string.Empty;
+    }
+
+    // Versi state terakhir dari /state; dipakai untuk mendeteksi state yang sudah berubah.
+    public static int StateVersion { get; private set; }
+
+    public static void SetStateVersion(int stateVersion)
+    {
+        if (stateVersion > 0)
+        {
+            StateVersion = stateVersion;
+        }
+    }
+
+    public static void SetHeartbeatExpiresAt(string expiresAt)
+    {
+        HeartbeatExpiresAt = expiresAt ?? string.Empty;
+    }
+
+    public static void SetEventSendingHold(bool isHeld)
+    {
+        IsEventSendingHeld = isHeld;
+    }
+
+    public static bool ConsumeOfflineNotice()
+    {
+        if (!hasPendingOfflineNotice)
+        {
+            return false;
+        }
+
+        hasPendingOfflineNotice = false;
+        return true;
+    }
     public static IReadOnlyList<NarafinSessionStatePlayer> Players => players;
     public static bool IsMahir => string.Equals(Mode, "MAHIR", StringComparison.OrdinalIgnoreCase);
 
@@ -44,6 +171,16 @@ public static class NarafinActiveSession
         Mode = mode ?? string.Empty;
         Catalog = catalog;
         IsStarted = false;
+        IsServerOffline = false;
+        hasPendingOfflineNotice = false;
+        IsSessionClosedByServer = false;
+        hasPendingSessionClosedNotice = false;
+        SessionClosedMessage = string.Empty;
+        HeartbeatExpiresAt = string.Empty;
+        IsEventSendingHeld = false;
+        StateVersion = 0;
+        IsSessionEnded = false;
+        SessionEndStatus = string.Empty;
 
         players.Clear();
         if (sessionPlayers != null)

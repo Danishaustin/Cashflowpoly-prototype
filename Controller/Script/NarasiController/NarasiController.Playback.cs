@@ -106,8 +106,12 @@ public partial class NarasiController
         }
 
         MarkDialogPlayed(dialogKarakter.id, activePlayerTurn);
-        view.HideNpcContainer();
-        view.HidePlayerDialogContainer();
+
+        // Karakter disuruh keluar lalu animasinya ditunggu sampai selesai, baru langkah berikutnya jalan —
+        // entah itu dialog berikutnya atau panel pilihan. Kotak dialognya ikut disembunyikan di sini,
+        // karena tidak semua panel pilihan menyembunyikannya sendiri (mis. JumatBerkah dan HargaEmas).
+        yield return view.DismissAllDialogCharacters();
+        view.HideDialog();
         view.ClearDialogNameOverride();
         currentNarasiCoroutine = null;
         isPlayingNarasi = false;

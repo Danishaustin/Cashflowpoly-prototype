@@ -28,16 +28,46 @@ public static class NarasiPackRepository
         string manifestPath = GetManifestFilePath();
         if (File.Exists(manifestPath))
         {
-            return NormalizeManifest(JsonUtility.FromJson<NarasiManifestData>(File.ReadAllText(manifestPath)));
+            return MergeBundledPacks(NormalizeManifest(JsonUtility.FromJson<NarasiManifestData>(File.ReadAllText(manifestPath))));
         }
 
+        return LoadBundledManifest() ?? new NarasiManifestData { narasiPacks = new List<NarasiPackData>() };
+    }
+
+    private static NarasiManifestData LoadBundledManifest()
+    {
         TextAsset manifestAsset = Resources.Load<TextAsset>(ManifestResourcePath);
-        if (manifestAsset != null)
+        return manifestAsset != null ? NormalizeManifest(JsonUtility.FromJson<NarasiManifestData>(manifestAsset.text)) : null;
+    }
+
+    // Paket bawaan build yang belum ada di manifest lokal ditambahkan; paket dengan id atau file yang sama
+    // tetap memakai versi lokal.
+    private static NarasiManifestData MergeBundledPacks(NarasiManifestData manifest)
+    {
+        NarasiManifestData bundledManifest = LoadBundledManifest();
+        if (bundledManifest == null)
         {
-            return NormalizeManifest(JsonUtility.FromJson<NarasiManifestData>(manifestAsset.text));
+            return manifest;
         }
 
-        return new NarasiManifestData { narasiPacks = new List<NarasiPackData>() };
+        foreach (NarasiPackData bundledPack in bundledManifest.narasiPacks)
+        {
+            if (bundledPack == null
+                || PackIdExists(manifest, bundledPack.id)
+                || PackFileExists(manifest, Path.GetFileNameWithoutExtension(bundledPack.file ?? string.Empty)))
+            {
+                continue;
+            }
+
+            manifest.narasiPacks.Add(bundledPack);
+        }
+
+        return manifest;
+    }
+
+    public static bool IsBundledPack(string packId)
+    {
+        return FindPackById(LoadBundledManifest(), packId) != null;
     }
 
     public static async Task<NarasiManifestData> LoadManifestAsync()
@@ -46,7 +76,9 @@ public static class NarasiPackRepository
         if (!string.IsNullOrWhiteSpace(cloudJson))
         {
             Debug.Log("Manifest narasi dimuat dari UGS Cloud Save.");
-            NarasiManifestData cloudManifest = NormalizeManifest(JsonUtility.FromJson<NarasiManifestData>(cloudJson));
+
+            // Paket bawaan build tetap digabung supaya akun yang belum punya paket itu ikut mendapatkannya.
+            NarasiManifestData cloudManifest = MergeBundledPacks(NormalizeManifest(JsonUtility.FromJson<NarasiManifestData>(cloudJson)));
             SaveManifest(cloudManifest);
             return cloudManifest;
         }
@@ -65,7 +97,13 @@ public static class NarasiPackRepository
         string packPath = GetPackFilePath(pack);
         if (File.Exists(packPath))
         {
-            return NormalizeDialogDatabase(JsonUtility.FromJson<DialogKarakterDatabase>(File.ReadAllText(packPath)));
+            DialogKarakterDatabase localDatabase = NormalizeDialogDatabase(JsonUtility.FromJson<DialogKarakterDatabase>(File.ReadAllText(packPath)));
+
+            // Salinan lokal kosong tidak boleh menutupi isi paket bawaan build.
+            if (localDatabase.dialogKarakter.Count > 0)
+            {
+                return localDatabase;
+            }
         }
 
         TextAsset packAsset = Resources.Load<TextAsset>(ResourceDirectory + "/" + Path.GetFileNameWithoutExtension(pack.file));
@@ -123,13 +161,13 @@ public static class NarasiPackRepository
         File.WriteAllText(path, JsonUtility.ToJson(NormalizeDialogDatabase(database), true));
     }
 
-    public static async Task SaveDialogDatabaseAsync(NarasiPackData pack, DialogKarakterDatabase database, bool requireCloudSave = false)
+    // UGS adalah sumber utama narasi: unggahan wajib berhasil dulu, salinan lokal hanya cache setelahnya.
+    public static async Task SaveDialogDatabaseAsync(NarasiPackData pack, DialogKarakterDatabase database, bool requireCloudSave = true)
     {
         DialogKarakterDatabase normalizedDatabase = NormalizeDialogDatabase(database);
-        SaveDialogDatabase(pack, normalizedDatabase);
-
         if (pack == null)
         {
+            SaveDialogDatabase(pack, normalizedDatabase);
             return;
         }
 
@@ -143,6 +181,7 @@ public static class NarasiPackRepository
             await SaveCloudTextOrLogAsync(GetPackCloudKey(pack), json);
         }
 
+        SaveDialogDatabase(pack, normalizedDatabase);
         await SaveManifestAsync(LoadManifest(), requireCloudSave);
     }
 
@@ -276,7 +315,17 @@ public static class NarasiPackRepository
         }
 
         pack.name = cleanName;
-        await SaveManifestAsync(manifest);
+        try
+        {
+            await SaveManifestAsync(manifest, true);
+        }
+        catch (Exception ex)
+        {
+            result.Success = false;
+            result.ErrorMessage = "Gagal menyimpan nama paket narasi ke UGS: " + ex.Message;
+            return result;
+        }
+
         result.Success = true;
         return result;
     }
@@ -300,12 +349,20 @@ public static class NarasiPackRepository
             return result;
         }
 
+        // Paket bawaan build akan muncul lagi setelah manifest dimuat ulang, jadi tidak bisa dihapus.
+        if (IsBundledPack(pack.id))
+        {
+            result.Success = false;
+            result.ErrorMessage = "Paket narasi bawaan aplikasi tidak dapat dihapus.";
+            return result;
+        }
+
         manifest.narasiPacks.Remove(pack);
 
         try
         {
+            await SaveManifestAsync(manifest, true);
             DeleteLocalPackFile(pack);
-            await SaveManifestAsync(manifest);
             await DeleteCloudFileOrLogAsync(GetPackCloudKey(pack));
             result.Success = true;
             return result;
@@ -384,7 +441,7 @@ public static class NarasiPackRepository
         File.WriteAllText(manifestPath, JsonUtility.ToJson(NormalizeManifest(manifest), true));
     }
 
-    private static async Task SaveManifestAsync(NarasiManifestData manifest, bool requireCloudSave = false)
+    private static async Task SaveManifestAsync(NarasiManifestData manifest, bool requireCloudSave = true)
     {
         NarasiManifestData normalizedManifest = NormalizeManifest(manifest);
         string json = JsonUtility.ToJson(normalizedManifest, true);
@@ -636,6 +693,13 @@ public static class NarasiSessionContext
     public static string ActivePackName { get; private set; } = DefaultOptionName;
     public static DialogKarakterDatabase ActiveDatabase { get; private set; }
 
+    // Indeks dialog per id, dipakai NarasiController dan editor narasi. Dulu disimpan DataManager.
+    public static Dictionary<string, DialogKarakterData> DialogKarakterById { get; private set; }
+        = new Dictionary<string, DialogKarakterData>();
+
+    public static bool IsDialogKarakterLoaded { get; private set; }
+    public static string DialogKarakterLoadStatus { get; private set; } = string.Empty;
+
     public static async Task<NarafinSessionOperationResult> ApplyAsync(NarasiPackData selectedPack)
     {
         try
@@ -660,11 +724,7 @@ public static class NarasiSessionContext
             }
 
             ActiveDatabase = database;
-
-            if (DataManager.Instance != null)
-            {
-                ApplyTo(DataManager.Instance);
-            }
+            BuildDialogKarakterIndex(database, ActivePackName);
 
             return new NarafinSessionOperationResult { Success = true };
         }
@@ -675,14 +735,56 @@ public static class NarasiSessionContext
         }
     }
 
-    public static void ApplyTo(DataManager dataManager)
+    // Dipakai editor narasi setelah menyimpan, supaya indeksnya ikut mengikuti isi terbaru.
+    public static void SetDialogKarakterIndex(List<DialogKarakterData> dialogs)
     {
-        if (dataManager == null || ActiveDatabase == null)
+        DialogKarakterById = new Dictionary<string, DialogKarakterData>();
+        if (dialogs == null)
         {
             return;
         }
 
-        dataManager.OverrideDialogKarakter(ActiveDatabase, ActivePackName);
+        foreach (DialogKarakterData dialog in dialogs)
+        {
+            if (dialog != null && !string.IsNullOrWhiteSpace(dialog.id))
+            {
+                DialogKarakterById[dialog.id] = dialog;
+            }
+        }
+    }
+
+    private static void BuildDialogKarakterIndex(DialogKarakterDatabase database, string sourceName)
+    {
+        DialogKarakterById = new Dictionary<string, DialogKarakterData>();
+        IsDialogKarakterLoaded = false;
+        DialogKarakterLoadStatus = string.Empty;
+
+        if (database?.dialogKarakter == null)
+        {
+            DialogKarakterLoadStatus = "WARN: Format narasi " + sourceName + " tidak valid.";
+            Debug.LogWarning(DialogKarakterLoadStatus);
+            return;
+        }
+
+        foreach (DialogKarakterData dialog in database.dialogKarakter)
+        {
+            if (dialog == null || string.IsNullOrWhiteSpace(dialog.id))
+            {
+                continue;
+            }
+
+            // id ganda membuat penanda "sudah diputar" bertabrakan, jadi yang terakhir dipakai dan sisanya dilaporkan.
+            if (DialogKarakterById.ContainsKey(dialog.id))
+            {
+                Debug.LogWarning("Dialog dengan id ganda pada " + sourceName + ": " + dialog.id);
+            }
+
+            DialogKarakterById[dialog.id] = dialog;
+        }
+
+        IsDialogKarakterLoaded = true;
+        DialogKarakterLoadStatus = "OK: Narasi " + sourceName + " dimuat (" + DialogKarakterById.Count + " dialog)";
+        Debug.Log(DialogKarakterLoadStatus);
     }
 
     private static NarafinSessionOperationResult CreateFailure(string errorCode, string errorMessage)

@@ -201,6 +201,13 @@ internal class NarafinSessionCreateResponse
 internal class NarafinSessionStateResponse
 {
     public List<NarafinSessionStatePlayer> players;
+
+    // Nomor urut event berikutnya dan versi state, dipakai agar klien tidak menghitung sendiri.
+    public int next_sequence_number;
+    public int state_version;
+    public int day;
+    public int turn;
+    public int action_slots_left;
 }
 
 [Serializable]
@@ -220,7 +227,7 @@ public class NarafinSessionEventSummary
     public NarafinSessionEventPayload payload;
 }
 
-// Hanya field payload yang dibaca klien (pinjaman dan asuransi dari setup); field lain diabaikan JsonUtility.
+// Hanya field payload yang dibaca klien (pinjaman dan asuransi dari setup, serta opsi darurat); field lain diabaikan JsonUtility.
 [Serializable]
 public class NarafinSessionEventPayload
 {
@@ -230,6 +237,9 @@ public class NarafinSessionEventPayload
     public int repayment_amount;
     public string policy_id;
     public string product_code;
+    public string risk_event_id;
+    public string option_type;
+    public int amount;
 }
 
 [Serializable]
@@ -242,7 +252,23 @@ public class NarafinSessionStatePlayer
     public int coins;
     public int happiness;
     public int saving;
+    public List<NarafinStateIngredient> bahan;
+    public List<NarafinStateNeed> kebutuhan;
     public List<NarafinStateFinancialGoal> tujuanFinansial;
+}
+
+[Serializable]
+public class NarafinStateIngredient
+{
+    public string nama;
+    public int jumlah;
+}
+
+[Serializable]
+public class NarafinStateNeed
+{
+    public string nama;
+    public string tipe;
 }
 
 // purchased_at_day sengaja tidak dideklarasikan karena bernilai null selama tujuan belum tercapai.
@@ -289,10 +315,23 @@ public class NarafinRulesetSettings
 }
 
 [Serializable]
+public class NarafinRulesetPlayerOrdering
+{
+    public string ordering_code;
+    public string friday_feature;
+    public bool friday_enabled;
+    public string saturday_feature;
+    public bool saturday_enabled;
+    public string sunday_feature;
+    public bool sunday_enabled;
+}
+
+[Serializable]
 public class NarafinRulesetSetupDefinition
 {
     public string mode;
     public NarafinRulesetSettings settings;
+    public NarafinRulesetPlayerOrdering player_ordering;
     public List<NarafinSetupIngredient> ingredients;
     public List<NarafinSetupNeed> needs;
     public List<NarafinSetupFinancialGoal> financial_goals;
@@ -303,6 +342,14 @@ public class NarafinRulesetSetupDefinition
     public List<NarafinSetupInsurance> insurance_products;
     public List<NarafinSetupOrder> orders;
     public List<NarafinSetupLifeRisk> life_risks;
+    public List<NarafinSetupDonationRankPoint> donation_rank_points;
+}
+
+[Serializable]
+public class NarafinSetupDonationRankPoint
+{
+    public int rank;
+    public int points;
 }
 
 [Serializable]
@@ -422,7 +469,8 @@ internal class NarafinSessionSetupPlayer
     public string session_player_id;
     public string tie_breaker_code;
     public string ingredient_card_id;
-    public int gold_quantity;
+    // null berarti field ini tidak dikirim: ruleset yang mematikan emas menolaknya (DISALLOWED_FOR_MODE).
+    public int? gold_quantity;
     public string mission_id;
     public string loan_code;
     public string insurance_product_code;
@@ -455,6 +503,83 @@ public class NarafinSessionCreateResult
     public string RulesetVersionId;
 }
 
+public class NarafinSessionAnalyticsResult
+{
+    public bool Success;
+    public string ErrorCode;
+    public string ErrorMessage;
+    public List<NarafinAnalyticsPlayer> Players;
+}
+
+// Delapan elemen poin kebahagiaan pada rulebook dihitung backend dan dibaca apa adanya oleh klien.
+[Serializable]
+public class NarafinAnalyticsPlayer
+{
+    public string user_id;
+    public int player_order_no;
+    public int happiness_points_total;
+    public int need_points_total;
+    public int need_set_bonus_points;
+    public int donation_points_total;
+    public int gold_points_total;
+    public int pension_points_total;
+    public int saving_goal_points_total;
+    public int mission_penalty_total;
+    public int mission_reward_total;
+    public int loan_penalty_total;
+    public int initial_happiness_points;
+}
+
+[Serializable]
+internal class NarafinSessionAnalyticsResponse
+{
+    public List<NarafinAnalyticsPlayer> by_player;
+}
+
+public class NarafinSessionEndResult
+{
+    public bool Success;
+    public string ErrorCode;
+    public string ErrorMessage;
+
+    // ENDED bila sesi punya event efektif, DELETED bila tidak ada.
+    public string Status;
+
+    // Sesi memang sudah tertutup sebelumnya, jadi tidak perlu dianggap gagal.
+    public bool AlreadyClosed;
+}
+
+[Serializable]
+public class NarafinSessionEndResponse
+{
+    public string status;
+}
+
+public class NarafinSessionHeartbeatResult
+{
+    public bool Success;
+    public string ErrorCode;
+    public string ErrorMessage;
+
+    // Waktu kedaluwarsa sesi dari server; dipakai hanya untuk informasi dan log.
+    public string ExpiresAt;
+
+    // Jarak kirim heartbeat berikutnya menurut server, dalam detik. 0 berarti server tidak menyebutkannya.
+    public int IntervalSeconds;
+
+    // 404 atau 409 berarti sesi sudah ditutup backend dan tidak bisa dilanjutkan.
+    public bool SessionClosed;
+}
+
+[Serializable]
+public class NarafinSessionHeartbeatResponse
+{
+    public string status;
+    public string last_activity_at;
+    public string expires_at;
+    public int heartbeat_interval_seconds;
+}
+
 public class NarafinSessionOperationResult
 {
     public bool Success;
@@ -471,6 +596,13 @@ public class NarafinSessionStateResult
     public string ErrorCode;
     public string ErrorMessage;
     public List<NarafinSessionStatePlayer> Players;
+
+    // 0 berarti server tidak menyebutkannya pada respons ini.
+    public int NextSequenceNumber;
+    public int StateVersion;
+    public int Day;
+    public int Turn;
+    public int ActionSlotsLeft;
 }
 
 public class NarafinSessionEventSequenceResult
@@ -499,6 +631,7 @@ public sealed class NarafinApiClient
     private const string PlayersPath = "/api/v1/players";
     private const string RulesetDetailPathPrefix = "/api/v1/rulesets/";
     private const string SessionsPath = "/api/v1/sessions";
+    private const string AnalyticsSessionsPath = "/api/v1/analytics/sessions";
     private const string EventsPath = "/api/v1/events";
     private const int RequestTimeoutSeconds = 10;
     private const string NetworkOfflineCode = "NETWORK_OFFLINE";
@@ -509,69 +642,14 @@ public sealed class NarafinApiClient
     private const string InvalidCredentialsCode = "AUTH_INVALID_CREDENTIALS";
     private const string UsernameTakenCode = "USERNAME_ALREADY_EXISTS";
     private const string AuthForbiddenCode = "AUTH_FORBIDDEN";
-    private static readonly List<NarafinRulesetSummary> OfflineRulesets = new List<NarafinRulesetSummary>
-    {
-        new NarafinRulesetSummary
-        {
-            ruleset_id = "offline-ruleset-01",
-            name = "Offline Demo Ruleset",
-            latest_version = 1,
-            status = "ACTIVE",
-            is_default = true,
-            is_locked_by_session = false
-        },
-        new NarafinRulesetSummary
-        {
-            ruleset_id = "offline-ruleset-02",
-            name = "Offline Test Ruleset",
-            latest_version = 1,
-            status = "ACTIVE",
-            is_default = false,
-            is_locked_by_session = false
-        }
-    };
 
-    private static readonly List<NarafinPlayerSummary> OfflinePlayers = new List<NarafinPlayerSummary>
-    {
-        new NarafinPlayerSummary
-        {
-            user_id = "offline-player-1",
-            display_name = "Player 1",
-            username = "player1",
-            role = "PLAYER"
-        },
-        new NarafinPlayerSummary
-        {
-            user_id = "offline-player-2",
-            display_name = "Player 2",
-            username = "player2",
-            role = "PLAYER"
-        },
-        new NarafinPlayerSummary
-        {
-            user_id = "offline-player-3",
-            display_name = "Player 3",
-            username = "player3",
-            role = "PLAYER"
-        },
-        new NarafinPlayerSummary
-        {
-            user_id = "offline-player-4",
-            display_name = "Player 4",
-            username = "player4",
-            role = "PLAYER"
-        }
-    };
+    // 401 berarti token kedaluwarsa dan pengguna harus login ulang; 403 tetap AUTH_FORBIDDEN.
+    private const string AuthExpiredCode = "AUTH_EXPIRED";
 
-    private static readonly object OfflineDataLock = new object();
-
+    // 429 bisa datang dari API maupun Nginx, dan respons Nginx belum tentu JSON.
+    private const string RateLimitedCode = "RATE_LIMITED";
     public Task<NarafinAuthResult> LoginAsync(string username, string password)
     {
-        if (NarafinRuntimeConfig.UseOfflineMode)
-        {
-            return Task.FromResult(CreateOfflineAuthSuccess(username, "INSTRUCTOR"));
-        }
-
         if (Application.internetReachability == NetworkReachability.NotReachable)
         {
             return Task.FromResult(CreateFailureResult(NetworkOfflineCode, "Koneksi internet belum tersambung."));
@@ -593,17 +671,6 @@ public sealed class NarafinApiClient
 
     public Task<NarafinAuthResult> RegisterAsync(string username, string password, string role)
     {
-        if (NarafinRuntimeConfig.UseOfflineMode)
-        {
-            string resolvedRole = string.IsNullOrWhiteSpace(role) ? "INSTRUCTOR" : role;
-            if (string.Equals(resolvedRole, "PLAYER", StringComparison.OrdinalIgnoreCase))
-            {
-                AddOfflinePlayer(username);
-            }
-
-            return Task.FromResult(CreateOfflineAuthSuccess(username, resolvedRole));
-        }
-
         if (Application.internetReachability == NetworkReachability.NotReachable)
         {
             return Task.FromResult(CreateFailureResult(NetworkOfflineCode, "Koneksi internet belum tersambung."));
@@ -622,15 +689,6 @@ public sealed class NarafinApiClient
 
     public Task<NarafinRulesetListResult> GetRulesetsAsync(string accessToken)
     {
-        if (NarafinRuntimeConfig.UseOfflineMode)
-        {
-            return Task.FromResult(new NarafinRulesetListResult
-            {
-                Success = true,
-                Items = CloneOfflineRulesets()
-            });
-        }
-
         if (string.IsNullOrWhiteSpace(accessToken))
         {
             return Task.FromResult(new NarafinRulesetListResult
@@ -656,33 +714,6 @@ public sealed class NarafinApiClient
 
     public Task<NarafinRulesetDetailResult> GetRulesetDetailAsync(string accessToken, string rulesetId)
     {
-        if (NarafinRuntimeConfig.UseOfflineMode)
-        {
-            NarafinRulesetSummary offlineRuleset = null;
-            lock (OfflineDataLock)
-            {
-                for (int i = 0; i < OfflineRulesets.Count; i++)
-                {
-                    if (OfflineRulesets[i] != null && string.Equals(OfflineRulesets[i].ruleset_id, rulesetId, StringComparison.OrdinalIgnoreCase))
-                    {
-                        offlineRuleset = OfflineRulesets[i];
-                        break;
-                    }
-                }
-            }
-
-            return Task.FromResult(new NarafinRulesetDetailResult
-            {
-                Success = offlineRuleset != null,
-                RulesetId = offlineRuleset != null ? offlineRuleset.ruleset_id : string.Empty,
-                RulesetVersionId = offlineRuleset != null ? offlineRuleset.ruleset_id + "_v" + offlineRuleset.latest_version : string.Empty,
-                Version = offlineRuleset != null ? offlineRuleset.latest_version : 0,
-                Name = offlineRuleset != null ? offlineRuleset.name : string.Empty,
-                ErrorCode = offlineRuleset != null ? string.Empty : "RULESET_NOT_FOUND",
-                ErrorMessage = offlineRuleset != null ? string.Empty : "Ruleset tidak ditemukan."
-            });
-        }
-
         if (string.IsNullOrWhiteSpace(accessToken))
         {
             return Task.FromResult(new NarafinRulesetDetailResult
@@ -708,15 +739,6 @@ public sealed class NarafinApiClient
 
     public Task<NarafinPlayerListResult> GetPlayersAsync(string accessToken)
     {
-        if (NarafinRuntimeConfig.UseOfflineMode)
-        {
-            return Task.FromResult(new NarafinPlayerListResult
-            {
-                Success = true,
-                Items = CloneOfflinePlayers()
-            });
-        }
-
         if (string.IsNullOrWhiteSpace(accessToken))
         {
             return Task.FromResult(new NarafinPlayerListResult
@@ -742,17 +764,6 @@ public sealed class NarafinApiClient
 
     public Task<NarafinSessionCreateResult> CreateSessionAsync(string accessToken, string sessionName, string mode, string rulesetVersionId)
     {
-        if (NarafinRuntimeConfig.UseOfflineMode)
-        {
-            return Task.FromResult(new NarafinSessionCreateResult
-            {
-                Success = true,
-                SessionId = "offline_session_" + Guid.NewGuid().ToString("N"),
-                RulesetId = "offline-ruleset-01",
-                RulesetVersionId = string.IsNullOrWhiteSpace(rulesetVersionId) ? "1" : rulesetVersionId
-            });
-        }
-
         if (string.IsNullOrWhiteSpace(accessToken))
         {
             return Task.FromResult(CreateSessionFailureResult(AuthRequiredCode, "Access token tidak tersedia."));
@@ -788,14 +799,6 @@ public sealed class NarafinApiClient
 
     public Task<NarafinSessionOperationResult> AddPlayerToSessionAsync(string accessToken, string sessionId, string userId, int playerOrderNo)
     {
-        if (NarafinRuntimeConfig.UseOfflineMode)
-        {
-            return Task.FromResult(new NarafinSessionOperationResult
-            {
-                Success = true
-            });
-        }
-
         if (string.IsNullOrWhiteSpace(accessToken))
         {
             return Task.FromResult(CreateSessionOperationFailureResult(AuthRequiredCode, "Access token tidak tersedia."));
@@ -811,14 +814,6 @@ public sealed class NarafinApiClient
 
     public Task<NarafinSessionOperationResult> StartSessionAsync(string accessToken, string sessionId)
     {
-        if (NarafinRuntimeConfig.UseOfflineMode)
-        {
-            return Task.FromResult(new NarafinSessionOperationResult
-            {
-                Success = true
-            });
-        }
-
         if (string.IsNullOrWhiteSpace(accessToken))
         {
             return Task.FromResult(CreateSessionOperationFailureResult(AuthRequiredCode, "Access token tidak tersedia."));
@@ -830,6 +825,244 @@ public sealed class NarafinApiClient
         }
 
         return StartSessionInternalAsync(accessToken, sessionId);
+    }
+
+    // Poin kebahagiaan akhir diambil dari analitik backend; recompute dipanggil dulu agar angkanya terbaru.
+    public async Task<NarafinSessionAnalyticsResult> GetSessionAnalyticsAsync(string accessToken, string sessionId)
+    {
+        if (string.IsNullOrWhiteSpace(accessToken))
+        {
+            return CreateAnalyticsFailureResult(AuthRequiredCode, "Access token tidak tersedia.");
+        }
+
+        if (string.IsNullOrWhiteSpace(sessionId))
+        {
+            return CreateAnalyticsFailureResult("SESSION_MISSING", "Session belum tersedia.");
+        }
+
+        if (Application.internetReachability == NetworkReachability.NotReachable)
+        {
+            return CreateAnalyticsFailureResult(NetworkOfflineCode, "Koneksi internet belum tersambung.");
+        }
+
+        await RecomputeSessionAnalyticsAsync(accessToken, sessionId);
+        return await GetSessionAnalyticsInternalAsync(accessToken, sessionId);
+    }
+
+    private async Task RecomputeSessionAnalyticsAsync(string accessToken, string sessionId)
+    {
+        string url = BaseUrl + AnalyticsSessionsPath + "/" + sessionId + "/recompute";
+
+        using (UnityWebRequest request = CreateJsonPostRequest(url, "{}"))
+        {
+            request.SetRequestHeader("Authorization", "Bearer " + accessToken);
+            await SendRequestAsync(request);
+
+            if (request.result != UnityWebRequest.Result.Success)
+            {
+                // Angka lama tetap bisa dibaca, jadi kegagalan recompute tidak menghentikan alur.
+                Debug.LogWarning("Recompute analitik gagal: " + request.responseCode + " " + request.error);
+            }
+        }
+    }
+
+    private async Task<NarafinSessionAnalyticsResult> GetSessionAnalyticsInternalAsync(string accessToken, string sessionId)
+    {
+        string url = BaseUrl + AnalyticsSessionsPath + "/" + sessionId;
+
+        using (UnityWebRequest request = UnityWebRequest.Get(url))
+        {
+            request.downloadHandler = new DownloadHandlerBuffer();
+            request.timeout = RequestTimeoutSeconds;
+            request.SetRequestHeader("Accept", "application/json");
+            request.SetRequestHeader("Authorization", "Bearer " + accessToken);
+
+            await SendRequestAsync(request);
+            string responseText = request.downloadHandler != null ? request.downloadHandler.text : string.Empty;
+
+            if (request.result != UnityWebRequest.Result.Success)
+            {
+                NarafinSessionOperationResult failure = BuildSessionOperationFailureResult(responseText, request.responseCode, request.error, "membaca analitik");
+                return CreateAnalyticsFailureResult(failure.ErrorCode, failure.ErrorMessage);
+            }
+
+            try
+            {
+                NarafinSessionAnalyticsResponse response = JsonUtility.FromJson<NarafinSessionAnalyticsResponse>(responseText);
+                if (response?.by_player == null || response.by_player.Count == 0)
+                {
+                    return CreateAnalyticsFailureResult("ANALYTICS_EMPTY", "Analitik sesi belum berisi data pemain.");
+                }
+
+                return new NarafinSessionAnalyticsResult { Success = true, Players = response.by_player };
+            }
+            catch (Exception ex)
+            {
+                Debug.LogWarning("Gagal membaca analitik sesi: " + ex.Message);
+                return CreateAnalyticsFailureResult("INVALID_RESPONSE", "Analitik sesi tidak valid.");
+            }
+        }
+    }
+
+    private static NarafinSessionAnalyticsResult CreateAnalyticsFailureResult(string errorCode, string errorMessage)
+    {
+        return new NarafinSessionAnalyticsResult
+        {
+            Success = false,
+            ErrorCode = errorCode,
+            ErrorMessage = errorMessage,
+            Players = new List<NarafinAnalyticsPlayer>()
+        };
+    }
+
+    public Task<NarafinSessionEndResult> EndSessionAsync(string accessToken, string sessionId)
+    {
+        if (string.IsNullOrWhiteSpace(accessToken))
+        {
+            return Task.FromResult(CreateSessionEndFailureResult(AuthRequiredCode, "Access token tidak tersedia.", false));
+        }
+
+        if (string.IsNullOrWhiteSpace(sessionId))
+        {
+            return Task.FromResult(CreateSessionEndFailureResult("SESSION_MISSING", "Session belum tersedia.", false));
+        }
+
+        if (Application.internetReachability == NetworkReachability.NotReachable)
+        {
+            return Task.FromResult(CreateSessionEndFailureResult(NetworkOfflineCode, "Koneksi internet belum tersambung.", false));
+        }
+
+        return EndSessionInternalAsync(accessToken, sessionId);
+    }
+
+    private async Task<NarafinSessionEndResult> EndSessionInternalAsync(string accessToken, string sessionId)
+    {
+        string url = BaseUrl + SessionsPath + "/" + sessionId + "/end";
+
+        using (UnityWebRequest request = CreateJsonPostRequest(url, "{}"))
+        {
+            request.SetRequestHeader("Authorization", "Bearer " + accessToken);
+
+            await SendRequestAsync(request);
+
+            string responseText = request.downloadHandler != null ? request.downloadHandler.text : string.Empty;
+            Debug.Log("Narafin end session response => code: " + request.responseCode + ", body: " + responseText);
+
+            if (request.result == UnityWebRequest.Result.Success)
+            {
+                string status = string.Empty;
+                try
+                {
+                    NarafinSessionEndResponse response = JsonUtility.FromJson<NarafinSessionEndResponse>(responseText);
+                    status = response?.status ?? string.Empty;
+                }
+                catch (Exception ex)
+                {
+                    Debug.LogWarning("Gagal membaca respons end session: " + ex.Message);
+                }
+
+                return new NarafinSessionEndResult { Success = true, Status = status };
+            }
+
+            NarafinSessionOperationResult failure = BuildSessionOperationFailureResult(responseText, request.responseCode, request.error, "mengakhiri");
+
+            // 404 dan 409 berarti sesi sudah ditutup lebih dulu, jadi tidak dianggap kegagalan.
+            bool alreadyClosed = request.responseCode == 404 || request.responseCode == 409;
+            return CreateSessionEndFailureResult(failure.ErrorCode, failure.ErrorMessage, alreadyClosed);
+        }
+    }
+
+    private static NarafinSessionEndResult CreateSessionEndFailureResult(string errorCode, string errorMessage, bool alreadyClosed)
+    {
+        return new NarafinSessionEndResult
+        {
+            Success = false,
+            ErrorCode = errorCode,
+            ErrorMessage = errorMessage,
+            AlreadyClosed = alreadyClosed
+        };
+    }
+
+    public Task<NarafinSessionHeartbeatResult> PostSessionHeartbeatAsync(string accessToken, string sessionId)
+    {
+        if (string.IsNullOrWhiteSpace(accessToken))
+        {
+            return Task.FromResult(CreateHeartbeatFailureResult(AuthRequiredCode, "Access token tidak tersedia.", false));
+        }
+
+        if (string.IsNullOrWhiteSpace(sessionId))
+        {
+            return Task.FromResult(CreateHeartbeatFailureResult("SESSION_MISSING", "Session belum tersedia.", false));
+        }
+
+        if (Application.internetReachability == NetworkReachability.NotReachable)
+        {
+            return Task.FromResult(CreateHeartbeatFailureResult(NetworkOfflineCode, "Koneksi internet belum tersambung.", false));
+        }
+
+        return PostSessionHeartbeatInternalAsync(accessToken, sessionId);
+    }
+
+    private async Task<NarafinSessionHeartbeatResult> PostSessionHeartbeatInternalAsync(string accessToken, string sessionId)
+    {
+        string url = BaseUrl + SessionsPath + "/" + sessionId + "/heartbeat";
+
+        // Kontrak backend: heartbeat dikirim tanpa body.
+        using (UnityWebRequest request = new UnityWebRequest(url, "POST"))
+        {
+            request.downloadHandler = new DownloadHandlerBuffer();
+            request.timeout = RequestTimeoutSeconds;
+            request.SetRequestHeader("Accept", "application/json");
+            request.SetRequestHeader("Authorization", "Bearer " + accessToken);
+
+            await SendRequestAsync(request);
+
+            string responseText = request.downloadHandler != null ? request.downloadHandler.text : string.Empty;
+
+            if (request.result == UnityWebRequest.Result.Success)
+            {
+                NarafinSessionHeartbeatResponse heartbeatResponse = ParseHeartbeatResponse(responseText);
+                return new NarafinSessionHeartbeatResult
+                {
+                    Success = true,
+                    ExpiresAt = heartbeatResponse?.expires_at ?? string.Empty,
+                    IntervalSeconds = heartbeatResponse != null ? heartbeatResponse.heartbeat_interval_seconds : 0
+                };
+            }
+
+            NarafinSessionOperationResult failure = BuildSessionOperationFailureResult(responseText, request.responseCode, request.error, "mengirim heartbeat");
+            bool sessionClosed = request.responseCode == 404 || request.responseCode == 409;
+            return CreateHeartbeatFailureResult(failure.ErrorCode, failure.ErrorMessage, sessionClosed);
+        }
+    }
+
+    private static NarafinSessionHeartbeatResponse ParseHeartbeatResponse(string responseText)
+    {
+        if (string.IsNullOrWhiteSpace(responseText))
+        {
+            return null;
+        }
+
+        try
+        {
+            return JsonUtility.FromJson<NarafinSessionHeartbeatResponse>(responseText);
+        }
+        catch (Exception ex)
+        {
+            Debug.LogWarning("Gagal membaca respons heartbeat: " + ex.Message);
+            return null;
+        }
+    }
+
+    private static NarafinSessionHeartbeatResult CreateHeartbeatFailureResult(string errorCode, string errorMessage, bool sessionClosed)
+    {
+        return new NarafinSessionHeartbeatResult
+        {
+            Success = false,
+            ErrorCode = errorCode,
+            ErrorMessage = errorMessage,
+            SessionClosed = sessionClosed
+        };
     }
 
     public Task<NarafinSessionStateResult> GetSessionStateAsync(string accessToken, string sessionId)
@@ -849,11 +1082,6 @@ public sealed class NarafinApiClient
 
     public Task<NarafinSessionEventSequenceResult> GetLastSessionEventSequenceAsync(string accessToken, string sessionId)
     {
-        if (NarafinRuntimeConfig.UseOfflineMode)
-        {
-            return Task.FromResult(new NarafinSessionEventSequenceResult { Success = true, LastSequenceNumber = 0 });
-        }
-
         if (string.IsNullOrWhiteSpace(accessToken))
         {
             return Task.FromResult(CreateSessionEventSequenceFailureResult(AuthRequiredCode, "Access token tidak tersedia."));
@@ -894,14 +1122,6 @@ public sealed class NarafinApiClient
 
     public Task<NarafinSessionOperationResult> PostEventAsync(string accessToken, string rawJsonBody)
     {
-        if (NarafinRuntimeConfig.UseOfflineMode)
-        {
-            return Task.FromResult(new NarafinSessionOperationResult
-            {
-                Success = true
-            });
-        }
-
         if (string.IsNullOrWhiteSpace(accessToken))
         {
             return Task.FromResult(CreateSessionOperationFailureResult(AuthRequiredCode, "Access token tidak tersedia."));
@@ -1153,7 +1373,12 @@ public sealed class NarafinApiClient
                 return new NarafinSessionStateResult
                 {
                     Success = true,
-                    Players = response.players
+                    Players = response.players,
+                    NextSequenceNumber = response.next_sequence_number,
+                    StateVersion = response.state_version,
+                    Day = response.day,
+                    Turn = response.turn,
+                    ActionSlotsLeft = response.action_slots_left
                 };
             }
             catch (Exception ex)
@@ -1300,11 +1525,6 @@ public sealed class NarafinApiClient
 
     private Task<NarafinSessionOperationResult> SendSessionSetupAsync(string accessToken, string sessionId, string rawJsonBody, bool validateOnly)
     {
-        if (NarafinRuntimeConfig.UseOfflineMode)
-        {
-            return Task.FromResult(new NarafinSessionOperationResult { Success = true });
-        }
-
         if (string.IsNullOrWhiteSpace(accessToken))
         {
             return Task.FromResult(CreateSessionOperationFailureResult(AuthRequiredCode, "Access token tidak tersedia."));
@@ -1930,9 +2150,19 @@ public sealed class NarafinApiClient
             return CreateSessionOperationFailureResult(RequestTimeoutCode, "Connection Timeout.");
         }
 
-        if (responseCode == 401 || responseCode == 403)
+        if (responseCode == 401)
+        {
+            return CreateSessionOperationFailureResult(AuthExpiredCode, "Sesi login berakhir, silakan login ulang.");
+        }
+
+        if (responseCode == 403)
         {
             return CreateSessionOperationFailureResult(AuthForbiddenCode, "Akses tidak diizinkan.");
+        }
+
+        if (responseCode == 429)
+        {
+            return CreateSessionOperationFailureResult(RateLimitedCode, "Terlalu banyak permintaan ke server.");
         }
 
         if (responseCode >= 500)
@@ -2158,70 +2388,4 @@ public sealed class NarafinApiClient
         };
     }
 
-    private static NarafinAuthResult CreateOfflineAuthSuccess(string username, string role)
-    {
-        string cleanUsername = string.IsNullOrWhiteSpace(username) ? "offline_user" : username.Trim();
-        string cleanRole = string.IsNullOrWhiteSpace(role) ? "INSTRUCTOR" : role.Trim().ToUpperInvariant();
-
-        return new NarafinAuthResult
-        {
-            Success = true,
-            Session = new NarafinAuthSession
-            {
-                user_id = "offline_" + cleanUsername,
-                username = cleanUsername,
-                role = cleanRole,
-                display_name = cleanUsername,
-                access_token = "offline_token_" + cleanUsername,
-                expires_at = string.Empty
-            }
-        };
-    }
-
-    private static List<NarafinRulesetSummary> CloneOfflineRulesets()
-    {
-        lock (OfflineDataLock)
-        {
-            return new List<NarafinRulesetSummary>(OfflineRulesets);
-        }
-    }
-
-    private static List<NarafinPlayerSummary> CloneOfflinePlayers()
-    {
-        lock (OfflineDataLock)
-        {
-            return new List<NarafinPlayerSummary>(OfflinePlayers);
-        }
-    }
-
-    private static void AddOfflinePlayer(string username)
-    {
-        string cleanUsername = string.IsNullOrWhiteSpace(username) ? "offline_player" : username.Trim();
-
-        lock (OfflineDataLock)
-        {
-            string generatedId = "offline_player_" + cleanUsername;
-            for (int i = 0; i < OfflinePlayers.Count; i++)
-            {
-                NarafinPlayerSummary existing = OfflinePlayers[i];
-                if (existing == null)
-                {
-                    continue;
-                }
-
-                if (string.Equals(existing.username, cleanUsername, StringComparison.OrdinalIgnoreCase))
-                {
-                    return;
-                }
-            }
-
-            OfflinePlayers.Add(new NarafinPlayerSummary
-            {
-                user_id = generatedId,
-                display_name = cleanUsername,
-                username = cleanUsername,
-                role = "PLAYER"
-            });
-        }
-    }
 }

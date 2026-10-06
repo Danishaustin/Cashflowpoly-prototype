@@ -14,7 +14,14 @@ public partial class ChoiceController
             return;
         }
 
-        _ = BuyBahanMasakanAsync(selectedChoice);
+        string bahanKey = GameState.Instance.ResolveBahanKey(selectedChoice);
+        string bahanName = GameState.Instance.GetBahanDisplayName(bahanKey);
+        int harga = GameState.Instance.GetHargaBahanEfektif(bahanKey);
+
+        AskConfirmation(
+            "Beli bahan " + bahanName + " seharga " + harga + " koin?",
+            () => _ = BuyBahanMasakanAsync(selectedChoice),
+            () => view.ShowChoice("BahanMasakan"));
     }
 
     private async Task BuyBahanMasakanAsync(string selectedChoice)

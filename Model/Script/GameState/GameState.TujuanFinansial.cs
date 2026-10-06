@@ -1,43 +1,18 @@
 using System;
 using System.Collections.Generic;
-using UnityEngine;
 
 public partial class GameState
 {
-    // Tabungan per tujuan finansial (goal_id ruleset session) per player.
-    private readonly Dictionary<int, Dictionary<string, int>> playerTujuanFinansialSaving = new Dictionary<int, Dictionary<string, int>>();
-
-    // Tujuan yang dianggap tercapai oleh klien karena server belum mengubah statusnya saat tabungan mencapai target.
-    // Poinnya dihitung terpisah agar tidak terhapus saat kebahagiaan disamakan dengan server.
-    private readonly Dictionary<int, HashSet<string>> playerTujuanFinansialClientAchieved = new Dictionary<int, HashSet<string>>();
-
-    public int GetTujuanFinansialSaving(int player, string goalId)
-    {
-        if (string.IsNullOrWhiteSpace(goalId)
-            || !playerTujuanFinansialSaving.TryGetValue(player, out Dictionary<string, int> savings))
-        {
-            return 0;
-        }
-
-        return savings.TryGetValue(goalId, out int saving) ? saving : 0;
-    }
-
-    public int GetTujuanFinansialRemaining(int player, string goalId, int target)
-    {
-        return Mathf.Max(0, target - GetTujuanFinansialSaving(player, goalId));
-    }
-
-    public void AddTujuanFinansialSaving(int player, string goalId, int amount, int target)
-    {
-        SetTujuanFinansialSaving(player, goalId, Mathf.Min(target, GetTujuanFinansialSaving(player, goalId) + amount));
-        EnsurePlayerStats(player);
-        playerSaving[player] += amount;
-    }
-
+    // Tabungan mengikuti backend: satu saldo per pemain, tanpa pembagian per tujuan dan tanpa kartu yang dipesan.
     public void SetSaving(int player, int amount)
     {
         EnsurePlayerStats(player);
-        playerSaving[player] = amount;
+        playerSaving[player] = Math.Max(0, amount);
+    }
+
+    public void ChangeSaving(int player, int amount)
+    {
+        SetSaving(player, GetSaving(player) + amount);
     }
 
     // goalIdAtauNama boleh goal_id ruleset atau nama tujuan lokal (prasyarat narasi, mis. "Rumah").
@@ -78,8 +53,20 @@ public partial class GameState
         return true;
     }
 
-    // Koin, tabungan, kebahagiaan, dan progres tujuan disamakan dengan state server. Tujuan yang tabungannya
-    // sudah mencapai target dianggap dimiliki; bila server belum menandainya, poinnya ditambahkan oleh klien.
+    // Kartu tujuan dibeli pemain dari tabungan, lalu dicatat ke server sebagai event SYSTEM.
+    public void BeliTujuanFinansial(int player, NarafinSetupFinancialGoal goal)
+    {
+        if (goal == null)
+        {
+            return;
+        }
+
+        ChangeSaving(player, -goal.hargaBeli);
+        AddTujuanFinansialDimiliki(player, goal.id);
+        SetHappiness(player, GetHappiness(player) + goal.poinKebahagiaan);
+    }
+
+    // Koin, tabungan, kebahagiaan, dan daftar tujuan disamakan dengan state server.
     public void ApplyServerTujuanFinansial(int player, NarafinSessionStatePlayer serverPlayer)
     {
         if (serverPlayer == null)
@@ -89,64 +76,31 @@ public partial class GameState
 
         SetCoins(player, serverPlayer.coins);
         SetSaving(player, serverPlayer.saving);
-        HashSet<string> clientAchieved = GetClientAchievedTujuanFinansial(player);
+        SetHappiness(player, serverPlayer.happiness);
 
-        if (serverPlayer.tujuanFinansial != null)
+        if (serverPlayer.tujuanFinansial == null)
         {
-            foreach (NarafinStateFinancialGoal progress in serverPlayer.tujuanFinansial)
+            return;
+        }
+
+        foreach (NarafinStateFinancialGoal progress in serverPlayer.tujuanFinansial)
+        {
+            NarafinSetupFinancialGoal goal = FindTujuanFinansialByName(progress?.nama);
+            bool isOwned = progress != null
+                && !string.IsNullOrWhiteSpace(progress.status)
+                && !string.Equals(progress.status, "ONGOING", StringComparison.OrdinalIgnoreCase);
+
+            if (goal != null && isOwned)
             {
-                NarafinSetupFinancialGoal goal = FindTujuanFinansialByName(progress?.nama);
-                if (goal == null)
-                {
-                    continue;
-                }
-
-                SetTujuanFinansialSaving(player, goal.id, progress.current_amount);
-
-                bool isServerAchieved = !string.IsNullOrWhiteSpace(progress.status)
-                    && !string.Equals(progress.status, "ONGOING", StringComparison.OrdinalIgnoreCase);
-                if (isServerAchieved)
-                {
-                    clientAchieved.Remove(goal.id);
-                    AddTujuanFinansialDimiliki(player, goal.id);
-                }
-                else if (progress.target_amount > 0 && progress.current_amount >= progress.target_amount)
-                {
-                    clientAchieved.Add(goal.id);
-                    AddTujuanFinansialDimiliki(player, goal.id);
-                }
+                AddTujuanFinansialDimiliki(player, goal.id);
             }
         }
-
-        SetHappiness(player, serverPlayer.happiness + GetClientAchievedTujuanFinansialPoints(player));
-    }
-
-    // Dipakai bila state server tidak terbaca: tandai tujuan tercapai dari tabungan lokal. Mengembalikan true bila baru tercapai.
-    public bool EnsureTujuanFinansialAchieved(int player, NarafinSetupFinancialGoal goal)
-    {
-        if (goal == null
-            || IsTujuanFinansialDimiliki(player, goal.id)
-            || GetTujuanFinansialSaving(player, goal.id) < goal.hargaBeli)
-        {
-            return false;
-        }
-
-        GetClientAchievedTujuanFinansial(player).Add(goal.id);
-        AddTujuanFinansialDimiliki(player, goal.id);
-        SetHappiness(player, GetHappiness(player) + goal.poinKebahagiaan);
-        return true;
     }
 
     // Sprite tujuan lokal dipetakan berdasarkan harga yang sama, mis. tujuan_30 (Keluar Kota) -> "Tamasya".
     public static string GetTujuanFinansialSpriteName(NarafinSetupFinancialGoal goal)
     {
-        TujuanFinansialData localTujuan = FindLocalTujuanFinansialByHarga(goal?.hargaBeli ?? -1);
-        if (localTujuan != null)
-        {
-            return localTujuan.nama;
-        }
-
-        return (goal?.nama ?? string.Empty).Replace(" ", string.Empty);
+        return NarafinSpriteMap.GetFinancialGoalSpriteName(goal?.id, goal?.nama);
     }
 
     private void AddTujuanFinansialDimiliki(int player, string goalId)
@@ -155,43 +109,6 @@ public partial class GameState
         {
             GetTujuanFinansialList(player).Add(goalId);
         }
-    }
-
-    private HashSet<string> GetClientAchievedTujuanFinansial(int player)
-    {
-        if (!playerTujuanFinansialClientAchieved.TryGetValue(player, out HashSet<string> achieved))
-        {
-            achieved = new HashSet<string>(StringComparer.Ordinal);
-            playerTujuanFinansialClientAchieved[player] = achieved;
-        }
-
-        return achieved;
-    }
-
-    private int GetClientAchievedTujuanFinansialPoints(int player)
-    {
-        int points = 0;
-        foreach (string goalId in GetClientAchievedTujuanFinansial(player))
-        {
-            NarafinSetupFinancialGoal goal = NarafinActiveSession.FindFinancialGoal(NarafinActiveSession.Catalog, goalId);
-            if (goal != null)
-            {
-                points += goal.poinKebahagiaan;
-            }
-        }
-
-        return points;
-    }
-
-    private void SetTujuanFinansialSaving(int player, string goalId, int amount)
-    {
-        if (!playerTujuanFinansialSaving.TryGetValue(player, out Dictionary<string, int> savings))
-        {
-            savings = new Dictionary<string, int>();
-            playerTujuanFinansialSaving[player] = savings;
-        }
-
-        savings[goalId] = Mathf.Max(0, amount);
     }
 
     private static NarafinSetupFinancialGoal FindTujuanFinansialByName(string nama)
@@ -206,25 +123,6 @@ public partial class GameState
 
         return null;
     }
-
-    private static TujuanFinansialData FindLocalTujuanFinansialByHarga(int hargaBeli)
-    {
-        if (DataManager.Instance == null || DataManager.Instance.tujuanFinansialDict == null)
-        {
-            return null;
-        }
-
-        foreach (TujuanFinansialData tujuan in DataManager.Instance.tujuanFinansialDict.Values)
-        {
-            if (tujuan != null && tujuan.hargaBeli == hargaBeli)
-            {
-                return tujuan;
-            }
-        }
-
-        return null;
-    }
-
     // Menyamakan goal_id ruleset dan nama tujuan lokal ke satu kunci melalui harga yang sama.
     private static string ToTujuanFinansialKey(string value)
     {
@@ -242,16 +140,13 @@ public partial class GameState
             }
         }
 
-        if (DataManager.Instance != null
-            && DataManager.Instance.tujuanFinansialDict != null
-            && DataManager.Instance.tujuanFinansialDict.TryGetValue(value, out TujuanFinansialData localTujuan))
+        // Nama tujuan masih diterima untuk paket yang ditulis sebelum identitasnya memakai goal_id.
+        string valueKey = NarafinActiveSession.NormalizeName(value);
+        foreach (NarafinSetupFinancialGoal goal in goals)
         {
-            foreach (NarafinSetupFinancialGoal goal in goals)
+            if (NarafinActiveSession.NormalizeName(goal.nama) == valueKey)
             {
-                if (goal.hargaBeli == localTujuan.hargaBeli)
-                {
-                    return goal.id;
-                }
+                return goal.id;
             }
         }
 

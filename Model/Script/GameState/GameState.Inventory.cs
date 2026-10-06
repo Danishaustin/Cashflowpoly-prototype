@@ -91,10 +91,7 @@ public partial class GameState
             return NarafinActiveSession.FindIngredient(catalog, namaAtauCardId) != null;
         }
 
-        return DataManager.Instance != null
-            && DataManager.Instance.bahanDict != null
-            && !string.IsNullOrWhiteSpace(namaAtauCardId)
-            && DataManager.Instance.bahanDict.ContainsKey(namaAtauCardId);
+        return false;
     }
 
     public string GetBahanDisplayName(string namaAtauCardId)
@@ -363,21 +360,39 @@ public partial class GameState
         weeklyBahanPriceWeek = GetCurrentWeekIndex();
     }
 
-    private int risikoBahanPriceDelta;
-    private int risikoBahanPriceUntilDay;
+    // Kartu INGREDIENT_PRICE_MODIFIER bisa aktif lebih dari satu sekaligus, dan server menjumlahkan efeknya.
+    private struct RisikoPerubahanHargaBahan
+    {
+        public int Delta;
+        public int UntilDay;
+    }
+
+    private readonly List<RisikoPerubahanHargaBahan> risikoBahanPriceModifiers = new List<RisikoPerubahanHargaBahan>();
 
     // Efek kartu risiko INGREDIENT_PRICE_MODIFIER: berlaku sejak hari kartu keluar selama duration_days.
     public void SetPerubahanHargaBahan(int delta, int durationDays)
     {
-        risikoBahanPriceDelta = delta;
-        risikoBahanPriceUntilDay = day + Mathf.Max(1, durationDays);
+        risikoBahanPriceModifiers.Add(new RisikoPerubahanHargaBahan
+        {
+            Delta = delta,
+            UntilDay = day + Mathf.Max(1, durationDays)
+        });
     }
 
     public int GetMingguanPerubahanHargaBahan()
     {
-        if (risikoBahanPriceUntilDay > 0)
+        if (risikoBahanPriceModifiers.Count > 0)
         {
-            return day < risikoBahanPriceUntilDay ? risikoBahanPriceDelta : 0;
+            int total = 0;
+            foreach (RisikoPerubahanHargaBahan modifier in risikoBahanPriceModifiers)
+            {
+                if (day < modifier.UntilDay)
+                {
+                    total += modifier.Delta;
+                }
+            }
+
+            return total;
         }
 
         if (GetCurrentWeekIndex() != weeklyBahanPriceWeek)
@@ -393,21 +408,12 @@ public partial class GameState
     {
         int hargaDasar;
         NarafinSetupIngredient ingredient = NarafinActiveSession.FindIngredient(NarafinActiveSession.Catalog, namaAtauCardId);
-        if (ingredient != null)
-        {
-            hargaDasar = ingredient.hargaBeli;
-        }
-        else if (DataManager.Instance != null
-                 && DataManager.Instance.bahanDict != null
-                 && !string.IsNullOrWhiteSpace(namaAtauCardId)
-                 && DataManager.Instance.bahanDict.TryGetValue(namaAtauCardId, out BahanMakananData bahanData))
-        {
-            hargaDasar = bahanData.hargaBeli;
-        }
-        else
+        if (ingredient == null)
         {
             return 0;
         }
+
+        hargaDasar = ingredient.hargaBeli;
 
         return Mathf.Max(0, hargaDasar + GetMingguanPerubahanHargaBahan());
     }

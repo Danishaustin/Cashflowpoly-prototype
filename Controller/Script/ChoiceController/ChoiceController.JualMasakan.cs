@@ -15,7 +15,9 @@ public partial class ChoiceController
     {
         if (!UseOrderCatalog)
         {
-            HandleChoiceJMLegacy(selectedChoice);
+            ShowSystemDialogThen(
+                "Katalog pesanan tidak tersedia pada ruleset ini, jadi penjualan masakan tidak bisa dicatat.\n",
+                () => view.ShowChoice("Choice1"));
             return;
         }
 
@@ -31,7 +33,10 @@ public partial class ChoiceController
             return;
         }
 
-        _ = JualMasakanAsync(order);
+        AskConfirmation(
+            "Jual " + GameState.GetOrderDisplayName(order) + " seharga " + order.hargaJual + " koin?",
+            () => _ = JualMasakanAsync(order),
+            () => view.ShowChoice("JualMasakan"));
     }
 
     // Kartu pesanan dari katalog ruleset session; koin dan bahan baru berubah setelah server menerima penjualan.
@@ -108,7 +113,8 @@ public partial class ChoiceController
         }
 
         GameState.Instance.ChangeCoins(player, order.hargaJual);
-        GameState.Instance.AddMasakanDijualToList(GameState.GetOrderLocalName(order));
+        // Disimpan sebagai id pesanan katalog supaya prasyarat narasi tidak bergantung pada ejaan nama.
+        GameState.Instance.AddMasakanDijualToList(order.id);
         view.UpdateCoins(GameState.Instance.GetCoins(player));
 
         // Mode MAHIR: setiap penjualan wajib dirujuk tepat satu kartu Risiko Kehidupan sebelum hari ditutup.
@@ -120,39 +126,4 @@ public partial class ChoiceController
     }
 
     // Alur lama tanpa katalog ruleset session (mode offline).
-    private void HandleChoiceJMLegacy(string selectedChoice)
-    {
-        Debug.Log($"{selectedChoice} dijual");
-        var listBahan = DataManager.Instance.resepDict[selectedChoice].bahan;
-        var jumlahBahan = listBahan
-            .GroupBy(b => b)
-            .ToDictionary(g => g.Key, g => g.Count());
-
-        var kurangBahan = GameState.Instance.HasBahan(jumlahBahan);
-
-        if (kurangBahan.Count > 0)
-        {
-            Debug.Log("Bahan tidak cukup: " + string.Join(", ", kurangBahan));
-            string errorText = "Bahan tidak cukup: " + string.Join(", ", kurangBahan) + "\n";
-            ShowSystemDialogThen(errorText, () => view.ShowChoice("Choice1"));
-            return;
-        }
-
-        foreach (var kv in jumlahBahan)
-        {
-            GameState.Instance.RemoveBahanFromList(kv.Key, kv.Value);
-        }
-
-        var amountCoins = DataManager.Instance.resepDict[selectedChoice].hargaJual;
-        GameState.Instance.ChangeCoins(amountCoins);
-        GameState.Instance.AddMasakanDijualToList(selectedChoice);
-        var amountHappiness = DataManager.Instance.resepDict[selectedChoice].poinKebahagiaan;
-        GameState.Instance.ChangeHappiness(amountHappiness);
-        view.UpdateCoins(GameState.Instance.Coins);
-        view.UpdateHappiness(GameState.Instance.Happiness);
-        PostJualMasakanEvent(GameState.Instance.turn, selectedChoice, listBahan, amountCoins);
-
-        string resultText = "Menjual " + selectedChoice + " menghasilkan " + amountCoins + " koin\n";
-        PlayNarasiThen("JualMasakan", resultText, ShowRisikoKehidupanAfterJualMasakan);
-    }
 }

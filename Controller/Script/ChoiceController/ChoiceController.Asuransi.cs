@@ -30,7 +30,11 @@ public partial class ChoiceController
             return;
         }
 
-        _ = BeliAsuransiAsync(player);
+        NarafinSetupInsurance product = GetAsuransiProduct();
+        AskConfirmation(
+            "Beli asuransi dengan premi " + (product != null ? product.premium : 0) + " koin?",
+            () => _ = BeliAsuransiAsync(player),
+            () => view.ShowChoice("Choice1"));
     }
 
     // Produk pertama pada katalog ruleset session, sama dengan pembagian awal.
@@ -65,6 +69,7 @@ public partial class ChoiceController
             return;
         }
 
+        // Id lokal untuk catatan GameState saja; server mengenali polis dari product_code.
         string policyId = product.product_code + ":unity:" + Guid.NewGuid().ToString("N");
 
         NarafinSessionOperationResult result;
@@ -75,7 +80,7 @@ public partial class ChoiceController
             result = await SendPlayerEventNowAsync(
                 player,
                 "Asuransi",
-                BuildAsuransiPayload(policyId, product.product_code, premium, AsuransiCoverageType),
+                BuildAsuransiPayload(product.product_code, premium, AsuransiCoverageType),
                 GetCurrentActionSlot());
         }
         catch (Exception ex)

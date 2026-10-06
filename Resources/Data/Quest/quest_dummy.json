@@ -1,0 +1,29 @@
+{
+    "quest": [
+        {
+            "id": "dmy_quest_belanja",
+            "nama": "Belanja Perdana",
+            "perintah": "Beli bahan masakan dua kali untuk menyelesaikan quest ini."
+        },
+        {
+            "id": "dmy_quest_impian",
+            "nama": "Kejar Impian",
+            "perintah": "Beli kartu tujuan finansial, lalu miliki tujuan Rumah."
+        },
+        {
+            "id": "dmy_quest_utang",
+            "nama": "Lunasi Utang",
+            "perintah": "Ambil pinjaman syariah, lalu bayar pinjaman itu sampai lunas."
+        },
+        {
+            "id": "dmy_quest_aman",
+            "nama": "Lindungi Diri",
+            "perintah": "Beli asuransi sebelum kartu risiko kehidupan kedua muncul."
+        },
+        {
+            "id": "dmy_quest_diam",
+            "nama": "Quest Tanpa Pemicu",
+            "perintah": "Quest ini tidak pernah diubah narasi mana pun; statusnya harus tetap Belum aktif."
+        }
+    ]
+}

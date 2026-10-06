@@ -48,7 +48,10 @@ public partial class ChoiceController
                     return;
                 }
 
-                _ = DonasiAsync(player, amount);
+                AskConfirmation(
+                    "Donasi " + amount + " koin?",
+                    () => _ = DonasiAsync(player, amount),
+                    () => view.ShowChoice("JumatBerkah"));
                 return;
             default:
                 Debug.Log("Pilihan tidak valid");
@@ -93,10 +96,42 @@ public partial class ChoiceController
         GameState.Instance.CatatPeduliDonasi(amount);
         GameState.Instance.ChangeCoins(player, -amount);
         view.UpdateCoins(GameState.Instance.GetCoins(player));
-        await PostAkhirGiliranForDayEndIfLastPlayerAsync(player);
-        if (this == null)
+        bool isHariBerganti = GameState.Instance.IsLastPlayerInTurnOrder(player);
+
+        // Narasi donasi diputar lebih dulu, selagi giliran masih milik pemain yang berdonasi. Kalau giliran
+        // dimajukan dulu, dialognya tampil dengan potret dan prasyarat pemain berikutnya.
+        PlayNarasiThen(
+            "JumatBerkah",
+            playerName + " berdonasi " + amount + " coin.",
+            () => _ = SelesaikanLangkahDonasiAsync(isHariBerganti));
+    }
+
+    // Penutup satu langkah donasi. Urutannya penting: juara donasi dan poin peringkatnya adalah peristiwa
+    // hari Jumat, jadi harus tercatat SEBELUM AkhirGiliran menutup harinya. Kalau dibalik, server sudah
+    // berpindah hari dan menolak keduanya dengan "Event harus dicatat pada hari aktif N".
+    private async Task SelesaikanLangkahDonasiAsync(bool isHariBerganti)
+    {
+        string juaraText = string.Empty;
+
+        if (isHariBerganti)
         {
-            return;
+            juaraText = await CatatJuaraPeduliDonasiAsync();
+            if (this == null)
+            {
+                return;
+            }
+
+            await PostAkhirGiliranForDayEndAsync();
+            if (this == null)
+            {
+                return;
+            }
+
+            await PlayEndingHariRollingAsync();
+            if (this == null)
+            {
+                return;
+            }
         }
 
         bool isPeduliDonasiSelesai = GameState.Instance.AdvancePeduliDonasiTurn();
@@ -104,7 +139,19 @@ public partial class ChoiceController
         view.UpdatePlayerTurn(GameState.Instance.turn);
         view.UpdatePlayerStats();
 
-        PlayNarasiThen("JumatBerkah", playerName + " berdonasi " + amount + " coin.", () => ContinueAfterPeduliDonasiStep(isPeduliDonasiSelesai));
+        if (!isPeduliDonasiSelesai)
+        {
+            ShowJumatBerkahOrSkipNoCoins();
+            return;
+        }
+
+        if (string.IsNullOrEmpty(juaraText))
+        {
+            ShowNextScheduledChoice();
+            return;
+        }
+
+        ShowSystemDialogThen(juaraText, ShowNextScheduledChoice);
     }
 
     // Donasi Jumat wajib; pemain yang koinnya kurang melakukan Kerja Lepas dulu (diterima server sebelum donasi)
@@ -178,22 +225,92 @@ public partial class ChoiceController
         return result;
     }
 
-    private void ContinueAfterPeduliDonasiStep(bool isPeduliDonasiSelesai)
+    // Peringkat donasi dihitung klien lalu dikirim ke server, karena server tidak menghitungnya sendiri.
+    // Mengembalikan teks pengumuman; penampilannya diserahkan ke pemanggil agar urutan event tetap terjaga.
+    private async Task<string> CatatJuaraPeduliDonasiAsync()
     {
-        if (!isPeduliDonasiSelesai)
-        {
-            ShowJumatBerkahOrSkipNoCoins();
-            return;
-        }
-
+        List<int> ranking = GameState.Instance.GetLatestPeduliDonasiRanking();
         string juaraText = BuildJuaraPeduliDonasiText();
-        if (string.IsNullOrEmpty(juaraText))
+
+        if (ranking != null && ranking.Count > 0)
         {
-            ShowNextScheduledChoice();
-            return;
+            NarafinSessionOperationResult result;
+            try
+            {
+                result = await SendSystemEventNowAsync("UmumkanJuaraDonasi", BuildUmumkanJuaraDonasiPayload(ranking));
+            }
+            catch (Exception ex)
+            {
+                Debug.LogWarning("Gagal mengumumkan juara donasi: " + ex.Message);
+                result = CreateEventFailure("EVENT_SEND_FAILED", "Gagal menghubungi server.");
+            }
+
+            if (this == null)
+            {
+                return string.Empty;
+            }
+
+            if (result.Success)
+            {
+                juaraText += await CatatPoinJuaraDonasiAsync(ranking);
+            }
+            else
+            {
+                juaraText += "\nJuara donasi gagal dicatat di server: " + result.ErrorMessage;
+            }
+
+            if (this == null)
+            {
+                return string.Empty;
+            }
         }
 
-        ShowSystemDialogThen(juaraText, ShowNextScheduledChoice);
+        return juaraText;
+    }
+
+    // Tiap juara mendapat poin kebahagiaan sesuai katalog, dicatat satu event SYSTEM per pemain.
+    private async Task<string> CatatPoinJuaraDonasiAsync(List<int> ranking)
+    {
+        string gagalText = string.Empty;
+        int winnerCount = Mathf.Min(3, ranking.Count);
+
+        for (int i = 0; i < winnerCount; i++)
+        {
+            int player = ranking[i];
+            int rank = i + 1;
+            int points = NarafinActiveSession.GetDonationRankPoints(NarafinActiveSession.Catalog, rank);
+            if (points <= 0)
+            {
+                continue;
+            }
+
+            NarafinSessionOperationResult result;
+            try
+            {
+                result = await SendSystemEventForPlayerNowAsync(player, "PoinPeringkatDonasi", BuildPoinPeringkatDonasiPayload(rank, points));
+            }
+            catch (Exception ex)
+            {
+                Debug.LogWarning("Gagal mencatat poin juara donasi: " + ex.Message);
+                result = CreateEventFailure("EVENT_SEND_FAILED", "Gagal menghubungi server.");
+            }
+
+            if (this == null)
+            {
+                return string.Empty;
+            }
+
+            if (result.Success)
+            {
+                GameState.Instance.SetHappiness(player, GameState.Instance.GetHappiness(player) + points);
+                continue;
+            }
+
+            gagalText += "\nPoin juara " + rank + " gagal dicatat: " + result.ErrorMessage;
+        }
+
+        view.UpdatePlayerStats();
+        return gagalText;
     }
 
     private string BuildJuaraPeduliDonasiText()
@@ -209,7 +326,8 @@ public partial class ChoiceController
         for (int i = 0; i < topCount; i++)
         {
             string juaraName = GetPlayerName(ranking[i]);
-            parts.Add("Juara " + (i + 1) + ": " + juaraName);
+            int points = NarafinActiveSession.GetDonationRankPoints(NarafinActiveSession.Catalog, i + 1);
+            parts.Add("Juara " + (i + 1) + ": " + juaraName + (points > 0 ? " (+" + points + " kebahagiaan)" : string.Empty));
         }
 
         return string.Join(" | ", parts);

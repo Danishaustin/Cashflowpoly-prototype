@@ -165,6 +165,16 @@ Button:active {
     -unity-text-align: middle-center;
 }
 
+/* Lencana gambar kartu di pojok kiri atas tombol aksi utama, sedikit keluar dari bingkai tombol. */
+.main-choice-icon {
+    position: absolute;
+    top: -18px;
+    left: -18px;
+    width: 90px;
+    height: 90px;
+    -unity-background-scale-mode: scale-to-fit;
+}
+
 .target-kebutuhan-panel {
     padding-top: 2%;
     padding-right: 4%;
@@ -439,6 +449,144 @@ Button:active {
     padding-bottom: 12px;
     padding-left: 20px;
     margin-bottom: 2%;
+}
+
+/* Layar akhir permainan: satu kartu berisi judul, daftar hasil, lalu tombol-tombolnya. */
+.selesai-panel {
+    width: 100%;
+    height: 72%;
+    align-self: center;
+    align-items: center;
+    justify-content: flex-start;
+    padding-top: 36px;
+    padding-right: 48px;
+    padding-bottom: 36px;
+    padding-left: 48px;
+    background-color: rgba(255, 255, 255, 0.96);
+    border-top-left-radius: 28px;
+    border-top-right-radius: 28px;
+    border-bottom-right-radius: 28px;
+    border-bottom-left-radius: 28px;
+    border-left-width: 4px;
+    border-right-width: 4px;
+    border-top-width: 4px;
+    border-bottom-width: 4px;
+    border-left-color: rgb(64, 92, 72);
+    border-right-color: rgb(64, 92, 72);
+    border-top-color: rgb(64, 92, 72);
+    border-bottom-color: rgb(64, 92, 72);
+}
+
+.selesai-title {
+    width: 100%;
+    -unity-font: resource('Sprite/300Mind/2D Game UI Kit/Fonts/Ariston Comic Font');
+    -unity-font-definition: initial;
+    -unity-font-style: bold;
+    font-size: 58px;
+    color: rgb(22, 52, 42);
+    -unity-text-align: middle-center;
+    white-space: normal;
+    margin-bottom: 8px;
+}
+
+.selesai-subtitle {
+    width: 100%;
+    -unity-font: resource('Sprite/300Mind/2D Game UI Kit/Fonts/Ariston Comic Font');
+    -unity-font-definition: initial;
+    font-size: 30px;
+    color: rgb(64, 92, 72);
+    -unity-text-align: middle-center;
+    white-space: normal;
+    margin-bottom: 18px;
+}
+
+.selesai-view-button {
+    width: 260px;
+    height: 86px;
+    margin-left: 14px;
+    margin-right: 14px;
+    background-color: rgba(0, 0, 0, 0);
+    background-image: url("project://database/Assets/View/UI/Sprites/Icons/Rect-Idle.png?fileID=21300000&guid=913eee861df48db40badaabe419fd9df&type=3#Rect-Idle");
+    -unity-background-scale-mode: stretch-to-fill;
+    -unity-font: resource('Sprite/300Mind/2D Game UI Kit/Fonts/Ariston Comic Font');
+    -unity-font-definition: initial;
+    -unity-font-style: bold;
+    font-size: 36px;
+    color: rgb(22, 52, 42);
+    -unity-text-align: middle-center;
+    white-space: nowrap;
+    border-left-width: 0;
+    border-right-width: 0;
+    border-top-width: 0;
+    border-bottom-width: 0;
+    border-top-left-radius: 14px;
+    border-top-right-radius: 14px;
+    border-bottom-right-radius: 14px;
+    border-bottom-left-radius: 14px;
+}
+
+.selesai-view-button:active {
+    background-image: url("project://database/Assets/View/UI/Sprites/Icons/Rect-Click.png?fileID=21300000&guid=dd3fef2ba78660a47b7e03f7e64c1bc6&type=3#Rect-Click");
+    background-color: rgba(0, 0, 0, 0);
+}
+
+.selesai-score-list {
+    flex-grow: 1;
+    flex-shrink: 1;
+    min-height: 0;
+    width: 100%;
+    margin-top: 12px;
+    padding-top: 16px;
+    padding-right: 22px;
+    padding-bottom: 16px;
+    padding-left: 22px;
+    background-color: rgba(64, 92, 72, 0.10);
+    border-top-left-radius: 18px;
+    border-top-right-radius: 18px;
+    border-bottom-right-radius: 18px;
+    border-bottom-left-radius: 18px;
+}
+
+.selesai-score-row {
+    width: 100%;
+    font-size: 30px;
+    color: rgb(22, 52, 42);
+    -unity-text-align: middle-left;
+    white-space: normal;
+    margin-bottom: 4px;
+}
+
+.selesai-score-title {
+    width: 100%;
+    font-size: 34px;
+    -unity-font-style: bold;
+    color: rgb(22, 52, 42);
+    -unity-text-align: middle-left;
+    margin-top: 10px;
+    margin-bottom: 2px;
+}
+
+.action-confirm-panel {
+    width: 58%;
+    height: 40%;
+    background-color: rgba(255, 255, 255, 0.96);
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+    border-bottom-right-radius: 20px;
+    border-bottom-left-radius: 20px;
+    border-left-width: 4px;
+    border-right-width: 4px;
+    border-top-width: 4px;
+    border-bottom-width: 4px;
+    border-left-color: rgb(64, 92, 72);
+    border-right-color: rgb(64, 92, 72);
+    border-top-color: rgb(64, 92, 72);
+    border-bottom-color: rgb(64, 92, 72);
+    padding-top: 4%;
+    padding-right: 5%;
+    padding-bottom: 4%;
+    padding-left: 5%;
+    translate: 0 -200%;
 }
 
 .tf-confirm-panel {
@@ -1307,6 +1455,56 @@ Button:active {
     opacity: 1;
 }
 
+/* Panel konfirmasi keluar memakai teks yang lebih panjang daripada panel jeda, jadi lebih lebar
+   dan judulnya lebih kecil supaya tidak keluar dari kotaknya. */
+.exit-confirm-panel {
+    width: 900px;
+    height: auto;
+    min-height: 340px;
+    padding-left: 56px;
+    padding-right: 56px;
+}
+
+.exit-confirm-title {
+    font-size: 54px;
+    white-space: normal;
+    margin-bottom: 34px;
+}
+
+.exit-confirm-button {
+    width: 220px;
+    height: 88px;
+    margin-left: 18px;
+    margin-right: 18px;
+    background-color: rgba(0, 0, 0, 0);
+    background-image: url("project://database/Assets/View/UI/Sprites/Icons/Rect-Idle.png?fileID=21300000&guid=913eee861df48db40badaabe419fd9df&type=3#Rect-Idle");
+    -unity-background-scale-mode: stretch-to-fill;
+    -unity-font: resource('Sprite/300Mind/2D Game UI Kit/Fonts/Ariston Comic Font');
+    -unity-font-definition: initial;
+    -unity-font-style: bold;
+    font-size: 40px;
+    color: rgb(22, 52, 42);
+    -unity-text-align: middle-center;
+    white-space: nowrap;
+    border-left-width: 0;
+    border-right-width: 0;
+    border-top-width: 0;
+    border-bottom-width: 0;
+    border-top-left-radius: 14px;
+    border-top-right-radius: 14px;
+    border-bottom-right-radius: 14px;
+    border-bottom-left-radius: 14px;
+}
+
+.exit-confirm-button:active {
+    background-image: url("project://database/Assets/View/UI/Sprites/Icons/Rect-Click.png?fileID=21300000&guid=dd3fef2ba78660a47b7e03f7e64c1bc6&type=3#Rect-Click");
+    background-color: rgba(0, 0, 0, 0);
+}
+
+.exit-confirm-button:disabled {
+    opacity: 0.45;
+}
+
 .pause-panel-title {
     -unity-font: resource('Sprite/300Mind/2D Game UI Kit/Fonts/Ariston Comic Font');
     -unity-font-definition: initial;
@@ -1364,6 +1562,31 @@ Button:active {
     border-right-color: rgba(255, 255, 255, 0);
     border-top-color: rgba(255, 255, 255, 0);
     border-bottom-color: rgba(255, 255, 255, 0);
+}
+
+.pause-text-button {
+    width: 180px;
+    background-color: rgb(245, 238, 220);
+    border-left-color: rgb(120, 96, 60);
+    border-right-color: rgb(120, 96, 60);
+    border-top-color: rgb(120, 96, 60);
+    border-bottom-color: rgb(120, 96, 60);
+    border-left-width: 3px;
+    border-right-width: 3px;
+    border-top-width: 3px;
+    border-bottom-width: 3px;
+    color: rgb(22, 52, 42);
+    font-size: 22px;
+    white-space: normal;
+    -unity-text-align: middle-center;
+}
+
+.pause-text-button:disabled {
+    opacity: 0.45;
+}
+
+.pause-text-button:active {
+    background-color: rgb(228, 216, 190);
 }
 
 .pause-home-button:active {

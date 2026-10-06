@@ -8,52 +8,34 @@ public partial class ChoiceController
 
     private bool isPendingTujuanFinansialConfirmation;
     private bool isSubmittingMenabung;
-    private string selectedTujuanFinansialId = string.Empty;
 
     private static bool UseTujuanFinansialCatalog => NarafinActiveSession.GetFinancialGoals(NarafinActiveSession.Catalog).Count > 0;
 
-    // Tujuan finansial diperoleh otomatis oleh server saat tabungan tujuan mencapai target,
-    // jadi pemain memilih tujuan lalu menabung; tidak ada aksi membeli tujuan.
-    private void HandleChoiceTF(string selectedChoice)
+    // Tabungan mengikuti backend: satu saldo per pemain. Aksi ini hanya menabung; kartu tujuan dibeli
+    // setelahnya lewat konfirmasi, dan tidak pernah diberikan otomatis saat tabungan mencukupi.
+    private void StartMenabung()
     {
-        if (!UseTujuanFinansialCatalog)
-        {
-            HandleChoiceTFLegacy(selectedChoice);
-            return;
-        }
-
-        NarafinSetupFinancialGoal goal = NarafinActiveSession.FindFinancialGoal(NarafinActiveSession.Catalog, selectedChoice);
-        if (goal == null)
-        {
-            ShowSystemDialogThen("Tujuan finansial tidak ada di ruleset session.\n", () => view.ShowChoice("Choice1"));
-            return;
-        }
-
         int player = GameState.Instance.turn;
-        if (GameState.Instance.GetTujuanFinansialRemaining(player, goal.id, goal.hargaBeli) <= 0)
+        int maxAmount = GetMaxMenabung();
+        if (maxAmount <= 0)
         {
-            ShowSystemDialogThen("Tabungan untuk " + goal.nama + " sudah mencapai target " + goal.hargaBeli + " koin.\n", () => view.ShowChoice("TujuanFinansial"));
+            string spendBlockedMessage = GameState.Instance.GetSpendBlockedMessage(player, 1);
+            ShowSystemDialogThen("Tidak bisa menabung. " + (spendBlockedMessage ?? "Koin tidak mencukupi.") + "\n", () => view.ShowChoice("Choice1"));
             return;
         }
 
-        string spendBlockedMessage = GameState.Instance.GetSpendBlockedMessage(player, 1);
-        if (spendBlockedMessage != null)
-        {
-            ShowSystemDialogThen("Tidak bisa menabung. " + spendBlockedMessage + "\n", () => view.ShowChoice("Choice1"));
-            return;
-        }
-
-        selectedTujuanFinansialId = goal.id;
-        GameState.Instance.SetSavingText(Mathf.Min(1, GetMaxMenabung(goal)));
+        GameState.Instance.SetSavingText(Mathf.Min(1, maxAmount));
         view.ShowChoice("Menabung");
-        UpdateMenabungView(goal);
+        UpdateMenabungView();
     }
 
     private void HandleChoiceMenabung(string selectedChoice)
     {
         if (!UseTujuanFinansialCatalog)
         {
-            HandleChoiceMenabungLegacy(selectedChoice);
+            ShowSystemDialogThen(
+                "Katalog tujuan finansial tidak tersedia pada ruleset ini, jadi menabung tidak bisa dicatat.\n",
+                () => view.ShowChoice("Choice1"));
             return;
         }
 
@@ -62,14 +44,7 @@ public partial class ChoiceController
             return;
         }
 
-        NarafinSetupFinancialGoal goal = NarafinActiveSession.FindFinancialGoal(NarafinActiveSession.Catalog, selectedTujuanFinansialId);
-        if (goal == null)
-        {
-            view.ShowChoice("Choice1");
-            return;
-        }
-
-        int maxAmount = GetMaxMenabung(goal);
+        int maxAmount = GetMaxMenabung();
         switch (selectedChoice)
         {
             case "MaxButton":
@@ -97,49 +72,52 @@ public partial class ChoiceController
                     ShowSystemDialogThen("Jumlah tabungan harus 1 sampai " + maxAmount + " koin.\n", () =>
                     {
                         view.ShowChoice("Menabung");
-                        UpdateMenabungView(goal);
+                        UpdateMenabungView();
                     });
                     return;
                 }
 
-                _ = MenabungAsync(goal, amount);
+                AskConfirmation(
+                    "Menabung " + amount + " koin?",
+                    () => _ = MenabungAsync(amount),
+                    () =>
+                    {
+                        view.ShowChoice("Menabung");
+                        UpdateMenabungView();
+                    });
                 return;
             default:
                 Debug.Log("Pilihan tidak valid");
                 break;
         }
 
-        UpdateMenabungView(goal);
+        UpdateMenabungView();
     }
 
-    // Maksimal 15 koin per aksi, tidak melebihi koin yang boleh dibelanjakan (setelah cadangan donasi Jumat)
-    // maupun sisa target tujuan.
-    private int GetMaxMenabung(NarafinSetupFinancialGoal goal)
+    // Maksimal 15 koin per aksi dan tidak melebihi koin yang boleh dibelanjakan setelah cadangan donasi Jumat.
+    private int GetMaxMenabung()
     {
         int player = GameState.Instance.turn;
-        int remaining = GameState.Instance.GetTujuanFinansialRemaining(player, goal.id, goal.hargaBeli);
-        return Mathf.Max(0, Mathf.Min(MaxMenabungPerAksi, Mathf.Min(GameState.Instance.GetSpendableCoins(player), remaining)));
+        return Mathf.Max(0, Mathf.Min(MaxMenabungPerAksi, GameState.Instance.GetSpendableCoins(player)));
     }
 
-    private void UpdateMenabungView(NarafinSetupFinancialGoal goal)
+    private void UpdateMenabungView()
     {
         int player = GameState.Instance.turn;
         view.UpdateSavingText(GameState.Instance.SavingText);
-        view.UpdateMenabungTitle("Menabung untuk " + goal.nama + " ("
-            + GameState.Instance.GetTujuanFinansialSaving(player, goal.id) + "/" + goal.hargaBeli + ")");
+        view.UpdateMenabungTitle("Jumlah Menabung (tabungan: " + GameState.Instance.GetSaving(player) + " koin)");
     }
 
-    private async Task MenabungAsync(NarafinSetupFinancialGoal goal, int amount)
+    private async Task MenabungAsync(int amount)
     {
         int player = GameState.Instance.turn;
-        bool wasOwned = GameState.Instance.IsTujuanFinansialDimiliki(player, goal.id);
 
         NarafinSessionOperationResult result;
         isSubmittingMenabung = true;
-        BeginServerWait("Mencatat tabungan untuk " + goal.nama + "...");
+        BeginServerWait("Mencatat tabungan...");
         try
         {
-            result = await SendPlayerEventNowAsync(player, "Menabung", BuildMenabungPayload(goal.id, amount), GetCurrentActionSlot());
+            result = await SendPlayerEventNowAsync(player, "Menabung", BuildMenabungPayload(amount), GetCurrentActionSlot());
         }
         catch (Exception ex)
         {
@@ -162,7 +140,7 @@ public partial class ChoiceController
         }
 
         GameState.Instance.ChangeCoins(player, -amount);
-        GameState.Instance.AddTujuanFinansialSaving(player, goal.id, amount, goal.hargaBeli);
+        GameState.Instance.ChangeSaving(player, amount);
         await SyncTujuanFinansialFromServerAsync(player);
         isSubmittingMenabung = false;
 
@@ -171,21 +149,97 @@ public partial class ChoiceController
             return;
         }
 
-        GameState.Instance.EnsureTujuanFinansialAchieved(player, goal);
         view.UpdatePlayerStats();
+        string resultText = "Menabung " + amount + " koin. Tabungan: " + GameState.Instance.GetSaving(player) + " koin\n";
+        PlayNarasiThen("Menabung", resultText, ContinueAfterMenabung);
+    }
 
-        int saving = GameState.Instance.GetTujuanFinansialSaving(player, goal.id);
-        string resultText = "Menabung " + amount + " koin untuk " + goal.nama + ". Tabungan: " + saving + "/" + goal.hargaBeli + "\n";
-        bool isNewlyOwned = !wasOwned && GameState.Instance.IsTujuanFinansialDimiliki(player, goal.id);
-
-        if (isNewlyOwned)
+    // Kartu tujuan dibeli dari tabungan setelah pemain mengonfirmasi; server mencatatnya sebagai event SYSTEM.
+    private void HandleChoiceTF(string selectedChoice)
+    {
+        if (!UseTujuanFinansialCatalog)
         {
-            resultText += "Target tercapai! Kartu tujuan " + goal.nama + " diperoleh (+" + goal.poinKebahagiaan + " kebahagiaan).\n";
-            PlayNarasiThen("TujuanFinansial", resultText, UpdateMove);
+            ShowSystemDialogThen(
+                "Katalog tujuan finansial tidak tersedia pada ruleset ini, jadi kartu tujuan tidak bisa dicatat.\n",
+                () => view.ShowChoice("Choice1"));
             return;
         }
 
-        PlayNarasiThen("Menabung", resultText, UpdateMove);
+        if (isSubmittingMenabung)
+        {
+            return;
+        }
+
+        NarafinSetupFinancialGoal goal = NarafinActiveSession.FindFinancialGoal(NarafinActiveSession.Catalog, selectedChoice);
+        if (goal == null)
+        {
+            ShowSystemDialogThen("Tujuan finansial tidak ada di ruleset session.\n", CompleteTujuanFinansialFlow);
+            return;
+        }
+
+        int player = GameState.Instance.turn;
+        if (GameState.Instance.IsTujuanFinansialDimiliki(player, goal.id))
+        {
+            ShowSystemDialogThen("Kartu tujuan " + goal.nama + " sudah dimiliki.\n", () => view.ShowTujuanFinansialPurchasableOnly());
+            return;
+        }
+
+        if (GameState.Instance.GetSaving(player) < goal.hargaBeli)
+        {
+            ShowSystemDialogThen("Tabungan belum cukup untuk " + goal.nama + " (" + goal.hargaBeli + " koin).\n", () => view.ShowTujuanFinansialPurchasableOnly());
+            return;
+        }
+
+        AskConfirmation(
+            "Beli kartu tujuan " + goal.nama + " seharga " + goal.hargaBeli + " koin tabungan (+"
+                + goal.poinKebahagiaan + " kebahagiaan)?",
+            () => _ = BeliTujuanFinansialAsync(goal),
+            () => view.ShowTujuanFinansialPurchasableOnly());
+    }
+
+    private async Task BeliTujuanFinansialAsync(NarafinSetupFinancialGoal goal)
+    {
+        int player = GameState.Instance.turn;
+
+        NarafinSessionOperationResult result;
+        isSubmittingMenabung = true;
+        BeginServerWait("Mencatat pembelian " + goal.nama + "...");
+        try
+        {
+            result = await SendSystemEventForPlayerNowAsync(player, "TujuanFinansial", BuildTujuanFinansialPayload(goal));
+        }
+        catch (Exception ex)
+        {
+            Debug.LogWarning("Gagal mengirim pembelian tujuan finansial: " + ex.Message);
+            result = CreateEventFailure("EVENT_SEND_FAILED", "Gagal menghubungi server.");
+        }
+
+        await EndServerWaitAsync();
+        isSubmittingMenabung = false;
+
+        if (this == null)
+        {
+            return;
+        }
+
+        if (!result.Success)
+        {
+            ShowSystemDialogThen("Pembelian tujuan ditolak: " + result.ErrorMessage + "\n", () => view.ShowTujuanFinansialPurchasableOnly());
+            return;
+        }
+
+        GameState.Instance.BeliTujuanFinansial(player, goal);
+        await SyncTujuanFinansialFromServerAsync(player);
+
+        if (this == null)
+        {
+            return;
+        }
+
+        view.UpdatePlayerStats();
+        string resultText = "Membeli kartu tujuan " + goal.nama + " seharga " + goal.hargaBeli + " koin tabungan (+"
+            + goal.poinKebahagiaan + " kebahagiaan). Sisa tabungan: " + GameState.Instance.GetSaving(player) + " koin\n";
+        PlayNarasiThen("TujuanFinansial", resultText, CompleteTujuanFinansialFlow);
     }
 
     private async Task SyncTujuanFinansialFromServerAsync(int player)
@@ -211,6 +265,7 @@ public partial class ChoiceController
             return;
         }
 
+        NarafinActiveSession.SetStateVersion(stateResult.StateVersion);
         foreach (NarafinSessionStatePlayer serverPlayer in stateResult.Players)
         {
             if (serverPlayer != null && serverPlayer.player_order_no == player)
@@ -222,88 +277,6 @@ public partial class ChoiceController
     }
 
     // Alur lama tanpa katalog ruleset session (mode offline): menabung ke tabungan gabungan lalu membeli tujuan.
-    private void HandleChoiceTFLegacy(string selectedChoice)
-    {
-        Debug.Log($"{selectedChoice} dipilih");
-        if (DataManager.Instance == null || DataManager.Instance.tujuanFinansialDict == null
-            || !DataManager.Instance.tujuanFinansialDict.ContainsKey(selectedChoice))
-        {
-            return;
-        }
-
-        var amount = 0 - DataManager.Instance.tujuanFinansialDict[selectedChoice].hargaBeli;
-
-        if (GameState.Instance.Saving + amount < 0)
-        {
-            Debug.Log("Tabungan tidak cukup untuk membeli " + selectedChoice);
-            view.AddTextToDialog("Tabungan tidak cukup untuk membeli " + selectedChoice + "\n");
-            CompleteTujuanFinansialFlow();
-            return;
-        }
-
-        GameState.Instance.ChangeSaving(amount);
-        GameState.Instance.AddTujuanFinansialToList(selectedChoice);
-        view.UpdateSaving(GameState.Instance.Saving);
-
-        var amountHappiness = DataManager.Instance.tujuanFinansialDict[selectedChoice].poinKebahagiaan;
-        GameState.Instance.ChangeHappiness(amountHappiness);
-        view.UpdateHappiness(GameState.Instance.Happiness);
-        PostTujuanFinansialEvent(GameState.Instance.turn, selectedChoice, -amount, amountHappiness);
-
-        string resultText = "Membeli tujuan finansial " + selectedChoice + " seharga " + (-amount) + " koin dengan poin kebahagiaan " + amountHappiness + "\n";
-        PlayNarasiThen("TujuanFinansial", resultText, CompleteTujuanFinansialFlow);
-    }
-
-    private void HandleChoiceMenabungLegacy(string selectedChoice)
-    {
-        Debug.Log($"{selectedChoice} dipilih");
-
-        switch (selectedChoice)
-        {
-            case "MaxButton":
-                GameState.Instance.SetSavingText(15);
-                break;
-            case "MinButton":
-                GameState.Instance.SetSavingText(0);
-                break;
-            case "IncreaseButton":
-                if (GameState.Instance.SavingText < 15)
-                {
-                    GameState.Instance.ChangeSavingText(1);
-                }
-                break;
-            case "DecreaseButton":
-                if (GameState.Instance.SavingText > 0)
-                {
-                    GameState.Instance.ChangeSavingText(-1);
-                }
-                break;
-            case "ConfirmButton":
-                if (GameState.Instance.SavingText <= 0 || GameState.Instance.SavingText > GameState.Instance.Coins)
-                {
-                    Debug.Log("Jumlah tabungan harus lebih dari 0");
-                    view.AddTextToDialog("Jumlah tabungan harus lebih dari 0\n");
-                    view.ShowChoice("Choice1");
-                    return;
-                }
-                GameState.Instance.ChangeSaving(GameState.Instance.SavingText);
-                GameState.Instance.ChangeCoins(-GameState.Instance.SavingText);
-                view.UpdateCoins(GameState.Instance.Coins);
-                view.UpdateSaving(GameState.Instance.Saving);
-                PostMenabungEvent(GameState.Instance.turn, GameState.Instance.SavingText);
-
-                string savingText = "Menabung " + GameState.Instance.SavingText + " koin\n";
-                PlayNarasiThen("Menabung", savingText, ContinueAfterMenabung);
-                break;
-            default:
-                Debug.Log("Pilihan tidak valid");
-                break;
-        }
-
-        Debug.Log("SavingText: " + GameState.Instance.SavingText.ToString());
-        view.UpdateSavingText(GameState.Instance.SavingText);
-    }
-
     private void HandleChoiceTFConfirm(string selectedChoice)
     {
         if (!isPendingTujuanFinansialConfirmation)
@@ -355,17 +328,19 @@ public partial class ChoiceController
 
     private bool HasAffordableTujuanFinansial()
     {
-        if (DataManager.Instance == null || DataManager.Instance.tujuanFinansialDict == null)
+        if (UseTujuanFinansialCatalog)
         {
-            return false;
-        }
-
-        foreach (var tujuan in DataManager.Instance.tujuanFinansialDict.Values)
-        {
-            if (GameState.Instance.Saving >= tujuan.hargaBeli)
+            int player = GameState.Instance.turn;
+            foreach (NarafinSetupFinancialGoal goal in NarafinActiveSession.GetFinancialGoals(NarafinActiveSession.Catalog))
             {
-                return true;
+                if (!GameState.Instance.IsTujuanFinansialDimiliki(player, goal.id)
+                    && GameState.Instance.GetSaving(player) >= goal.hargaBeli)
+                {
+                    return true;
+                }
             }
+
+            return false;
         }
 
         return false;
@@ -383,7 +358,8 @@ public partial class ChoiceController
         ShowNextScheduledChoice();
     }
 
-    public void CancelPendingTujuanFinansialConfirmation()
+    // Back dari daftar kartu tujuan kembali ke panel "ingin membeli?", bukan langsung mengakhiri giliran.
+    public void BackFromTujuanFinansialList()
     {
         if (!isPendingTujuanFinansialConfirmation)
         {
@@ -391,6 +367,6 @@ public partial class ChoiceController
             return;
         }
 
-        CompleteTujuanFinansialFlow();
+        view.ShowTujuanFinansialConfirmation();
     }
 }

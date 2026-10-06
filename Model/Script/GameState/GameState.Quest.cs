@@ -8,12 +8,7 @@ public partial class GameState
     public List<QuestData> GetQuestList()
     {
         List<QuestData> quests = new List<QuestData>();
-        if (DataManager.Instance?.questDict == null)
-        {
-            return quests;
-        }
-
-        foreach (QuestData quest in DataManager.Instance.questDict.Values)
+        foreach (QuestData quest in QuestSessionContext.QuestById.Values)
         {
             if (quest != null && !string.IsNullOrWhiteSpace(quest.id))
             {
@@ -63,9 +58,8 @@ public partial class GameState
 
     public string GetQuestDisplayName(string questId)
     {
-        if (DataManager.Instance?.questDict != null
-            && !string.IsNullOrWhiteSpace(questId)
-            && DataManager.Instance.questDict.TryGetValue(questId, out QuestData quest)
+        if (!string.IsNullOrWhiteSpace(questId)
+            && QuestSessionContext.QuestById.TryGetValue(questId, out QuestData quest)
             && quest != null
             && !string.IsNullOrWhiteSpace(quest.nama))
         {

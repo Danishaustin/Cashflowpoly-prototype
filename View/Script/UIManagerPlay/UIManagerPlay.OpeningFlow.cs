@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -28,11 +27,20 @@ public partial class UIManagerPlay
 
         HideNpcContainer();
         UpdatePlayerContainerSprite(GameState.Instance != null ? GameState.Instance.turn : 1);
+
         playerContainer.style.display = DisplayStyle.Flex;
-        playerContainer.schedule.Execute(() =>
+        playerContainer.RemoveFromClassList("show-character");
+
+        // Hari pertama harus melewati jalur harian yang sama seperti hari lainnya, supaya pemeriksaan hari
+        // khusus, pemeriksaan game over, dan narasi Intro Hari ikut berjalan. Memanggil ShowChoice1
+        // langsung membuat Intro Hari hari ke-1 terlambat sampai sesudah aksi pertama.
+        if (choiceController != null)
         {
-            playerContainer.AddToClassList("show-character");
-        }).StartingIn(1);
+            choiceController.ShowCurrentDayChoice();
+            return;
+        }
+
+        ShowChoice1();
     }
 
     private void ShowInitialBahanChoice()
@@ -44,8 +52,6 @@ public partial class UIManagerPlay
 
     public void ShowInitialBahanChoiceForPlayer(int player)
     {
-        isOpeningSetupActive = true;
-        CancelOpeningChoiceFlow();
         HideDialogContainer();
         SetChoiceBackground("ChoiceInitialBahan");
 
@@ -108,7 +114,6 @@ public partial class UIManagerPlay
 
     public void ShowTargetKebutuhanChoiceForPlayer(int player)
     {
-        isOpeningSetupActive = true;
         HideDialogContainer();
         SetChoiceBackground("ChoiceTargetKebutuhan");
         choiceController?.ResetTargetKebutuhanSelection();
@@ -130,7 +135,7 @@ public partial class UIManagerPlay
         }
 
         RefreshTargetKebutuhanButtons();
-        int targetPlayerCount = GameState.Instance != null ? GameState.Instance.playerCount : 3;
+        int targetPlayerCount = GameState.Instance != null ? GameState.Instance.playerCount : 2;
         RefreshTargetKebutuhanSelectionUI(new List<string>(), targetPlayerCount);
 
         if (choiceContainers != null && choiceContainers.ContainsKey("ChoiceTargetKebutuhan"))
@@ -146,83 +151,9 @@ public partial class UIManagerPlay
         }
     }
 
-    private void ShowTextContainer(TransitionEndEvent evt)
-    {
-        if (isOpeningSetupActive)
-        {
-            return;
-        }
-
-        if (hasStartedOpeningChoiceFlow)
-        {
-            return;
-        }
-
-        hasStartedOpeningChoiceFlow = true;
-        ShowDialogContainer();
-        Dialog(dialog, "Sekarang ngapain ya?");
-        openingChoiceCoroutine = StartCoroutine(WaitForOpeningChoiceClick());
-    }
-
-    private IEnumerator WaitForOpeningChoiceClick()
-    {
-        yield return null;
-
-        bool canShowChoice = false;
-        while (!canShowChoice)
-        {
-            if (Input.GetMouseButtonDown(0))
-            {
-                if (dialogTween != null && dialogTween.IsActive() && dialogTween.IsPlaying())
-                {
-                    dialogTween.Complete();
-                }
-                else
-                {
-                    canShowChoice = true;
-                }
-            }
-
-            yield return null;
-        }
-
-        yield return TransitionOpeningCharacterToChoice1();
-    }
-
-    private void CancelOpeningChoiceFlow()
-    {
-        if (openingChoiceCoroutine != null)
-        {
-            StopCoroutine(openingChoiceCoroutine);
-            openingChoiceCoroutine = null;
-        }
-
-        HideDialogContainer();
-    }
-
     public void CompleteOpeningSetup()
     {
-        isOpeningSetupActive = false;
-        CancelOpeningChoiceFlow();
-    }
-
-    private IEnumerator TransitionOpeningCharacterToChoice1()
-    {
         HideDialogContainer();
-
-        if (playerContainer != null && playerContainer.ClassListContains("show-character"))
-        {
-            playerContainer.RemoveFromClassList("show-character");
-            yield return new WaitForSeconds(DialogCharacterTransitionDuration);
-        }
-
-        if (playerContainer != null)
-        {
-            playerContainer.style.display = DisplayStyle.None;
-        }
-
-        openingChoiceCoroutine = null;
-        ShowChoice1();
     }
 
     private void ShowChoice1()

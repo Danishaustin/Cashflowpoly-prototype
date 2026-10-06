@@ -107,6 +107,16 @@ public partial class UIManagerPlay : MonoBehaviour
     private Button nextTujuanFinansialButton;
     private Button resumePauseButton;
     private Button homePauseButton;
+    private Button selesaiHomeButton;
+    private Button selesaiRetryButton;
+    private ScrollView selesaiScoreList;
+    private Button backChoiceKLButton;
+    private Button backChoiceJumlahEmasButton;
+    private Label choiceConfirmText;
+    private VisualElement exitConfirmPanel;
+    private Label exitConfirmText;
+    private Button exitConfirmYesButton;
+    private Button exitConfirmNoButton;
     private Button questToggleButton;
     private Button closeQuestButton;
     private Button inventoryToggleButton;
@@ -172,9 +182,6 @@ public partial class UIManagerPlay : MonoBehaviour
     private string activeBackgroundClass = "background-city";
     private int backgroundTransitionVersion;
     private int ignoredDialogClickFrame = -1;
-    private bool hasStartedOpeningChoiceFlow;
-    private Coroutine openingChoiceCoroutine;
-    private bool isOpeningSetupActive = true;
     private bool showOnlyAffordableTujuanFinansial;
 
     void Start()
@@ -237,6 +244,16 @@ public partial class UIManagerPlay : MonoBehaviour
         nextTujuanFinansialButton = root.Q<Button>("NextTujuanFinansialButton");
         resumePauseButton = root.Q<Button>("ResumePauseButton");
         homePauseButton = root.Q<Button>("HomePauseButton");
+        selesaiHomeButton = root.Q<Button>("SelesaiHomeButton");
+        selesaiRetryButton = root.Q<Button>("SelesaiRetryButton");
+        selesaiScoreList = root.Q<ScrollView>("SelesaiScoreList");
+        backChoiceKLButton = root.Q<Button>("BackChoiceKLButton");
+        backChoiceJumlahEmasButton = root.Q<Button>("BackChoiceJumlahEmasButton");
+        choiceConfirmText = root.Q<Label>("ChoiceConfirmText");
+        exitConfirmPanel = root.Q<VisualElement>("ExitConfirmPanel");
+        exitConfirmText = root.Q<Label>("ExitConfirmText");
+        exitConfirmYesButton = root.Q<Button>("ExitConfirmYesButton");
+        exitConfirmNoButton = root.Q<Button>("ExitConfirmNoButton");
         questToggleButton = root.Q<Button>("QuestToggleButton");
         closeQuestButton = root.Q<Button>("CloseQuestButton");
         inventoryToggleButton = root.Q<Button>("InventoryToggleButton");
@@ -276,6 +293,7 @@ public partial class UIManagerPlay : MonoBehaviour
         BuildKebutuhanChoiceButtons(root.Q<VisualElement>("ChoiceK"));
         BuildJualMasakanChoiceButtons(root.Q<VisualElement>("ChoiceJM"));
         BuildTujuanFinansialChoiceButtons(root.Q<VisualElement>("ChoiceTF"));
+        AddMainChoiceIcons(root.Q<VisualElement>("Choice1"));
         BuildInitialBahanChoiceButtons(initialBahanGrid);
         BuildTargetKebutuhanChoiceButtons(targetKebutuhanGrid);
 
@@ -335,6 +353,7 @@ public partial class UIManagerPlay : MonoBehaviour
             "ChoiceTFConfirm",
             "JumatBerkah",
             "ChoiceKJumlah",
+            "ChoiceConfirm",
             "ChoiceFinalHappiness",
             "PermainanSelesai"
         };
@@ -346,13 +365,14 @@ public partial class UIManagerPlay : MonoBehaviour
 
         textContainer.style.display = DisplayStyle.None;
 
-        playerContainer.RegisterCallback<TransitionEndEvent>(ShowTextContainer);
         pauseToggleButton.RegisterCallback<ClickEvent>(TogglePause);
         backChoiceBMButton.RegisterCallback<ClickEvent>(BackFromChoiceBM);
         previousBahanButton.RegisterCallback<ClickEvent>(ShowPreviousBahanPage);
         nextBahanButton.RegisterCallback<ClickEvent>(ShowNextBahanPage);
         backChoiceKButton.RegisterCallback<ClickEvent>(BackFromChoiceK);
         backChoiceKJumlahButton.RegisterCallback<ClickEvent>(BackFromChoiceKJumlah);
+        backChoiceKLButton?.RegisterCallback<ClickEvent>(BackFromChoiceKL);
+        backChoiceJumlahEmasButton?.RegisterCallback<ClickEvent>(BackFromChoiceJumlahEmas);
         previousKebutuhanButton.RegisterCallback<ClickEvent>(ShowPreviousKebutuhanPage);
         nextKebutuhanButton.RegisterCallback<ClickEvent>(ShowNextKebutuhanPage);
         backChoiceJMButton.RegisterCallback<ClickEvent>(BackFromChoiceJM);
@@ -365,6 +385,10 @@ public partial class UIManagerPlay : MonoBehaviour
         nextTujuanFinansialButton.RegisterCallback<ClickEvent>(ShowNextTujuanFinansialPage);
         resumePauseButton.RegisterCallback<ClickEvent>(ResumePause);
         homePauseButton.RegisterCallback<ClickEvent>(GoToHome);
+        selesaiHomeButton?.RegisterCallback<ClickEvent>(GoToHomeAfterGameFinished);
+        selesaiRetryButton?.RegisterCallback<ClickEvent>(RetryEndSessionFromGameFinished);
+        exitConfirmYesButton?.RegisterCallback<ClickEvent>(ConfirmExitToHome);
+        exitConfirmNoButton?.RegisterCallback<ClickEvent>(CancelExitToHome);
         questToggleButton.RegisterCallback<ClickEvent>(ToggleQuestPanel);
         closeQuestButton.RegisterCallback<ClickEvent>(HideQuestPanel);
         inventoryToggleButton.RegisterCallback<ClickEvent>(ToggleInventoryPanel);
@@ -409,6 +433,10 @@ public partial class UIManagerPlay : MonoBehaviour
             if (button == backChoiceBMButton || button == previousBahanButton || button == nextBahanButton
                 || button == backChoiceKButton || button == previousKebutuhanButton || button == nextKebutuhanButton
                 || button == backChoiceKJumlahButton
+                || button == backChoiceKLButton
+                || button == backChoiceJumlahEmasButton
+                || button == selesaiHomeButton
+                || button == selesaiRetryButton
                 || button == backChoiceJMButton || button == previousJualMasakanButton || button == nextJualMasakanButton
                 || button == backChoicePSButton
                 || button == backChoiceMenabungButton
@@ -486,7 +514,7 @@ public partial class UIManagerPlay : MonoBehaviour
         }
     }
 
-    private void HideAllChoiceContainers()
+    public void HideAllChoiceContainers()
     {
         if (choiceContainers == null)
         {

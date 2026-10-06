@@ -1,0 +1,9 @@
+{
+    "questPacks": [
+        {
+            "id": "quest_dummy",
+            "name": "Dummy Uji Quest",
+            "file": "quest_dummy"
+        }
+    ]
+}

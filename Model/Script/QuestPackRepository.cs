@@ -30,16 +30,46 @@ public static class QuestPackRepository
         string manifestPath = GetManifestFilePath();
         if (File.Exists(manifestPath))
         {
-            return NormalizeManifest(JsonUtility.FromJson<QuestManifestData>(File.ReadAllText(manifestPath)));
+            return MergeBundledPacks(NormalizeManifest(JsonUtility.FromJson<QuestManifestData>(File.ReadAllText(manifestPath))));
         }
 
+        return LoadBundledManifest() ?? new QuestManifestData { questPacks = new List<QuestPackData>() };
+    }
+
+    private static QuestManifestData LoadBundledManifest()
+    {
         TextAsset manifestAsset = Resources.Load<TextAsset>(ManifestResourcePath);
-        if (manifestAsset != null)
+        return manifestAsset != null ? NormalizeManifest(JsonUtility.FromJson<QuestManifestData>(manifestAsset.text)) : null;
+    }
+
+    // Paket bawaan build yang belum ada di manifest akun ditambahkan; paket dengan id atau file yang sama
+    // tetap memakai versi akun.
+    private static QuestManifestData MergeBundledPacks(QuestManifestData manifest)
+    {
+        QuestManifestData bundledManifest = LoadBundledManifest();
+        if (bundledManifest == null)
         {
-            return NormalizeManifest(JsonUtility.FromJson<QuestManifestData>(manifestAsset.text));
+            return manifest;
         }
 
-        return new QuestManifestData { questPacks = new List<QuestPackData>() };
+        foreach (QuestPackData bundledPack in bundledManifest.questPacks)
+        {
+            if (bundledPack == null
+                || PackIdExists(manifest, bundledPack.id)
+                || PackFileExists(manifest, Path.GetFileNameWithoutExtension(bundledPack.file ?? string.Empty)))
+            {
+                continue;
+            }
+
+            manifest.questPacks.Add(bundledPack);
+        }
+
+        return manifest;
+    }
+
+    public static bool IsBundledPack(string packId)
+    {
+        return FindPackById(LoadBundledManifest(), packId) != null;
     }
 
     public static async Task<QuestManifestData> LoadManifestAsync()
@@ -47,7 +77,8 @@ public static class QuestPackRepository
         string cloudJson = await TryLoadCloudTextAsync(ManifestCloudKey);
         if (!string.IsNullOrWhiteSpace(cloudJson))
         {
-            QuestManifestData cloudManifest = NormalizeManifest(JsonUtility.FromJson<QuestManifestData>(cloudJson));
+            // Paket bawaan build tetap digabung supaya akun yang belum punya paket itu ikut mendapatkannya.
+            QuestManifestData cloudManifest = MergeBundledPacks(NormalizeManifest(JsonUtility.FromJson<QuestManifestData>(cloudJson)));
             SaveManifest(cloudManifest);
             return cloudManifest;
         }
@@ -65,7 +96,13 @@ public static class QuestPackRepository
         string packPath = GetPackFilePath(pack);
         if (File.Exists(packPath))
         {
-            return NormalizeQuestDatabase(JsonUtility.FromJson<QuestDatabase>(File.ReadAllText(packPath)));
+            QuestDatabase localDatabase = NormalizeQuestDatabase(JsonUtility.FromJson<QuestDatabase>(File.ReadAllText(packPath)));
+
+            // Salinan lokal kosong tidak boleh menutupi isi paket bawaan build.
+            if (localDatabase.quest.Count > 0)
+            {
+                return localDatabase;
+            }
         }
 
         TextAsset packAsset = Resources.Load<TextAsset>(ResourceDirectory + "/" + Path.GetFileNameWithoutExtension(pack.file));
@@ -120,13 +157,13 @@ public static class QuestPackRepository
         File.WriteAllText(path, JsonUtility.ToJson(NormalizeQuestDatabase(database), true));
     }
 
-    public static async Task SaveQuestDatabaseAsync(QuestPackData pack, QuestDatabase database, bool requireCloudSave = false)
+    // UGS adalah sumber utama quest: unggahan wajib berhasil dulu, salinan lokal hanya cache setelahnya.
+    public static async Task SaveQuestDatabaseAsync(QuestPackData pack, QuestDatabase database, bool requireCloudSave = true)
     {
         QuestDatabase normalizedDatabase = NormalizeQuestDatabase(database);
-        SaveQuestDatabase(pack, normalizedDatabase);
-
         if (pack == null)
         {
+            SaveQuestDatabase(pack, normalizedDatabase);
             return;
         }
 
@@ -140,6 +177,7 @@ public static class QuestPackRepository
             await SaveCloudTextOrLogAsync(GetPackCloudKey(pack), json);
         }
 
+        SaveQuestDatabase(pack, normalizedDatabase);
         await SaveManifestAsync(LoadManifest(), requireCloudSave);
     }
 
@@ -208,7 +246,17 @@ public static class QuestPackRepository
         }
 
         pack.name = cleanName;
-        await SaveManifestAsync(manifest);
+        try
+        {
+            await SaveManifestAsync(manifest, true);
+        }
+        catch (Exception ex)
+        {
+            result.Success = false;
+            result.ErrorMessage = "Gagal menyimpan nama paket quest ke UGS: " + ex.Message;
+            return result;
+        }
+
         result.Success = true;
         return result;
     }
@@ -232,12 +280,20 @@ public static class QuestPackRepository
             return result;
         }
 
+        // Paket bawaan build akan muncul lagi setelah manifest dimuat ulang, jadi tidak bisa dihapus.
+        if (IsBundledPack(pack.id))
+        {
+            result.Success = false;
+            result.ErrorMessage = "Paket quest bawaan aplikasi tidak dapat dihapus.";
+            return result;
+        }
+
         manifest.questPacks.Remove(pack);
 
         try
         {
+            await SaveManifestAsync(manifest, true);
             DeleteLocalPackFile(pack);
-            await SaveManifestAsync(manifest);
             await DeleteCloudFileOrLogAsync(GetPackCloudKey(pack));
             result.Success = true;
             return result;
@@ -291,7 +347,7 @@ public static class QuestPackRepository
         File.WriteAllText(manifestPath, JsonUtility.ToJson(NormalizeManifest(manifest), true));
     }
 
-    private static async Task SaveManifestAsync(QuestManifestData manifest, bool requireCloudSave = false)
+    private static async Task SaveManifestAsync(QuestManifestData manifest, bool requireCloudSave = true)
     {
         QuestManifestData normalizedManifest = NormalizeManifest(manifest);
         string json = JsonUtility.ToJson(normalizedManifest, true);
@@ -542,10 +598,7 @@ public static class QuestSessionContext
 
             ActiveDatabase = database;
 
-            if (DataManager.Instance != null)
-            {
-                ApplyTo(DataManager.Instance);
-            }
+            BuildQuestIndex(database, ActivePackName);
 
             return new NarafinSessionOperationResult { Success = true };
         }
@@ -561,14 +614,34 @@ public static class QuestSessionContext
         }
     }
 
-    public static void ApplyTo(DataManager dataManager)
+    // Indeks quest per id, dipakai GameState.Quest. Dulu disimpan DataManager.
+    public static Dictionary<string, QuestData> QuestById { get; private set; } = new Dictionary<string, QuestData>();
+
+    private static void BuildQuestIndex(QuestDatabase database, string sourceName)
     {
-        if (dataManager == null || ActiveDatabase == null)
+        QuestById = new Dictionary<string, QuestData>();
+        if (database?.quest == null)
         {
+            Debug.LogWarning("WARN: Data quest " + sourceName + " tidak valid.");
             return;
         }
 
-        dataManager.OverrideQuest(ActiveDatabase, ActivePackName);
+        foreach (QuestData quest in database.quest)
+        {
+            if (quest == null || string.IsNullOrWhiteSpace(quest.id))
+            {
+                continue;
+            }
+
+            if (QuestById.ContainsKey(quest.id))
+            {
+                Debug.LogWarning("Quest dengan id ganda pada " + sourceName + ": " + quest.id);
+            }
+
+            QuestById[quest.id] = quest;
+        }
+
+        Debug.Log("OK: Quest " + sourceName + " dimuat (" + QuestById.Count + " quest)");
     }
 }
 

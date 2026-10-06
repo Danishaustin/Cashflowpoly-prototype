@@ -64,11 +64,30 @@
             <ui:VisualElement name="Body" class="edit-narasi-select-body">
                 <ui:VisualElement name="EditQuestSelectCard" class="edit-narasi-select-card">
                     <ui:Label tabindex="-1" text="Pilih Quest" parse-escape-sequences="true" display-tooltip-when-elided="true" name="EditQuestSelectTitle" class="edit-menu-title" />
-                    <ui:Label tabindex="-1" text="Paket Quest" parse-escape-sequences="true" display-tooltip-when-elided="true" class="edit-field-label" />
-                    <ui:DropdownField name="EditQuestPackDropdown" class="edit-narasi-pack-dropdown" />
-                    <ui:VisualElement name="EditQuestPackActions" class="edit-action-row">
-                        <ui:Button text="+ New" parse-escape-sequences="true" display-tooltip-when-elided="true" name="EditQuestPackNewButton" class="home-button edit-narasi-pack-new-button" />
-                        <ui:Button text="Delete" parse-escape-sequences="true" display-tooltip-when-elided="true" name="EditQuestPackDeleteButton" class="home-button edit-narasi-pack-new-button edit-delete-button" />
+                    <ui:VisualElement name="EditQuestSelectColumns" class="narasi-select-columns">
+                        <ui:VisualElement name="EditQuestOwnColumn" class="narasi-select-column">
+                            <ui:Label tabindex="-1" text="Paket Milik Sendiri" parse-escape-sequences="true" display-tooltip-when-elided="true" name="QuestOwnColumnTitle" class="narasi-column-title" />
+                            <ui:Label tabindex="-1" text="Paket Quest" parse-escape-sequences="true" display-tooltip-when-elided="true" class="narasi-global-field-label" />
+                            <ui:DropdownField name="EditQuestPackDropdown" class="narasi-global-dropdown" />
+                            <ui:VisualElement name="EditQuestPackActions" class="edit-action-row">
+                                <ui:Button text="+ New" parse-escape-sequences="true" display-tooltip-when-elided="true" name="EditQuestPackNewButton" class="home-button edit-narasi-pack-new-button" />
+                                <ui:Button text="Delete" parse-escape-sequences="true" display-tooltip-when-elided="true" name="EditQuestPackDeleteButton" class="home-button edit-narasi-pack-new-button edit-delete-button" />
+                            </ui:VisualElement>
+                            <ui:Label tabindex="-1" text="Paket yang dipilih di sini yang akan diedit questnya." parse-escape-sequences="true" display-tooltip-when-elided="true" name="QuestOwnColumnHint" class="narasi-global-hint" />
+                        </ui:VisualElement>
+                        <ui:VisualElement name="QuestSelectDivider" class="narasi-select-divider" />
+                        <ui:VisualElement name="QuestGlobalSection" class="narasi-select-column">
+                            <ui:VisualElement name="QuestGlobalHeaderRow" class="narasi-global-header-row">
+                                <ui:Label tabindex="-1" text="Quest Global" parse-escape-sequences="true" display-tooltip-when-elided="true" name="QuestGlobalSectionTitle" class="narasi-column-title" />
+                                <ui:Label tabindex="-1" text="Pribadi" parse-escape-sequences="true" display-tooltip-when-elided="true" name="QuestGlobalShareStatus" class="narasi-global-badge" />
+                            </ui:VisualElement>
+                            <ui:Label tabindex="-1" text="Bagikan paket yang dipilih" parse-escape-sequences="true" display-tooltip-when-elided="true" name="QuestGlobalShareLabel" class="narasi-global-field-label" />
+                            <ui:Button text="Bagikan" parse-escape-sequences="true" display-tooltip-when-elided="true" name="QuestGlobalShareButton" class="home-button narasi-global-wide-button" />
+                            <ui:Label tabindex="-1" text="Ambil dari Katalog Global" parse-escape-sequences="true" display-tooltip-when-elided="true" name="QuestGlobalCatalogLabel" class="narasi-global-field-label" />
+                            <ui:DropdownField name="QuestGlobalCatalogDropdown" class="narasi-global-dropdown" />
+                            <ui:Button text="Adopsi Salinan" parse-escape-sequences="true" display-tooltip-when-elided="true" name="QuestGlobalAdoptButton" class="home-button narasi-global-wide-button" />
+                            <ui:Label tabindex="-1" text="Salinan menjadi milikmu sendiri dan bisa diedit bebas." parse-escape-sequences="true" display-tooltip-when-elided="true" name="QuestGlobalHint" class="narasi-global-hint" />
+                        </ui:VisualElement>
                     </ui:VisualElement>
                 </ui:VisualElement>
             </ui:VisualElement>
@@ -121,17 +140,36 @@
             <ui:VisualElement name="Body" class="edit-narasi-select-body">
                 <ui:VisualElement name="EditNarasiSelectCard" class="edit-narasi-select-card">
                     <ui:Label tabindex="-1" text="Pilih Narasi" parse-escape-sequences="true" display-tooltip-when-elided="true" name="EditNarasiSelectTitle" class="edit-menu-title" />
-                    <ui:Label tabindex="-1" text="Paket Narasi" parse-escape-sequences="true" display-tooltip-when-elided="true" class="edit-field-label" />
-                    <ui:DropdownField name="EditNarasiPackDropdown" class="edit-narasi-pack-dropdown" />
-                    <ui:VisualElement name="EditNarasiPackActions" class="edit-action-row">
-                        <ui:Button text="+ New" parse-escape-sequences="true" display-tooltip-when-elided="true" name="EditNarasiPackNewButton" class="home-button edit-narasi-pack-new-button" />
-                        <ui:Button text="Delete" parse-escape-sequences="true" display-tooltip-when-elided="true" name="EditNarasiPackDeleteButton" class="home-button edit-narasi-pack-new-button edit-delete-button" />
+                    <ui:VisualElement name="EditNarasiSelectColumns" class="narasi-select-columns">
+                        <ui:VisualElement name="EditNarasiOwnColumn" class="narasi-select-column">
+                            <ui:Label tabindex="-1" text="Paket Milik Sendiri" parse-escape-sequences="true" display-tooltip-when-elided="true" name="NarasiOwnColumnTitle" class="narasi-column-title" />
+                            <ui:Label tabindex="-1" text="Paket Narasi" parse-escape-sequences="true" display-tooltip-when-elided="true" class="narasi-global-field-label" />
+                            <ui:DropdownField name="EditNarasiPackDropdown" class="narasi-global-dropdown" />
+                            <ui:VisualElement name="EditNarasiPackActions" class="edit-action-row">
+                                <ui:Button text="+ New" parse-escape-sequences="true" display-tooltip-when-elided="true" name="EditNarasiPackNewButton" class="home-button edit-narasi-pack-new-button" />
+                                <ui:Button text="Delete" parse-escape-sequences="true" display-tooltip-when-elided="true" name="EditNarasiPackDeleteButton" class="home-button edit-narasi-pack-new-button edit-delete-button" />
+                            </ui:VisualElement>
+                            <ui:Label tabindex="-1" text="Paket yang dipilih di sini yang akan diedit dialognya." parse-escape-sequences="true" display-tooltip-when-elided="true" name="NarasiOwnColumnHint" class="narasi-global-hint" />
+                        </ui:VisualElement>
+                        <ui:VisualElement name="NarasiSelectDivider" class="narasi-select-divider" />
+                        <ui:VisualElement name="NarasiGlobalSection" class="narasi-select-column">
+                            <ui:VisualElement name="NarasiGlobalHeaderRow" class="narasi-global-header-row">
+                                <ui:Label tabindex="-1" text="Narasi Global" parse-escape-sequences="true" display-tooltip-when-elided="true" name="NarasiGlobalSectionTitle" class="narasi-column-title" />
+                                <ui:Label tabindex="-1" text="Pribadi" parse-escape-sequences="true" display-tooltip-when-elided="true" name="NarasiGlobalShareStatus" class="narasi-global-badge" />
+                            </ui:VisualElement>
+                            <ui:Label tabindex="-1" text="Bagikan paket yang dipilih" parse-escape-sequences="true" display-tooltip-when-elided="true" name="NarasiGlobalShareLabel" class="narasi-global-field-label" />
+                            <ui:Button text="Bagikan" parse-escape-sequences="true" display-tooltip-when-elided="true" name="NarasiGlobalShareButton" class="home-button narasi-global-wide-button" />
+                            <ui:Label tabindex="-1" text="Ambil dari Katalog Global" parse-escape-sequences="true" display-tooltip-when-elided="true" name="NarasiGlobalCatalogLabel" class="narasi-global-field-label" />
+                            <ui:DropdownField name="NarasiGlobalCatalogDropdown" class="narasi-global-dropdown" />
+                            <ui:Button text="Adopsi Salinan" parse-escape-sequences="true" display-tooltip-when-elided="true" name="NarasiGlobalAdoptButton" class="home-button narasi-global-wide-button" />
+                            <ui:Label tabindex="-1" text="Salinan menjadi milikmu sendiri dan bisa diedit bebas." parse-escape-sequences="true" display-tooltip-when-elided="true" name="NarasiGlobalHint" class="narasi-global-hint" />
+                        </ui:VisualElement>
                     </ui:VisualElement>
                 </ui:VisualElement>
             </ui:VisualElement>
             <ui:Button text="Next" parse-escape-sequences="true" display-tooltip-when-elided="true" name="NextEditPemilihanNarasiButton" class="home-button edit-narasi-select-next-button" />
         </ui:VisualElement>
-        <ui:VisualElement name="EditNarasiContainer" class="edit-narasi-page">
+        <ui:VisualElement name="EditNarasiContainer" class="edit-narasi-page show-edit-narasi">
             <ui:VisualElement name="Navbar" class="navbar edit-narasi-navbar">
                 <ui:Button text="Back" parse-escape-sequences="true" display-tooltip-when-elided="true" name="BackEditNarasiButton" class="home-button navbar-button" />
             </ui:VisualElement>
@@ -186,7 +224,6 @@
                             </ui:VisualElement>
                             <ui:VisualElement name="EditNarasiPrerequisiteSection" class="edit-section-card">
                                 <ui:Label tabindex="-1" text="Prerequisite" parse-escape-sequences="true" display-tooltip-when-elided="true" class="edit-section-title" />
-                                <ui:Label tabindex="-1" text="Isi syarat bahan, kebutuhan, tujuan finansial, masakan terjual dengan nama item dan pisahkan koma. Contoh: Buku, Sepatu, Makanan" parse-escape-sequences="true" display-tooltip-when-elided="true" class="edit-prerequisite-hint" />
                                 <ui:VisualElement name="EditNarasiPrerequisiteGrid" class="edit-prerequisite-grid">
                                     <ui:VisualElement class="edit-prerequisite-column">
                                         <ui:Label tabindex="-1" text="Minimal Koin&#10;" parse-escape-sequences="true" display-tooltip-when-elided="true" class="edit-field-label" />
@@ -205,17 +242,42 @@
                                         <ui:IntegerField name="EditNarasiWeekInput" class="edit-number-input" />
                                         <ui:Label tabindex="-1" text="Hari Ke-" parse-escape-sequences="true" display-tooltip-when-elided="true" class="edit-field-label" />
                                         <ui:IntegerField name="EditNarasiDayInput" class="edit-number-input" />
-                                        <ui:Toggle text="  Has Insurance" name="EditNarasiHasInsuranceToggle" class="edit-toggle" style="align-items: flex-end;" />
+                                        <ui:Label tabindex="-1" text="Has Insurance" parse-escape-sequences="true" display-tooltip-when-elided="true" class="edit-field-label" />
+                                        <ui:DropdownField name="EditNarasiHasInsuranceDropdown" class="edit-basic-dropdown" />
                                     </ui:VisualElement>
                                 </ui:VisualElement>
+                                <ui:Label tabindex="-1" text="Giliran Pemain" parse-escape-sequences="true" display-tooltip-when-elided="true" class="edit-field-label" />
+                                <ui:Label tabindex="-1" text="Dialog hanya diputar pada giliran pemain yang dicentang. Tanpa centang sama sekali, syarat ini tidak dipakai." parse-escape-sequences="true" display-tooltip-when-elided="true" class="edit-prerequisite-hint" />
+                                <ui:VisualElement name="EditNarasiGiliranPemainRow" style="flex-direction: row; justify-content: flex-start;">
+                                    <ui:Toggle text="  Pemain 1" name="EditNarasiGiliranPemain1Toggle" class="edit-toggle" style="margin-right: 24px;" />
+                                    <ui:Toggle text="  Pemain 2" name="EditNarasiGiliranPemain2Toggle" class="edit-toggle" style="margin-right: 24px;" />
+                                    <ui:Toggle text="  Pemain 3" name="EditNarasiGiliranPemain3Toggle" class="edit-toggle" style="margin-right: 24px;" />
+                                    <ui:Toggle text="  Pemain 4" name="EditNarasiGiliranPemain4Toggle" class="edit-toggle" />
+                                </ui:VisualElement>
                                 <ui:Label tabindex="-1" text="Syarat Bahan" parse-escape-sequences="true" display-tooltip-when-elided="true" class="edit-field-label" />
-                                <ui:TextField name="EditNarasiRequiredBahanInput" class="input-field edit-text-input" />
+                                <ui:VisualElement name="EditNarasiRequiredBahanRow" style="flex-direction: row; align-items: center;">
+                                    <ui:DropdownField name="EditNarasiRequiredBahanDropdown" class="edit-basic-dropdown edit-syarat-dropdown" />
+                                    <ui:Button text="Add" parse-escape-sequences="true" display-tooltip-when-elided="true" name="EditNarasiRequiredBahanAddButton" class="home-button edit-small-button" />
+                                </ui:VisualElement>
+                                <ui:VisualElement name="EditNarasiRequiredBahanList" style="flex-direction: row; flex-wrap: wrap;" />
                                 <ui:Label tabindex="-1" text="Syarat Kebutuhan" parse-escape-sequences="true" display-tooltip-when-elided="true" class="edit-field-label" />
-                                <ui:TextField name="EditNarasiRequiredKebutuhanInput" class="input-field edit-text-input" />
+                                <ui:VisualElement name="EditNarasiRequiredKebutuhanRow" style="flex-direction: row; align-items: center;">
+                                    <ui:DropdownField name="EditNarasiRequiredKebutuhanDropdown" class="edit-basic-dropdown edit-syarat-dropdown" style="flex-grow: 1;" />
+                                    <ui:Button text="Add" parse-escape-sequences="true" display-tooltip-when-elided="true" name="EditNarasiRequiredKebutuhanAddButton" class="home-button edit-small-button" />
+                                </ui:VisualElement>
+                                <ui:VisualElement name="EditNarasiRequiredKebutuhanList" style="flex-direction: row; flex-wrap: wrap;" />
                                 <ui:Label tabindex="-1" text="Syarat Tujuan Finansial" parse-escape-sequences="true" display-tooltip-when-elided="true" class="edit-field-label" />
-                                <ui:TextField name="EditNarasiRequiredTujuanFinansialInput" class="input-field edit-text-input" />
+                                <ui:VisualElement name="EditNarasiRequiredTujuanFinansialRow" style="flex-direction: row; align-items: center;">
+                                    <ui:DropdownField name="EditNarasiRequiredTujuanFinansialDropdown" class="edit-basic-dropdown edit-syarat-dropdown" style="flex-grow: 1;" />
+                                    <ui:Button text="Add" parse-escape-sequences="true" display-tooltip-when-elided="true" name="EditNarasiRequiredTujuanFinansialAddButton" class="home-button edit-small-button" />
+                                </ui:VisualElement>
+                                <ui:VisualElement name="EditNarasiRequiredTujuanFinansialList" style="flex-direction: row; flex-wrap: wrap;" />
                                 <ui:Label tabindex="-1" text="Syarat Masakan Terjual" parse-escape-sequences="true" display-tooltip-when-elided="true" class="edit-field-label" />
-                                <ui:TextField name="EditNarasiRequiredMasakanInput" class="input-field edit-text-input" />
+                                <ui:VisualElement name="EditNarasiRequiredMasakanRow" style="flex-direction: row; align-items: center;">
+                                    <ui:DropdownField name="EditNarasiRequiredMasakanDropdown" class="edit-basic-dropdown edit-syarat-dropdown" style="flex-grow: 1;" />
+                                    <ui:Button text="Add" parse-escape-sequences="true" display-tooltip-when-elided="true" name="EditNarasiRequiredMasakanAddButton" class="home-button edit-small-button" />
+                                </ui:VisualElement>
+                                <ui:VisualElement name="EditNarasiRequiredMasakanList" style="flex-direction: row; flex-wrap: wrap;" />
                                 <ui:Label tabindex="-1" text="Syarat Quest" parse-escape-sequences="true" display-tooltip-when-elided="true" class="edit-field-label" />
                                 <ui:DropdownField name="EditNarasiQuestPrereqDropdown" class="edit-basic-dropdown" />
                                 <ui:Label tabindex="-1" text="State Quest" parse-escape-sequences="true" display-tooltip-when-elided="true" class="edit-field-label" />

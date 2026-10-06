@@ -23,10 +23,18 @@ public partial class ChoiceController
         switch (selectedChoice)
         {
             case "AmbilPinjamanSyariah":
-                _ = AmbilPinjamanSyariahAsync();
+                NarafinSetupLoan loanProduct = GetPinjamanSyariahProduct();
+                AskConfirmation(
+                    "Ambil pinjaman " + loanProduct.principal + " koin dengan pengembalian "
+                        + loanProduct.repayment_amount + " koin?",
+                    () => _ = AmbilPinjamanSyariahAsync(),
+                    () => view.ShowChoice("PinjamanSyariah"));
                 break;
             case "KembalikanPinjamanSyariah":
-                _ = KembalikanPinjamanSyariahAsync();
+                AskConfirmation(
+                    "Kembalikan pinjaman sekarang?",
+                    () => _ = KembalikanPinjamanSyariahAsync(),
+                    () => view.ShowChoice("PinjamanSyariah"));
                 break;
             default:
                 Debug.Log("Pilihan pinjaman syariah tidak valid");
@@ -109,7 +117,7 @@ public partial class ChoiceController
             return;
         }
 
-        if (string.IsNullOrWhiteSpace(holding.LoanId) && !NarafinRuntimeConfig.UseOfflineMode)
+        if (string.IsNullOrWhiteSpace(holding.LoanId) && !NarafinActiveSession.IsServerOffline)
         {
             ShowSystemDialogThen("Pinjaman ini belum tercatat di server sehingga belum bisa dikembalikan.\n", () => view.ShowChoice("Choice1"));
             return;

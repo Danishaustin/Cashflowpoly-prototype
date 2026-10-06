@@ -13,12 +13,43 @@ public partial class UIManager
     private const string NewDialogOption = "Dialog baru (belum disimpan)";
     private static readonly List<string> EditNarasiDefaultActionTypes = new List<string>
     {
+        "IntroHari",
         "BahanMasakan",
         "Kebutuhan",
         "JualMasakan",
+        "KerjaLepas",
         "Menabung",
-        "TujuanFinansial"
+        "TujuanFinansial",
+        "PinjamanSyariah",
+        "BayarPinjaman",
+        "Asuransi",
+        "JumatBerkah",
+        "BeliEmas",
+        "JualEmas",
+        "RisikoKehidupan",
+        "EndingHari"
     };
+    // Syarat asuransi punya tiga keadaan: tidak dipakai, harus belum punya, harus punya.
+    private const string EditNarasiTriStateUnusedOption = "-";
+    private const string EditNarasiTriStateFalseOption = "False";
+    private const string EditNarasiTriStateTrueOption = "True";
+    private static readonly List<string> EditNarasiTriStateOptions = new List<string>
+    {
+        EditNarasiTriStateUnusedOption,
+        EditNarasiTriStateFalseOption,
+        EditNarasiTriStateTrueOption
+    };
+
+    // IntroHari dan EndingHari dipicu sekali per hari, bukan per nomor urut aksi, jadi aksiValue-nya
+    // dikunci 0 dan harinya ditentukan lewat prasyarat hariKe/mingguKe.
+    private static readonly List<string> EditNarasiDayScopedActionTypes = new List<string>
+    {
+        "IntroHari",
+        "EndingHari",
+        "Intro Hari",
+        "Ending Hari"
+    };
+
     private static readonly List<string> EditNarasiDefaultNpcSprites = new List<string>
     {
         "penjual_bahan",
@@ -26,6 +57,8 @@ public partial class UIManager
         "pembeli_masakan",
         "penjaga_bank"
     };
+
+    // Syarat bahan disusun lewat dropdown + tombol Add, jadi daftarnya dipegang di sini, bukan di teks.
 
     private readonly Dictionary<string, DialogKarakterData> editNarasiDialogLookup = new Dictionary<string, DialogKarakterData>();
     private readonly Dictionary<string, NarasiPackData> editNarasiPackLookup = new Dictionary<string, NarasiPackData>();
@@ -223,6 +256,9 @@ public partial class UIManager
             dialog => dialog?.npcSprite);
 
         ConfigureDropdown(editNarasiActionTypeInput, actionChoices, actionChoices.Count > 0 ? actionChoices[0] : string.Empty);
+        UpdateEditNarasiAksiValueAvailability(editNarasiActionTypeInput?.value);
+        ConfigureDropdown(editNarasiHasInsuranceDropdown, new List<string>(EditNarasiTriStateOptions), EditNarasiTriStateUnusedOption);
+        SetupEditNarasiListFieldDropdowns(database);
         string defaultNpcSprite = npcSpriteChoices.Count > 0 ? npcSpriteChoices[0] : string.Empty;
         ConfigureDropdown(editNarasiNpcSpriteInput, npcSpriteChoices, defaultNpcSprite);
         UpdateEditNarasiNpcSpritePreview(editNarasiNpcSpriteInput?.value ?? defaultNpcSprite);
@@ -355,7 +391,7 @@ public partial class UIManager
 
         if (editNarasiDialogLookup.Count == 0)
         {
-            LoadEditNarasiDialogsFromDataManager();
+            LoadEditNarasiDialogsFromActiveNarasi();
         }
 
         List<string> dialogIds = new List<string>(editNarasiDialogLookup.Keys);
@@ -363,14 +399,10 @@ public partial class UIManager
         return dialogIds;
     }
 
-    private void LoadEditNarasiDialogsFromDataManager()
+    // Cadangan bila paket yang dipilih kosong: pakai indeks narasi sesi yang sedang aktif.
+    private void LoadEditNarasiDialogsFromActiveNarasi()
     {
-        if (DataManager.Instance == null || DataManager.Instance.dialogKarakterDict == null)
-        {
-            return;
-        }
-
-        foreach (var pair in DataManager.Instance.dialogKarakterDict)
+        foreach (KeyValuePair<string, DialogKarakterData> pair in NarasiSessionContext.DialogKarakterById)
         {
             AddEditNarasiDialog(pair.Value);
         }
@@ -443,6 +475,7 @@ public partial class UIManager
         SetIntegerWithoutNotify(editNarasiAksiValueInput, 0);
         SetTextWithoutNotify(editNarasiNpcNameInput, string.Empty);
         SetDropdownWithoutNotify(editNarasiActionTypeInput, "BahanMasakan");
+        UpdateEditNarasiAksiValueAvailability("BahanMasakan");
         SetDropdownWithoutNotify(editNarasiNpcSpriteInput, "penjual_bahan");
         UpdateEditNarasiNpcSpritePreview("penjual_bahan");
         ShowSuccessPopup("Form dialog baru siap diisi.");
@@ -728,7 +761,9 @@ public partial class UIManager
         {
             id = editNarasiIdInput?.value?.Trim() ?? string.Empty,
             aksi = editNarasiActionTypeInput?.value?.Trim() ?? string.Empty,
-            aksiValue = editNarasiAksiValueInput?.value ?? 0,
+            aksiValue = IsEditNarasiDayScopedAction(editNarasiActionTypeInput?.value)
+                ? 0
+                : (editNarasiAksiValueInput?.value ?? 0),
             npcName = editNarasiNpcNameInput?.value?.Trim() ?? string.Empty,
             npcSprite = editNarasiNpcSpriteInput?.value?.Trim() ?? string.Empty,
             questId = ResolveQuestIdFromOption(editNarasiQuestEffectDropdown?.value),
@@ -751,11 +786,12 @@ public partial class UIManager
             kartuPinjaman = editNarasiLoanCardInput?.value ?? 0,
             mingguKe = editNarasiWeekInput?.value ?? 0,
             hariKe = editNarasiDayInput?.value ?? 0,
-            asuransiDimiliki = editNarasiHasInsuranceToggle?.value ?? false,
-            bahanDimiliki = ParseCommaSeparatedList(editNarasiRequiredBahanInput?.value),
-            kebutuhanDimiliki = ParseCommaSeparatedList(editNarasiRequiredKebutuhanInput?.value),
-            tujuanFinansialDimiliki = ParseCommaSeparatedList(editNarasiRequiredTujuanFinansialInput?.value),
-            masakanDijual = ParseCommaSeparatedList(editNarasiRequiredMasakanInput?.value),
+            asuransiStatus = ToAsuransiPrerequisiteStatus(editNarasiHasInsuranceDropdown?.value),
+            giliranPemain = BuildEditNarasiGiliranPemain(),
+            bahanDimiliki = new List<string>(GetEditNarasiListField(0).Selections),
+            kebutuhanDimiliki = new List<string>(GetEditNarasiListField(1).Selections),
+            tujuanFinansialDimiliki = new List<string>(GetEditNarasiListField(2).Selections),
+            masakanDijual = new List<string>(GetEditNarasiListField(3).Selections),
             questId = ResolveQuestIdFromOption(editNarasiQuestPrereqDropdown?.value),
             questState = string.IsNullOrWhiteSpace(ResolveQuestIdFromOption(editNarasiQuestPrereqDropdown?.value))
                 ? string.Empty
@@ -763,6 +799,37 @@ public partial class UIManager
         };
 
         return new List<DialogPrerequisiteData> { prerequisite };
+    }
+
+    // Checkbox giliran pemain: dialog hanya diputar saat giliran pemain yang dicentang.
+    private List<int> BuildEditNarasiGiliranPemain()
+    {
+        List<int> giliranPemain = new List<int>();
+        for (int player = 1; player <= editNarasiGiliranPemainToggles.Length; player++)
+        {
+            Toggle toggle = editNarasiGiliranPemainToggles[player - 1];
+            if (toggle != null && toggle.value)
+            {
+                giliranPemain.Add(player);
+            }
+        }
+
+        return giliranPemain;
+    }
+
+    // null berarti dialog lama yang belum punya syarat ini, jadi semua giliran dicentang.
+    private void PopulateEditNarasiGiliranPemain(List<int> giliranPemain)
+    {
+        for (int player = 1; player <= editNarasiGiliranPemainToggles.Length; player++)
+        {
+            Toggle toggle = editNarasiGiliranPemainToggles[player - 1];
+            if (toggle == null)
+            {
+                continue;
+            }
+
+            SetToggleWithoutNotify(toggle, giliranPemain == null || giliranPemain.Contains(player));
+        }
     }
 
     private List<DialogKarakterLineData> BuildEditNarasiLines()
@@ -798,24 +865,18 @@ public partial class UIManager
     {
         editNarasiDialogLookup.Clear();
 
-        if (DataManager.Instance?.dialogKarakterDict != null)
-        {
-            DataManager.Instance.dialogKarakterDict.Clear();
-        }
-
         if (database.dialogKarakter == null)
         {
+            NarasiSessionContext.SetDialogKarakterIndex(null);
             return;
         }
 
         foreach (DialogKarakterData dialog in database.dialogKarakter)
         {
             AddEditNarasiDialog(dialog);
-            if (DataManager.Instance?.dialogKarakterDict != null && dialog != null && !string.IsNullOrWhiteSpace(dialog.id))
-            {
-                DataManager.Instance.dialogKarakterDict[dialog.id] = dialog;
-            }
         }
+
+        NarasiSessionContext.SetDialogKarakterIndex(database.dialogKarakter);
     }
 
     private void PopulateEditNarasiForm(string dialogId)
@@ -844,6 +905,7 @@ public partial class UIManager
         SetIntegerWithoutNotify(editNarasiAksiValueInput, dialogData.aksiValue);
         SetTextWithoutNotify(editNarasiNpcNameInput, dialogData.npcName);
         SetDropdownWithoutNotify(editNarasiActionTypeInput, dialogData.aksi);
+        UpdateEditNarasiAksiValueAvailability(dialogData.aksi);
         SetDropdownWithoutNotify(editNarasiNpcSpriteInput, dialogData.npcSprite);
         UpdateEditNarasiNpcSpritePreview(dialogData.npcSprite);
         SetQuestDropdownValue(editNarasiQuestEffectDropdown, dialogData.questId);
@@ -867,11 +929,14 @@ public partial class UIManager
         SetIntegerWithoutNotify(editNarasiLoanCardInput, prerequisite?.kartuPinjaman ?? 0);
         SetIntegerWithoutNotify(editNarasiWeekInput, prerequisite?.mingguKe ?? 0);
         SetIntegerWithoutNotify(editNarasiDayInput, prerequisite?.hariKe ?? 0);
-        SetToggleWithoutNotify(editNarasiHasInsuranceToggle, prerequisite?.asuransiDimiliki ?? false);
-        SetTextWithoutNotify(editNarasiRequiredBahanInput, JoinPrerequisiteNames(prerequisite?.bahanDimiliki, NarafinEventCardIdResolver.ResolveBahanNameFromCardId));
-        SetTextWithoutNotify(editNarasiRequiredKebutuhanInput, JoinPrerequisiteNames(prerequisite?.kebutuhanDimiliki, NarafinEventCardIdResolver.ResolveKebutuhanNameFromCardId));
-        SetTextWithoutNotify(editNarasiRequiredTujuanFinansialInput, JoinPrerequisiteNames(prerequisite?.tujuanFinansialDimiliki, NarafinEventCardIdResolver.ResolveTujuanFinansialNameFromCardId));
-        SetTextWithoutNotify(editNarasiRequiredMasakanInput, JoinPrerequisiteNames(prerequisite?.masakanDijual, NarafinEventCardIdResolver.ResolveResepNameFromCardId));
+        SetDropdownWithoutNotify(
+            editNarasiHasInsuranceDropdown,
+            ToEditNarasiTriStateOption(prerequisite?.asuransiStatus ?? AsuransiPrerequisiteStatus.TidakDipakai));
+        PopulateEditNarasiGiliranPemain(prerequisite?.giliranPemain);
+        SetEditNarasiListFieldSelections(GetEditNarasiListField(0), prerequisite?.bahanDimiliki);
+        SetEditNarasiListFieldSelections(GetEditNarasiListField(1), prerequisite?.kebutuhanDimiliki);
+        SetEditNarasiListFieldSelections(GetEditNarasiListField(2), prerequisite?.tujuanFinansialDimiliki);
+        SetEditNarasiListFieldSelections(GetEditNarasiListField(3), prerequisite?.masakanDijual);
         SetQuestDropdownValue(editNarasiQuestPrereqDropdown, prerequisite?.questId);
         SetDropdownWithoutNotify(editNarasiQuestPrereqStateDropdown, QuestState.Normalize(prerequisite?.questState));
     }
@@ -1055,12 +1120,13 @@ public partial class UIManager
         SetIntegerWithoutNotify(editNarasiAksiValueInput, 0);
         SetTextWithoutNotify(editNarasiNpcNameInput, string.Empty);
         SetDropdownWithoutNotify(editNarasiActionTypeInput, string.Empty);
+        UpdateEditNarasiAksiValueAvailability(string.Empty);
         SetDropdownWithoutNotify(editNarasiNpcSpriteInput, string.Empty);
         UpdateEditNarasiNpcSpritePreview(string.Empty);
-        SetTextWithoutNotify(editNarasiRequiredBahanInput, string.Empty);
-        SetTextWithoutNotify(editNarasiRequiredKebutuhanInput, string.Empty);
-        SetTextWithoutNotify(editNarasiRequiredTujuanFinansialInput, string.Empty);
-        SetTextWithoutNotify(editNarasiRequiredMasakanInput, string.Empty);
+        foreach (EditNarasiListField listField in GetEditNarasiListFields())
+        {
+            SetEditNarasiListFieldSelections(listField, null);
+        }
         ResetEditNarasiLineInputsToBaseRows();
         PopulateEditNarasiLines(null);
 
@@ -1071,9 +1137,337 @@ public partial class UIManager
         SetIntegerWithoutNotify(editNarasiLoanCardInput, 0);
         SetIntegerWithoutNotify(editNarasiWeekInput, 0);
         SetIntegerWithoutNotify(editNarasiDayInput, 0);
-        SetToggleWithoutNotify(editNarasiHasInsuranceToggle, false);
+        SetDropdownWithoutNotify(editNarasiHasInsuranceDropdown, EditNarasiTriStateUnusedOption);
+        PopulateEditNarasiGiliranPemain(null);
     }
 
+
+    // Satu widget untuk keempat syarat berbentuk daftar nama: dropdown + tombol Add + chip yang bisa dihapus.
+    private sealed class EditNarasiListField
+    {
+        public DropdownField Dropdown;
+        public VisualElement ListContainer;
+        public string ItemLabel;
+        public Func<List<NarafinLocalRulesetCatalog.Choice>> ChoiceSource;
+        public Func<DialogPrerequisiteData, List<string>> ExistingValues;
+
+        // Selections menyimpan id katalog; peta ini hanya untuk menampilkan namanya di dropdown dan chip.
+        public readonly List<string> Selections = new List<string>();
+        public readonly Dictionary<string, string> NamaById = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+        public readonly Dictionary<string, string> IdByNama = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+    }
+
+    private List<EditNarasiListField> editNarasiListFields;
+
+    private List<EditNarasiListField> GetEditNarasiListFields()
+    {
+        if (editNarasiListFields != null)
+        {
+            return editNarasiListFields;
+        }
+
+        editNarasiListFields = new List<EditNarasiListField>
+        {
+            new EditNarasiListField
+            {
+                Dropdown = editNarasiRequiredBahanDropdown,
+                ListContainer = editNarasiRequiredBahanList,
+                ItemLabel = "bahan",
+                ChoiceSource = NarafinLocalRulesetCatalog.GetIngredientChoices,
+                ExistingValues = prerequisite => prerequisite?.bahanDimiliki
+            },
+            new EditNarasiListField
+            {
+                Dropdown = editNarasiRequiredKebutuhanDropdown,
+                ListContainer = editNarasiRequiredKebutuhanList,
+                ItemLabel = "kebutuhan",
+                ChoiceSource = NarafinLocalRulesetCatalog.GetNeedChoices,
+                ExistingValues = prerequisite => prerequisite?.kebutuhanDimiliki
+            },
+            new EditNarasiListField
+            {
+                Dropdown = editNarasiRequiredTujuanFinansialDropdown,
+                ListContainer = editNarasiRequiredTujuanFinansialList,
+                ItemLabel = "tujuan finansial",
+                ChoiceSource = NarafinLocalRulesetCatalog.GetFinancialGoalChoices,
+                ExistingValues = prerequisite => prerequisite?.tujuanFinansialDimiliki
+            },
+            new EditNarasiListField
+            {
+                Dropdown = editNarasiRequiredMasakanDropdown,
+                ListContainer = editNarasiRequiredMasakanList,
+                ItemLabel = "masakan",
+                ChoiceSource = NarafinLocalRulesetCatalog.GetOrderChoices,
+                ExistingValues = prerequisite => prerequisite?.masakanDijual
+            }
+        };
+
+        return editNarasiListFields;
+    }
+
+    private EditNarasiListField GetEditNarasiListField(int index)
+    {
+        List<EditNarasiListField> fields = GetEditNarasiListFields();
+        return index >= 0 && index < fields.Count ? fields[index] : null;
+    }
+
+    // Nama yang sudah dipakai paket ini tetap bisa dipilih walau tidak ada di berkas ruleset lokal.
+    private void SetupEditNarasiListFieldDropdowns(DialogKarakterDatabase database)
+    {
+        foreach (EditNarasiListField field in GetEditNarasiListFields())
+        {
+            field.NamaById.Clear();
+            field.IdByNama.Clear();
+            List<string> choices = new List<string>();
+
+            foreach (NarafinLocalRulesetCatalog.Choice choice in field.ChoiceSource())
+            {
+                RegisterEditNarasiChoice(field, choices, choice.Nama, choice.Id);
+            }
+
+            // Nilai yang sudah dipakai paket ini tetap bisa dipilih walau tidak ada di ruleset lokal.
+            if (database?.dialogKarakter != null)
+            {
+                foreach (DialogKarakterData dialog in database.dialogKarakter)
+                {
+                    if (dialog?.prerequisite == null)
+                    {
+                        continue;
+                    }
+
+                    foreach (DialogPrerequisiteData prerequisite in dialog.prerequisite)
+                    {
+                        List<string> existing = field.ExistingValues(prerequisite);
+                        if (existing == null)
+                        {
+                            continue;
+                        }
+
+                        foreach (string value in existing)
+                        {
+                            RegisterEditNarasiChoice(field, choices, value, value);
+                        }
+                    }
+                }
+            }
+
+            ConfigureDropdown(field.Dropdown, choices, choices.Count > 0 ? choices[0] : string.Empty);
+        }
+    }
+
+    private static void RegisterEditNarasiChoice(EditNarasiListField field, List<string> choices, string nama, string id)
+    {
+        string cleanId = (id ?? string.Empty).Trim();
+        if (cleanId.Length == 0 || field.NamaById.ContainsKey(cleanId))
+        {
+            return;
+        }
+
+        string cleanNama = (nama ?? string.Empty).Trim();
+        if (cleanNama.Length == 0)
+        {
+            cleanNama = cleanId;
+        }
+
+        // Nama yang bertabrakan diberi keterangan id supaya dropdown tetap bisa dibedakan.
+        if (field.IdByNama.ContainsKey(cleanNama))
+        {
+            cleanNama = cleanNama + " (" + cleanId + ")";
+        }
+
+        field.NamaById[cleanId] = cleanNama;
+        field.IdByNama[cleanNama] = cleanId;
+        choices.Add(cleanNama);
+    }
+
+    private void AddEditNarasiListFieldValue(EditNarasiListField field)
+    {
+        if (field == null)
+        {
+            return;
+        }
+
+        string displayName = (field.Dropdown?.value ?? string.Empty).Trim();
+        if (displayName.Length == 0)
+        {
+            ShowErrorPopup("Pilih " + field.ItemLabel + " yang ingin ditambahkan.");
+            return;
+        }
+
+        string value = field.IdByNama.TryGetValue(displayName, out string mappedId) ? mappedId : displayName;
+
+        // Syarat ini hanya memeriksa kepemilikan, jadi nama yang sama dua kali tidak ada gunanya.
+        foreach (string existing in field.Selections)
+        {
+            if (string.Equals(existing, value, StringComparison.OrdinalIgnoreCase))
+            {
+                ShowErrorPopup("\"" + displayName + "\" sudah ada di daftar syarat.");
+                return;
+            }
+        }
+
+        field.Selections.Add(value);
+        RefreshEditNarasiListField(field);
+    }
+
+    private void SetEditNarasiListFieldSelections(EditNarasiListField field, List<string> values)
+    {
+        if (field == null)
+        {
+            return;
+        }
+
+        field.Selections.Clear();
+        if (values != null)
+        {
+            foreach (string value in values)
+            {
+                string clean = (value ?? string.Empty).Trim();
+                if (clean.Length > 0 && !field.Selections.Contains(clean))
+                {
+                    field.Selections.Add(clean);
+                }
+            }
+        }
+
+        RefreshEditNarasiListField(field);
+    }
+
+    private void RefreshEditNarasiListField(EditNarasiListField field)
+    {
+        if (field?.ListContainer == null)
+        {
+            return;
+        }
+
+        field.ListContainer.Clear();
+
+        if (field.Selections.Count == 0)
+        {
+            Label emptyLabel = new Label("Belum ada syarat " + field.ItemLabel + ".");
+            emptyLabel.AddToClassList("edit-prerequisite-hint");
+            field.ListContainer.Add(emptyLabel);
+            return;
+        }
+
+        foreach (string value in field.Selections)
+        {
+            field.ListContainer.Add(BuildEditNarasiListFieldChip(field, value));
+        }
+    }
+
+    private VisualElement BuildEditNarasiListFieldChip(EditNarasiListField field, string value)
+    {
+        VisualElement chip = new VisualElement();
+        chip.AddToClassList("edit-chip");
+
+        Label nameLabel = new Label(field.NamaById.TryGetValue(value, out string displayName) ? displayName : value);
+        nameLabel.AddToClassList("edit-chip-label");
+
+        Button removeButton = new Button(() =>
+        {
+            field.Selections.Remove(value);
+            RefreshEditNarasiListField(field);
+        })
+        {
+            text = "X"
+        };
+        removeButton.AddToClassList("edit-line-remove-button");
+        removeButton.AddToClassList("edit-chip-remove-button");
+
+        chip.Add(nameLabel);
+        chip.Add(removeButton);
+        return chip;
+    }
+
+    private void OnEditNarasiRequiredBahanAddClicked(ClickEvent evt)
+    {
+        AddEditNarasiListFieldValue(GetEditNarasiListField(0));
+    }
+
+    private void OnEditNarasiRequiredKebutuhanAddClicked(ClickEvent evt)
+    {
+        AddEditNarasiListFieldValue(GetEditNarasiListField(1));
+    }
+
+    private void OnEditNarasiRequiredTujuanFinansialAddClicked(ClickEvent evt)
+    {
+        AddEditNarasiListFieldValue(GetEditNarasiListField(2));
+    }
+
+    private void OnEditNarasiRequiredMasakanAddClicked(ClickEvent evt)
+    {
+        AddEditNarasiListFieldValue(GetEditNarasiListField(3));
+    }
+
+    private static string ToEditNarasiTriStateOption(int status)
+    {
+        switch (status)
+        {
+            case AsuransiPrerequisiteStatus.HarusDimiliki:
+                return EditNarasiTriStateTrueOption;
+            case AsuransiPrerequisiteStatus.TidakBolehDimiliki:
+                return EditNarasiTriStateFalseOption;
+            default:
+                return EditNarasiTriStateUnusedOption;
+        }
+    }
+
+    private static int ToAsuransiPrerequisiteStatus(string option)
+    {
+        string cleanOption = (option ?? string.Empty).Trim();
+        if (string.Equals(cleanOption, EditNarasiTriStateTrueOption, StringComparison.OrdinalIgnoreCase))
+        {
+            return AsuransiPrerequisiteStatus.HarusDimiliki;
+        }
+
+        if (string.Equals(cleanOption, EditNarasiTriStateFalseOption, StringComparison.OrdinalIgnoreCase))
+        {
+            return AsuransiPrerequisiteStatus.TidakBolehDimiliki;
+        }
+
+        return AsuransiPrerequisiteStatus.TidakDipakai;
+    }
+
+    private static bool IsEditNarasiDayScopedAction(string aksi)
+    {
+        string cleanAksi = (aksi ?? string.Empty).Trim();
+        foreach (string dayScopedAction in EditNarasiDayScopedActionTypes)
+        {
+            if (string.Equals(cleanAksi, dayScopedAction, StringComparison.OrdinalIgnoreCase))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    // Field aksiValue dimatikan dan dinolkan untuk aksi berbasis hari supaya tidak ada dialog yang
+    // tersimpan dengan nomor urut yang tidak akan pernah dicocokkan saat bermain.
+    private void UpdateEditNarasiAksiValueAvailability(string aksi)
+    {
+        if (editNarasiAksiValueInput == null)
+        {
+            return;
+        }
+
+        bool isDayScoped = IsEditNarasiDayScopedAction(aksi);
+        if (isDayScoped && editNarasiAksiValueInput.value != 0)
+        {
+            SetIntegerWithoutNotify(editNarasiAksiValueInput, 0);
+        }
+
+        editNarasiAksiValueInput.SetEnabled(!isDayScoped);
+        editNarasiAksiValueInput.tooltip = isDayScoped
+            ? "Tidak dipakai untuk Intro Hari dan Ending Hari. Pilih harinya lewat prasyarat hariKe dan mingguKe."
+            : string.Empty;
+    }
+
+    private void OnEditNarasiActionTypeChanged(ChangeEvent<string> evt)
+    {
+        UpdateEditNarasiAksiValueAvailability(evt.newValue);
+    }
 
     private void UpdateEditNarasiNpcSpritePreview(string npcSpriteName)
     {
@@ -1106,52 +1500,6 @@ public partial class UIManager
     private void OnEditNarasiNpcSpriteChanged(ChangeEvent<string> evt)
     {
         UpdateEditNarasiNpcSpritePreview(evt.newValue);
-    }
-
-    private List<string> ParseCommaSeparatedList(string value)
-    {
-        List<string> items = new List<string>();
-        if (string.IsNullOrWhiteSpace(value))
-        {
-            return items;
-        }
-
-        string[] rawItems = value.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
-        foreach (string rawItem in rawItems)
-        {
-            string item = rawItem.Trim();
-            if (!string.IsNullOrWhiteSpace(item))
-            {
-                items.Add(item);
-            }
-        }
-
-        return items;
-    }
-
-    private string JoinPrerequisiteNames(List<string> values, Func<string, string> resolveName)
-    {
-        if (values == null || values.Count == 0)
-        {
-            return string.Empty;
-        }
-
-        List<string> displayNames = new List<string>();
-        foreach (string value in values)
-        {
-            if (string.IsNullOrWhiteSpace(value))
-            {
-                continue;
-            }
-
-            string displayName = resolveName != null ? resolveName(value.Trim()) : value.Trim();
-            if (!string.IsNullOrWhiteSpace(displayName))
-            {
-                displayNames.Add(displayName);
-            }
-        }
-
-        return string.Join(", ", displayNames);
     }
 
     private void SetIntegerWithoutNotify(IntegerField integerField, int value)

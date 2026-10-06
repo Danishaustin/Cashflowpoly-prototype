@@ -1,0 +1,548 @@
+{
+    "dialogKarakter": [
+        {
+            "id": "m01h01bahan",
+            "prerequisite": [
+                {
+                    "uang": 0,
+                    "kebahagiaan": 0,
+                    "tabungan": 0,
+                    "emas": 0,
+                    "kartuPinjaman": 0,
+                    "mingguKe": 1,
+                    "hariKe": 1,
+                    "asuransiDimiliki": false,
+                    "bahanDimiliki": [],
+                    "kebutuhanDimiliki": [],
+                    "tujuanFinansialDimiliki": [],
+                    "masakanDijual": [],
+                    "questId": "",
+                    "questState": ""
+                }
+            ],
+            "aksi": "BahanMasakan",
+            "aksiValue": 0,
+            "npcName": "Mentor",
+            "npcSprite": "penjaga_bank",
+            "questId": "",
+            "questState": "",
+            "lines": [
+                {
+                    "speaker": "NPC",
+                    "text": "Bagus, mari siapkan masakanmu!"
+                }
+            ]
+        },
+        {
+            "id": "m01h01jual",
+            "prerequisite": [
+                {
+                    "uang": 0,
+                    "kebahagiaan": 0,
+                    "tabungan": 0,
+                    "emas": 0,
+                    "kartuPinjaman": 0,
+                    "mingguKe": 1,
+                    "hariKe": 1,
+                    "asuransiDimiliki": false,
+                    "bahanDimiliki": [],
+                    "kebutuhanDimiliki": [],
+                    "tujuanFinansialDimiliki": [],
+                    "masakanDijual": [],
+                    "questId": "",
+                    "questState": ""
+                }
+            ],
+            "aksi": "JualMasakan",
+            "aksiValue": 0,
+            "npcName": "Mentor",
+            "npcSprite": "penjaga_bank",
+            "questId": "",
+            "questState": "",
+            "lines": [
+                {
+                    "speaker": "NPC",
+                    "text": "Bagus, uang masuk!"
+                }
+            ]
+        },
+        {
+            "id": "m01h01butuh",
+            "prerequisite": [
+                {
+                    "uang": 0,
+                    "kebahagiaan": 0,
+                    "tabungan": 0,
+                    "emas": 0,
+                    "kartuPinjaman": 0,
+                    "mingguKe": 1,
+                    "hariKe": 1,
+                    "asuransiDimiliki": false,
+                    "bahanDimiliki": [],
+                    "kebutuhanDimiliki": [],
+                    "tujuanFinansialDimiliki": [],
+                    "masakanDijual": [],
+                    "questId": "",
+                    "questState": ""
+                }
+            ],
+            "aksi": "Kebutuhan",
+            "aksiValue": 0,
+            "npcName": "Mentor",
+            "npcSprite": "penjaga_bank",
+            "questId": "",
+            "questState": "",
+            "lines": [
+                {
+                    "speaker": "NPC",
+                    "text": "Bagus, rasakan kebahagiaan yang datang!"
+                }
+            ]
+        },
+        {
+            "id": "m01h01tabung",
+            "prerequisite": [
+                {
+                    "uang": 0,
+                    "kebahagiaan": 0,
+                    "tabungan": 0,
+                    "emas": 0,
+                    "kartuPinjaman": 0,
+                    "mingguKe": 1,
+                    "hariKe": 1,
+                    "asuransiDimiliki": false,
+                    "bahanDimiliki": [],
+                    "kebutuhanDimiliki": [],
+                    "tujuanFinansialDimiliki": [],
+                    "masakanDijual": [],
+                    "questId": "",
+                    "questState": ""
+                }
+            ],
+            "aksi": "Menabung",
+            "aksiValue": 0,
+            "npcName": "Mentor",
+            "npcSprite": "penjaga_bank",
+            "questId": "",
+            "questState": "",
+            "lines": [
+                {
+                    "speaker": "NPC",
+                    "text": "Bagus, siapkan masa depan dengan menabung!"
+                }
+            ]
+        },
+        {
+            "id": "m01h01tujuan",
+            "prerequisite": [
+                {
+                    "uang": 0,
+                    "kebahagiaan": 0,
+                    "tabungan": 0,
+                    "emas": 0,
+                    "kartuPinjaman": 0,
+                    "mingguKe": 1,
+                    "hariKe": 1,
+                    "asuransiDimiliki": false,
+                    "bahanDimiliki": [],
+                    "kebutuhanDimiliki": [],
+                    "tujuanFinansialDimiliki": [],
+                    "masakanDijual": [],
+                    "questId": "",
+                    "questState": ""
+                }
+            ],
+            "aksi": "TujuanFinansial",
+            "aksiValue": 0,
+            "npcName": "Mentor",
+            "npcSprite": "penjaga_bank",
+            "questId": "",
+            "questState": "",
+            "lines": [
+                {
+                    "speaker": "NPC",
+                    "text": "Luar biasa! Harapan jangkamu tercapai di awal karirmu!"
+                }
+            ]
+        },
+        {
+            "id": "m01h02bahan",
+            "prerequisite": [
+                {
+                    "uang": 0,
+                    "kebahagiaan": 0,
+                    "tabungan": 0,
+                    "emas": 0,
+                    "kartuPinjaman": 0,
+                    "mingguKe": 1,
+                    "hariKe": 2,
+                    "asuransiDimiliki": false,
+                    "bahanDimiliki": [],
+                    "kebutuhanDimiliki": [],
+                    "tujuanFinansialDimiliki": [],
+                    "masakanDijual": [],
+                    "questId": "",
+                    "questState": ""
+                }
+            ],
+            "aksi": "BahanMasakan",
+            "aksiValue": 0,
+            "npcName": "Mentor",
+            "npcSprite": "penjaga_bank",
+            "questId": "",
+            "questState": "",
+            "lines": [
+                {
+                    "speaker": "NPC",
+                    "text": "Sip! Coba catat pembelian bahanmu, ya."
+                }
+            ]
+        },
+        {
+            "id": "m01h02jual",
+            "prerequisite": [
+                {
+                    "uang": 0,
+                    "kebahagiaan": 0,
+                    "tabungan": 0,
+                    "emas": 0,
+                    "kartuPinjaman": 0,
+                    "mingguKe": 1,
+                    "hariKe": 2,
+                    "asuransiDimiliki": false,
+                    "bahanDimiliki": [],
+                    "kebutuhanDimiliki": [],
+                    "tujuanFinansialDimiliki": [],
+                    "masakanDijual": [],
+                    "questId": "",
+                    "questState": ""
+                }
+            ],
+            "aksi": "JualMasakan",
+            "aksiValue": 0,
+            "npcName": "Mentor",
+            "npcSprite": "penjaga_bank",
+            "questId": "",
+            "questState": "",
+            "lines": [
+                {
+                    "speaker": "NPC",
+                    "text": "Sip! Coba catat uang masuk, ya."
+                }
+            ]
+        },
+        {
+            "id": "m01h02butuh",
+            "prerequisite": [
+                {
+                    "uang": 0,
+                    "kebahagiaan": 0,
+                    "tabungan": 0,
+                    "emas": 0,
+                    "kartuPinjaman": 0,
+                    "mingguKe": 1,
+                    "hariKe": 2,
+                    "asuransiDimiliki": false,
+                    "bahanDimiliki": [],
+                    "kebutuhanDimiliki": [],
+                    "tujuanFinansialDimiliki": [],
+                    "masakanDijual": [],
+                    "questId": "",
+                    "questState": ""
+                }
+            ],
+            "aksi": "Kebutuhan",
+            "aksiValue": 0,
+            "npcName": "Mentor",
+            "npcSprite": "penjaga_bank",
+            "questId": "",
+            "questState": "",
+            "lines": [
+                {
+                    "speaker": "NPC",
+                    "text": "Sip! Catat pembelian kebutuhanmu, ya."
+                }
+            ]
+        },
+        {
+            "id": "m01h02tabung",
+            "prerequisite": [
+                {
+                    "uang": 0,
+                    "kebahagiaan": 0,
+                    "tabungan": 0,
+                    "emas": 0,
+                    "kartuPinjaman": 0,
+                    "mingguKe": 1,
+                    "hariKe": 2,
+                    "asuransiDimiliki": false,
+                    "bahanDimiliki": [],
+                    "kebutuhanDimiliki": [],
+                    "tujuanFinansialDimiliki": [],
+                    "masakanDijual": [],
+                    "questId": "",
+                    "questState": ""
+                }
+            ],
+            "aksi": "Menabung",
+            "aksiValue": 0,
+            "npcName": "Mentor",
+            "npcSprite": "penjaga_bank",
+            "questId": "",
+            "questState": "",
+            "lines": [
+                {
+                    "speaker": "NPC",
+                    "text": "Sip! Catat uang yang ditabungkan, ya."
+                }
+            ]
+        },
+        {
+            "id": "m01h02tujuan",
+            "prerequisite": [
+                {
+                    "uang": 0,
+                    "kebahagiaan": 0,
+                    "tabungan": 0,
+                    "emas": 0,
+                    "kartuPinjaman": 0,
+                    "mingguKe": 1,
+                    "hariKe": 2,
+                    "asuransiDimiliki": false,
+                    "bahanDimiliki": [],
+                    "kebutuhanDimiliki": [],
+                    "tujuanFinansialDimiliki": [],
+                    "masakanDijual": [],
+                    "questId": "",
+                    "questState": ""
+                }
+            ],
+            "aksi": "TujuanFinansial",
+            "aksiValue": 0,
+            "npcName": "Mentor",
+            "npcSprite": "penjaga_bank",
+            "questId": "",
+            "questState": "",
+            "lines": [
+                {
+                    "speaker": "NPC",
+                    "text": "Hebat! Jangan lupa catat pembelian tujuanmu, ya."
+                }
+            ]
+        },
+        {
+            "id": "m01h03bahan",
+            "prerequisite": [
+                {
+                    "uang": 0,
+                    "kebahagiaan": 0,
+                    "tabungan": 0,
+                    "emas": 0,
+                    "kartuPinjaman": 0,
+                    "mingguKe": 1,
+                    "hariKe": 3,
+                    "asuransiDimiliki": false,
+                    "bahanDimiliki": [],
+                    "kebutuhanDimiliki": [],
+                    "tujuanFinansialDimiliki": [],
+                    "masakanDijual": [],
+                    "questId": "",
+                    "questState": ""
+                }
+            ],
+            "aksi": "BahanMasakan",
+            "aksiValue": 0,
+            "npcName": "Mentor",
+            "npcSprite": "penjaga_bank",
+            "questId": "",
+            "questState": "",
+            "lines": [
+                {
+                    "speaker": "NPC",
+                    "text": "Keren! Tapi coba pikirkan, apa manfaat bahan yang kamu beli? Apakah seharusnya kamu membeli bahan lain? Apakah kamu sudah memperhitungkan kondisi sekitar dalam membeli bahan?"
+                },
+                {
+                    "speaker": "PLAYER",
+                    "text": ""
+                }
+            ]
+        },
+        {
+            "id": "m01h03jual",
+            "prerequisite": [
+                {
+                    "uang": 0,
+                    "kebahagiaan": 0,
+                    "tabungan": 0,
+                    "emas": 0,
+                    "kartuPinjaman": 0,
+                    "mingguKe": 1,
+                    "hariKe": 3,
+                    "asuransiDimiliki": false,
+                    "bahanDimiliki": [],
+                    "kebutuhanDimiliki": [],
+                    "tujuanFinansialDimiliki": [],
+                    "masakanDijual": [],
+                    "questId": "",
+                    "questState": ""
+                }
+            ],
+            "aksi": "JualMasakan",
+            "aksiValue": 0,
+            "npcName": "Mentor",
+            "npcSprite": "penjaga_bank",
+            "questId": "",
+            "questState": "",
+            "lines": [
+                {
+                    "speaker": "NPC",
+                    "text": "Keren! Tapi coba pikirkan, apakah keuntunganmu optimal? Coba bandingkan dengan keuntungan pesaing. Apakah lain kali kamu perlu menjual masakan lain?"
+                },
+                {
+                    "speaker": "PLAYER",
+                    "text": ""
+                }
+            ]
+        },
+        {
+            "id": "m01h03butuh",
+            "prerequisite": [
+                {
+                    "uang": 0,
+                    "kebahagiaan": 0,
+                    "tabungan": 0,
+                    "emas": 0,
+                    "kartuPinjaman": 0,
+                    "mingguKe": 1,
+                    "hariKe": 3,
+                    "asuransiDimiliki": false,
+                    "bahanDimiliki": [],
+                    "kebutuhanDimiliki": [],
+                    "tujuanFinansialDimiliki": [],
+                    "masakanDijual": [],
+                    "questId": "",
+                    "questState": ""
+                }
+            ],
+            "aksi": "Kebutuhan",
+            "aksiValue": 0,
+            "npcName": "Mentor",
+            "npcSprite": "penjaga_bank",
+            "questId": "",
+            "questState": "",
+            "lines": [
+                {
+                    "speaker": "NPC",
+                    "text": "Keren! Tapi coba pikirkan, apakah itu kebutuhan yang tepat? Apakah kebahagiaanmu optimal, terutama jika dibandingkan dengan orang di sekitarmu? "
+                }
+            ]
+        },
+        {
+            "id": "m01h03tabung",
+            "prerequisite": [
+                {
+                    "uang": 0,
+                    "kebahagiaan": 0,
+                    "tabungan": 0,
+                    "emas": 0,
+                    "kartuPinjaman": 0,
+                    "mingguKe": 1,
+                    "hariKe": 3,
+                    "asuransiDimiliki": false,
+                    "bahanDimiliki": [],
+                    "kebutuhanDimiliki": [],
+                    "tujuanFinansialDimiliki": [],
+                    "masakanDijual": [],
+                    "questId": "",
+                    "questState": ""
+                }
+            ],
+            "aksi": "Menabung",
+            "aksiValue": 0,
+            "npcName": "Mentor",
+            "npcSprite": "penjaga_bank",
+            "questId": "",
+            "questState": "",
+            "lines": [
+                {
+                    "speaker": "NPC",
+                    "text": "Keren! Tapi coba pikirkan, apakah tabunganmu sudah optimal? Apakah kamu menabung terlalu banyak atau terlalu sedikit? Bagaimana dengan tabungan orang-orang di sekitarmu?"
+                },
+                {
+                    "speaker": "PLAYER",
+                    "text": ""
+                }
+            ]
+        },
+        {
+            "id": "m01h03tujuan",
+            "prerequisite": [
+                {
+                    "uang": 0,
+                    "kebahagiaan": 0,
+                    "tabungan": 0,
+                    "emas": 0,
+                    "kartuPinjaman": 0,
+                    "mingguKe": 1,
+                    "hariKe": 3,
+                    "asuransiDimiliki": false,
+                    "bahanDimiliki": [],
+                    "kebutuhanDimiliki": [],
+                    "tujuanFinansialDimiliki": [],
+                    "masakanDijual": [],
+                    "questId": "",
+                    "questState": ""
+                }
+            ],
+            "aksi": "TujuanFinansial",
+            "aksiValue": 0,
+            "npcName": "Mentor",
+            "npcSprite": "penjaga_bank",
+            "questId": "",
+            "questState": "",
+            "lines": [
+                {
+                    "speaker": "NPC",
+                    "text": "Keren! Tapi coba pikirkan, apakah tujuan jangka panjangmu sudah tepat? Apakah kebahagiaan dari tujuanmu itu sudah optimal? Bagaimana dengan tujuan orang-orang di sekitarmu? "
+                },
+                {
+                    "speaker": "PLAYER",
+                    "text": ""
+                }
+            ]
+        },
+        {
+            "id": "m01h04bahan",
+            "prerequisite": [
+                {
+                    "uang": 0,
+                    "kebahagiaan": 0,
+                    "tabungan": 0,
+                    "emas": 0,
+                    "kartuPinjaman": 0,
+                    "mingguKe": 0,
+                    "hariKe": 0,
+                    "asuransiDimiliki": false,
+                    "bahanDimiliki": [],
+                    "kebutuhanDimiliki": [],
+                    "tujuanFinansialDimiliki": [],
+                    "masakanDijual": [],
+                    "questId": "",
+                    "questState": ""
+                }
+            ],
+            "aksi": "BahanMasakan",
+            "aksiValue": 0,
+            "npcName": "Mentor",
+            "npcSprite": "penjaga_bank",
+            "questId": "",
+            "questState": "",
+            "lines": [
+                {
+                    "speaker": "NPC",
+                    "text": "Heboh! Tapi coba renungkan"
+                }
+            ]
+        }
+    ]
+}
