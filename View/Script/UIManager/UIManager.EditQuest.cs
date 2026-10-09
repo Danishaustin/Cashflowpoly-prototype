@@ -6,11 +6,11 @@ using UnityEngine.UIElements;
 
 public partial class UIManager
 {
-    private const string EmptyQuestOption = "Tidak ada quest";
-    private const string EmptyQuestPackOption = "Tidak ada paket quest";
-    private const string NewQuestOption = "Quest baru (belum disimpan)";
+    private const string EmptyQuestOption = "Tidak ada tantangan";
+    private const string EmptyQuestPackOption = "Tidak ada paket tantangan";
+    private const string NewQuestOption = "Tantangan baru (belum disimpan)";
     private const string NoQuestOption = "(tidak ada)";
-    private const string MissingQuestSuffix = " (tidak ada di paket quest)";
+    private const string MissingQuestSuffix = " (tidak ada di paket tantangan)";
     private const string EditQuestPackIdPlayerPrefsKey = "Narafin.EditQuestPackId";
 
     private Button editQuestButton;
@@ -92,7 +92,7 @@ public partial class UIManager
         }
 
         QuestPackRepository.ClearLastCloudWarning();
-        BeginEditQuestLoading("Memuat daftar quest...");
+        BeginEditQuestLoading("Memuat daftar tantangan...");
 
         try
         {
@@ -104,7 +104,7 @@ public partial class UIManager
         catch (Exception ex)
         {
             Debug.LogError("Gagal membuka menu edit quest: " + ex.Message);
-            ShowErrorPopup("Gagal membuka menu edit quest. Detail: " + ex.Message);
+            ShowErrorPopup("Gagal membuka menu edit tantangan. Detail: " + ex.Message);
         }
         finally
         {
@@ -130,7 +130,7 @@ public partial class UIManager
         }
 
         QuestPackRepository.ClearLastCloudWarning();
-        BeginEditQuestLoading("Memuat isi quest...");
+        BeginEditQuestLoading("Memuat isi tantangan...");
 
         try
         {
@@ -145,7 +145,7 @@ public partial class UIManager
         catch (Exception ex)
         {
             Debug.LogError("Gagal memuat isi quest: " + ex.Message);
-            ShowErrorPopup("Gagal memuat isi quest. Detail: " + ex.Message);
+            ShowErrorPopup("Gagal memuat isi tantangan. Detail: " + ex.Message);
         }
         finally
         {
@@ -163,7 +163,7 @@ public partial class UIManager
         }
 
         QuestPackRepository.ClearLastCloudWarning();
-        BeginEditQuestLoading("Memuat ulang daftar quest...");
+        BeginEditQuestLoading("Memuat ulang daftar tantangan...");
 
         try
         {
@@ -175,7 +175,7 @@ public partial class UIManager
         catch (Exception ex)
         {
             Debug.LogError("Gagal kembali ke daftar quest: " + ex.Message);
-            ShowErrorPopup("Gagal kembali ke daftar quest. Detail: " + ex.Message);
+            ShowErrorPopup("Gagal kembali ke daftar tantangan. Detail: " + ex.Message);
         }
         finally
         {
@@ -193,7 +193,7 @@ public partial class UIManager
         }
 
         QuestPackRepository.ClearLastCloudWarning();
-        BeginEditQuestLoading("Membuat paket quest baru...");
+        BeginEditQuestLoading("Membuat paket tantangan baru...");
 
         try
         {
@@ -206,7 +206,7 @@ public partial class UIManager
 
             editQuestActivePack = result.Pack;
             await SetupEditQuestPackSelectionAsync();
-            ShowEditQuestCloudWarningOrSuccess("Paket quest baru berhasil dibuat. Kamu bisa ubah namanya setelah menekan Next.");
+            ShowEditQuestCloudWarningOrSuccess("Paket tantangan baru berhasil dibuat. Kamu bisa ubah namanya setelah menekan Next.");
 #if UNITY_EDITOR
             UnityEditor.AssetDatabase.Refresh();
 #endif
@@ -214,7 +214,7 @@ public partial class UIManager
         catch (Exception ex)
         {
             Debug.LogError("Gagal membuat paket quest: " + ex.Message);
-            ShowErrorPopup("Gagal membuat paket quest. Detail: " + ex.Message);
+            ShowErrorPopup("Gagal membuat paket tantangan. Detail: " + ex.Message);
         }
         finally
         {
@@ -234,16 +234,17 @@ public partial class UIManager
             || selectedOption == EmptyQuestPackOption
             || !editQuestPackLookup.TryGetValue(selectedOption, out QuestPackData confirmPack))
         {
-            ShowErrorPopup("Pilih paket quest yang ingin dihapus.");
+            ShowErrorPopup("Pilih paket tantangan yang ingin dihapus.");
             return;
         }
 
         string packName = string.IsNullOrWhiteSpace(confirmPack.name) ? confirmPack.file : confirmPack.name;
         ShowConfirmPopup(
-            "Hapus Paket Quest",
-            "Hapus paket quest \"" + packName + "\"?\nAksi ini tidak bisa dikembalikan.",
+            "Hapus Paket Tantangan",
+            "Hapus paket tantangan \"" + packName + "\"?\nAksi ini tidak bisa dikembalikan.",
             "Hapus",
-            () => DeleteQuestPackConfirmed());
+            () => DeleteQuestPackConfirmed(),
+            true);
     }
 
     private async void DeleteQuestPackConfirmed()
@@ -256,12 +257,12 @@ public partial class UIManager
         string selectedOption = editQuestPackDropdown?.value;
         if (string.IsNullOrWhiteSpace(selectedOption) || !editQuestPackLookup.TryGetValue(selectedOption, out QuestPackData selectedPack))
         {
-            ShowErrorPopup("Pilih paket quest yang ingin dihapus.");
+            ShowErrorPopup("Pilih paket tantangan yang ingin dihapus.");
             return;
         }
 
         QuestPackRepository.ClearLastCloudWarning();
-        BeginEditQuestLoading("Menghapus paket quest...");
+        BeginEditQuestLoading("Menghapus paket tantangan...");
 
         try
         {
@@ -281,15 +282,15 @@ public partial class UIManager
             }
 
             await SetupEditQuestPackSelectionAsync();
-            ShowEditQuestCloudWarningOrSuccess("Paket quest berhasil dihapus.");
+            ShowEditQuestCloudWarningOrSuccess("Paket tantangan berhasil dihapus.");
 #if UNITY_EDITOR
             UnityEditor.AssetDatabase.Refresh();
 #endif
         }
         catch (Exception ex)
         {
-            Debug.LogError("Gagal menghapus paket quest: " + ex.Message);
-            ShowErrorPopup("Gagal menghapus paket quest. Detail: " + ex.Message);
+            Debug.LogError("Gagal menghapus paket tantangan: " + ex.Message);
+            ShowErrorPopup("Gagal menghapus paket tantangan. Detail: " + ex.Message);
         }
         finally
         {
@@ -331,7 +332,7 @@ public partial class UIManager
         }
 
         QuestPackRepository.ClearLastCloudWarning();
-        BeginEditQuestLoading("Menyimpan quest...");
+        BeginEditQuestLoading("Menyimpan tantangan...");
 
         try
         {
@@ -340,7 +341,7 @@ public partial class UIManager
         catch (Exception ex)
         {
             Debug.LogError("Gagal menyimpan quest: " + ex.Message);
-            ShowErrorPopup("Gagal menyimpan quest. Detail: " + ex.Message);
+            ShowErrorPopup("Gagal menyimpan tantangan. Detail: " + ex.Message);
         }
         finally
         {
@@ -361,15 +362,16 @@ public partial class UIManager
 
         if (string.IsNullOrWhiteSpace(questId) || questId == EmptyQuestOption || questId == NewQuestOption)
         {
-            ShowErrorPopup("Pilih quest yang ingin dihapus.");
+            ShowErrorPopup("Pilih tantangan yang ingin dihapus.");
             return;
         }
 
         ShowConfirmPopup(
-            "Hapus Quest",
-            "Hapus quest \"" + questId + "\"?\nAksi ini tidak bisa dikembalikan.",
+            "Hapus Tantangan",
+            "Hapus tantangan \"" + questId + "\"?\nAksi ini tidak bisa dikembalikan.",
             "Hapus",
-            () => DeleteEditQuestConfirmed());
+            () => DeleteEditQuestConfirmed(),
+            true);
     }
 
     private async void DeleteEditQuestConfirmed()
@@ -380,7 +382,7 @@ public partial class UIManager
         }
 
         QuestPackRepository.ClearLastCloudWarning();
-        BeginEditQuestLoading("Menghapus quest...");
+        BeginEditQuestLoading("Menghapus tantangan...");
 
         try
         {
@@ -389,7 +391,7 @@ public partial class UIManager
         catch (Exception ex)
         {
             Debug.LogError("Gagal menghapus quest: " + ex.Message);
-            ShowErrorPopup("Gagal menghapus quest. Detail: " + ex.Message);
+            ShowErrorPopup("Gagal menghapus tantangan. Detail: " + ex.Message);
         }
         finally
         {
@@ -471,7 +473,7 @@ public partial class UIManager
         string selectedOption = editQuestPackDropdown?.value;
         if (string.IsNullOrWhiteSpace(selectedOption) || !editQuestPackLookup.TryGetValue(selectedOption, out QuestPackData selectedPack))
         {
-            ShowErrorPopup("Pilih paket quest terlebih dahulu.");
+            ShowErrorPopup("Pilih paket tantangan terlebih dahulu.");
             return false;
         }
 
@@ -631,7 +633,7 @@ public partial class UIManager
         string activePackName = editQuestActivePackNameInput?.value?.Trim();
         if (string.IsNullOrWhiteSpace(activePackName))
         {
-            ShowErrorPopup("Nama quest pack tidak boleh kosong.");
+            ShowErrorPopup("Nama paket tantangan tidak boleh kosong.");
             return false;
         }
 
@@ -661,21 +663,21 @@ public partial class UIManager
         string questId = editQuestIdInput?.value?.Trim();
         if (string.IsNullOrWhiteSpace(questId))
         {
-            ShowErrorPopup("Quest ID tidak boleh kosong.");
+            ShowErrorPopup("ID Tantangan tidak boleh kosong.");
             return false;
         }
 
         string questNama = editQuestNamaInput?.value?.Trim();
         if (string.IsNullOrWhiteSpace(questNama))
         {
-            ShowErrorPopup("Nama quest tidak boleh kosong.");
+            ShowErrorPopup("Nama tantangan tidak boleh kosong.");
             return false;
         }
 
         string questPerintah = editQuestPerintahInput?.value?.Trim();
         if (string.IsNullOrWhiteSpace(questPerintah))
         {
-            ShowErrorPopup("Perintah quest tidak boleh kosong.");
+            ShowErrorPopup("Perintah tantangan tidak boleh kosong.");
             return false;
         }
 
@@ -696,7 +698,7 @@ public partial class UIManager
 
         if ((editQuestIsCreatingNew || isChangingId) && duplicateIndex >= 0)
         {
-            ShowErrorPopup("Quest ID sudah digunakan. Gunakan ID lain.");
+            ShowErrorPopup("ID Tantangan sudah digunakan. Gunakan ID lain.");
             return false;
         }
 
@@ -723,7 +725,7 @@ public partial class UIManager
 #if UNITY_EDITOR
         UnityEditor.AssetDatabase.Refresh();
 #endif
-        ShowEditQuestCloudWarningOrSuccess("Save berhasil. Quest berhasil disimpan.");
+        ShowEditQuestCloudWarningOrSuccess("Save berhasil. Tantangan berhasil disimpan.");
         return true;
     }
 
@@ -731,7 +733,7 @@ public partial class UIManager
     {
         if (string.IsNullOrWhiteSpace(editQuestSelectedId))
         {
-            ShowErrorPopup("Pilih quest yang ingin dihapus.");
+            ShowErrorPopup("Pilih tantangan yang ingin dihapus.");
             return false;
         }
 
@@ -739,7 +741,7 @@ public partial class UIManager
         int existingIndex = FindQuestIndex(database?.quest, editQuestSelectedId);
         if (existingIndex < 0)
         {
-            ShowErrorPopup("Quest yang dipilih tidak ditemukan.");
+            ShowErrorPopup("Tantangan yang dipilih tidak ditemukan.");
             return false;
         }
 
@@ -752,7 +754,7 @@ public partial class UIManager
 #if UNITY_EDITOR
         UnityEditor.AssetDatabase.Refresh();
 #endif
-        ShowEditQuestCloudWarningOrSuccess("Quest berhasil dihapus.");
+        ShowEditQuestCloudWarningOrSuccess("Tantangan berhasil dihapus.");
         return true;
     }
 

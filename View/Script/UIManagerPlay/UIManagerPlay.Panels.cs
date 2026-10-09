@@ -44,7 +44,7 @@ public partial class UIManagerPlay
         List<QuestData> quests = GameState.Instance.GetQuestList();
         if (quests.Count == 0)
         {
-            var noQuestLabel = new Label("Paket quest ini belum punya quest.");
+            var noQuestLabel = new Label("Paket tantangan ini belum punya tantangan.");
             noQuestLabel.AddToClassList("quest-item-title");
             questList.Add(noQuestLabel);
             return;
@@ -90,7 +90,7 @@ public partial class UIManagerPlay
 
         if (!hasQuest)
         {
-            var emptyLabel = new Label("Belum ada quest.");
+            var emptyLabel = new Label("Belum ada tantangan.");
             emptyLabel.AddToClassList("quest-item-detail");
             questList.Add(emptyLabel);
         }

@@ -512,10 +512,12 @@ public partial class ChoiceController
         }
 
         // Hari terakhir tidak ditutup dengan AkhirGiliran: server menolaknya dan meminta finalisasi
-        // lewat POST /end, yang memang dipanggil klien saat permainan berakhir.
+        // lewat POST /end, yang memang dipanggil klien saat permainan berakhir. Sinkronisasi state
+        // tetap dijalankan di hari itu -- justru hari yang paling penting angkanya benar.
         if (GameState.Instance != null && GameState.Instance.day >= GameState.Instance.finishDay)
         {
             Debug.Log("AkhirGiliran dilewati pada hari terakhir; sesi ditutup lewat POST /end.");
+            await SyncPlayerStatsFromServerAsync();
             return;
         }
 
@@ -537,12 +539,20 @@ public partial class ChoiceController
             isSendingAkhirGiliran = false;
         }
 
-        if (this == null || result.Success)
+        if (this == null)
         {
             return;
         }
 
-        view.AddSystemTextToDialog("Hari gagal ditutup di server: " + result.ErrorMessage);
+        if (!result.Success)
+        {
+            view.AddSystemTextToDialog("Hari gagal ditutup di server: " + result.ErrorMessage);
+        }
+
+        // Proses terakhir hari ini: angka server dijadikan acuan, sesudah seluruh event hari itu
+        // diterima. Dijalankan juga saat penutupan hari gagal, supaya angka yang ditampilkan tetap
+        // yang dipegang server.
+        await SyncPlayerStatsFromServerAsync();
     }
 
     // Hari berganti setelah aksi terakhir pemain terakhir.

@@ -5,6 +5,10 @@ public partial class GameState
 {
     // Tracks Peduli Donasi totals and rankings per event.
     private int peduliDonasiEventKe;
+
+    // Menjaga agar satu putaran donasi hanya difinalisasi sekali, karena finalisasi kini dipanggil
+    // pemanggil lebih dulu dan AdvancePeduliDonasiTurn tetap memanggilnya sebagai jaring pengaman.
+    private bool peduliDonasiSudahDifinalisasi;
     private Dictionary<int, int> lastPeduliDonasiAmounts;
     private List<int> currentPeduliDonasiOrder;
     private Dictionary<int, int> playerDonasiJuara1Cards;
@@ -21,6 +25,7 @@ public partial class GameState
         playerDonasiJuara2Cards = new Dictionary<int, int>();
         playerDonasiJuara3Cards = new Dictionary<int, int>();
         peduliDonasiEventKe = 0;
+        peduliDonasiSudahDifinalisasi = false;
 
         for (int player = 1; player <= playerCount; player++)
         {
@@ -69,6 +74,7 @@ public partial class GameState
 
         playerPeduliDonasi[turn] += amount;
         JumatBerkah++;
+        peduliDonasiSudahDifinalisasi = false;
     }
 
     public int GetPeduliDonasiTotal(int player)
@@ -92,7 +98,9 @@ public partial class GameState
             return false;
         }
 
-        FinalizePeduliDonasiEvent();
+        // Jaring pengaman: biasanya pemanggil sudah memfinalisasi lebih dulu agar peringkatnya
+        // dapat diumumkan sebelum AkhirGiliran. Panggilan kedua ini tidak berefek.
+        FinalisasiPeduliDonasiEvent();
         NextDay();
         return true;
     }
@@ -125,8 +133,17 @@ public partial class GameState
         return new List<int>();
     }
 
-    private void FinalizePeduliDonasiEvent()
+    // Menghitung peringkat juara Jumat ini dan membagikan kartu juaranya. Harus dipanggil SEBELUM
+    // GetLatestPeduliDonasiRanking dibaca; tanpa itu yang terbaca peringkat Jumat sebelumnya.
+    public void FinalisasiPeduliDonasiEvent()
     {
+        if (peduliDonasiSudahDifinalisasi)
+        {
+            return;
+        }
+
+        peduliDonasiSudahDifinalisasi = true;
+
         var ranking = BuildPeduliDonasiRanking();
         lastPeduliDonasiAmounts = new Dictionary<int, int>(playerPeduliDonasi);
         peduliDonasiEventKe++;

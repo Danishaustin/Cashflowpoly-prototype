@@ -50,12 +50,16 @@ public partial class ChoiceController
             return;
         }
 
+        // Harga nol SAH, dan tidak boleh ditolak. GetHargaBahanEfektif menjepit hasilnya dengan
+        // Mathf.Max(0, ...), jadi kartu risiko INGREDIENT_PRICE_MODIFIER yang menurunkan harga sampai
+        // di bawah harga dasar membuat bahannya gratis -- bukan rusak. Server pun sengaja
+        // mengizinkannya: jalur pembelian bahan divalidasi "Amount minimal 0" (hanya menolak negatif),
+        // berbeda dari pembelian kebutuhan yang menuntut "Amount harus > 0".
+        //
+        // Nilai nol dari GetHargaBahanEfektif juga bisa berarti bahan tidak ada di katalog, tetapi
+        // kemungkinan itu sudah dihabisi IsKnownBahan di atas, yang memakai pencarian katalog yang
+        // sama persis. Jadi nol yang sampai di sini pasti berarti gratis.
         int hargaBahan = gameState.GetHargaBahanEfektif(bahanKey);
-        if (hargaBahan <= 0)
-        {
-            ShowSystemDialogThen("Harga " + bahanName + " tidak valid.\n", () => view.ShowChoice("BahanMasakan"));
-            return;
-        }
 
         string spendBlockedMessage = gameState.GetSpendBlockedMessage(activePlayer, hargaBahan);
         if (spendBlockedMessage != null)

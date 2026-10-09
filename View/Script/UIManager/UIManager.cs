@@ -39,7 +39,12 @@ public partial class UIManager : MonoBehaviour
     private TextField passwordInput;
     private TextField addPlayerUsernameInput;
     private TextField addPlayerPasswordInput;
+    private Button editQuestPackExportButton;
+    private Button editQuestPackImportButton;
+    private Button editNarasiPackExportButton;
+    private Button editNarasiPackImportButton;
     private TextField sessionNameInput;
+    private Label sessionNamePlaceholder;
     private TextField rulesetSearchInput;
     private TextField editNarasiIdInput;
     private TextField editNarasiActivePackNameInput;
@@ -102,9 +107,6 @@ public partial class UIManager : MonoBehaviour
     private readonly List<NarafinRulesetSummary> currentRulesetOptions = new List<NarafinRulesetSummary>();
     private readonly List<NarasiPackData> currentNarasiPackOptions = new List<NarasiPackData>();
     private readonly List<QuestPackData> currentQuestPackOptions = new List<QuestPackData>();
-    private Label playValidationText;
-    private Label addPlayerValidationText;
-    private Label sessionSetupValidationText;
     private Label dialogKarakterStatusText;
     private Label authLoadingText;
     private Label playLoadingText;
@@ -190,6 +192,7 @@ public partial class UIManager : MonoBehaviour
         ResetPlayLoadingState();
         isHomeUiReady = true;
         RegisterCallbacks();
+        SetupPasswordToggles();
         SetupMobileKeyboardFocusHandlers();
         AudioController.Instance.RegisterButtonSounds(root);
         SetupPlayerCountDropdown();
@@ -250,7 +253,12 @@ public partial class UIManager : MonoBehaviour
         passwordInput = root.Q<TextField>("PasswordInput");
         addPlayerUsernameInput = root.Q<TextField>("AddPlayerUsernameInput");
         addPlayerPasswordInput = root.Q<TextField>("AddPlayerPasswordInput");
+        editQuestPackExportButton = root.Q<Button>("EditQuestPackExportButton");
+        editQuestPackImportButton = root.Q<Button>("EditQuestPackImportButton");
+        editNarasiPackExportButton = root.Q<Button>("EditNarasiPackExportButton");
+        editNarasiPackImportButton = root.Q<Button>("EditNarasiPackImportButton");
         sessionNameInput = root.Q<TextField>("SessionNameInput");
+        sessionNamePlaceholder = root.Q<Label>("SessionNamePlaceholder");
         rulesetSearchInput = root.Q<TextField>("RulesetSearchInput");
         editNarasiIdInput = root.Q<TextField>("EditNarasiIdInput");
         editNarasiActivePackNameInput = root.Q<TextField>("EditNarasiActivePackNameInput");
@@ -334,9 +342,6 @@ public partial class UIManager : MonoBehaviour
             root.Q<Button>("RulesetSuggestionButton3"),
             root.Q<Button>("RulesetSuggestionButton4")
         };
-        playValidationText = root.Q<Label>("PlayValidationText");
-        addPlayerValidationText = root.Q<Label>("AddPlayerValidationText");
-        sessionSetupValidationText = root.Q<Label>("SessionSetupValidationText");
         dialogKarakterStatusText = root.Q<Label>("DialogKarakterStatusText");
         authLoadingText = root.Q<Label>("AuthLoadingText");
         playLoadingText = root.Q<Label>("PlayLoadingText");
@@ -359,9 +364,6 @@ public partial class UIManager : MonoBehaviour
         playLoadingSpinner = root.Q<VisualElement>("PlayLoadingSpinner");
         errorPopupOverlay = root.Q<VisualElement>("ErrorPopupOverlay");
         errorPopupCard = root.Q<VisualElement>("ErrorPopupCard");
-
-        // narasi global dummy: hapus baris ini bila peragaan sudah tidak dipakai
-        BindNarasiGlobalDummy(root);
     }
 
     private void RegisterCallbacks()
@@ -395,8 +397,11 @@ public partial class UIManager : MonoBehaviour
         signOutButton.RegisterCallback<ClickEvent>(OnSignOutClicked);
         errorPopupOkButton?.RegisterCallback<ClickEvent>(OnErrorPopupOkClicked);
 
+        RegisterNarasiTransferCallbacks();
+        RegisterQuestTransferCallbacks();
+        RegisterSessionNamePlaceholder();
+
         rulesetModeDropdown?.RegisterValueChangedCallback(OnRulesetModeChanged);
-        rulesetDropdown?.RegisterValueChangedCallback(OnRulesetDropdownChanged);
         editNarasiDialogDropdown?.RegisterValueChangedCallback(OnEditNarasiDialogChanged);
         editNarasiNpcSpriteInput?.RegisterValueChangedCallback(OnEditNarasiNpcSpriteChanged);
         editNarasiActionTypeInput?.RegisterValueChangedCallback(OnEditNarasiActionTypeChanged);
@@ -416,9 +421,6 @@ public partial class UIManager : MonoBehaviour
 
         addPlayerContainer.RegisterCallback<TransitionEndEvent>(OnAddPlayerTransitionEnd);
         loginContainer.RegisterCallback<TransitionEndEvent>(OnLoginTransitionEnd);
-
-        // narasi global dummy: hapus baris ini bila peragaan sudah tidak dipakai
-        RegisterNarasiGlobalDummyCallbacks();
     }
 
     private void SetupMobileKeyboardFocusHandlers()

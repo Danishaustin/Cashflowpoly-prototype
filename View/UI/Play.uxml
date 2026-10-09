@@ -5,17 +5,17 @@
             <ui:VisualElement name="BackgroundTransitionOverlay" class="choice-background background-transition-overlay background-city" />
         </ui:VisualElement>
         <ui:VisualElement name="DayContainer" style="flex-grow: 1; position: absolute; width: 16%; height: 20%; background-color: rgba(255, 255, 255, 0); left: 0; background-image: url(&quot;project://database/Assets/View/UI/Sprites/UIElement/DayCounter.png?fileID=21300000&amp;guid=1c026d03cd1faf04e8bc91fe6b9067bd&amp;type=3#DayCounter&quot;); flex-direction: column; translate: 0 -20%; padding-top: 42px; padding-bottom: 42px; padding-left: 16px; padding-right: 16px; rotate: 0; justify-content: center; align-items: flex-end;">
-            <ui:Label tabindex="-1" text="Day 1" parse-escape-sequences="true" display-tooltip-when-elided="true" name="DayCounter" style="font-size: 44%; height: 34%; white-space: nowrap; -unity-text-align: lower-left; -unity-font: url(&quot;project://database/Assets/Resources/Sprite/300Mind/2D%20Game%20UI%20Kit/Fonts/Ariston%20Comic%20Font.ttf?fileID=12800000&amp;guid=e28e9ad7f0a79f14d8c01971d5416eba&amp;type=3#Ariston Comic Font&quot;); -unity-font-definition: initial; -unity-font-style: bold; border-top-left-radius: 100%; border-top-right-radius: 100%; border-bottom-right-radius: 100%; border-bottom-left-radius: 100%; width: 60%;" />
-            <ui:Label tabindex="-1" text="Minggu: 1" parse-escape-sequences="true" display-tooltip-when-elided="true" name="WeekCounter" style="font-size: 30%; height: 26%; white-space: nowrap; -unity-text-align: middle-left; -unity-font: url(&quot;project://database/Assets/Resources/Sprite/300Mind/2D%20Game%20UI%20Kit/Fonts/Ariston%20Comic%20Font.ttf?fileID=12800000&amp;guid=e28e9ad7f0a79f14d8c01971d5416eba&amp;type=3#Ariston Comic Font&quot;); -unity-font-definition: initial; -unity-font-style: bold; width: 60%;" />
-            <ui:Label tabindex="-1" text="Senin" parse-escape-sequences="true" display-tooltip-when-elided="true" name="DayNameCounter" style="font-size: 30%; height: 26%; white-space: nowrap; -unity-text-align: upper-left; -unity-font: url(&quot;project://database/Assets/Resources/Sprite/300Mind/2D%20Game%20UI%20Kit/Fonts/Ariston%20Comic%20Font.ttf?fileID=12800000&amp;guid=e28e9ad7f0a79f14d8c01971d5416eba&amp;type=3#Ariston Comic Font&quot;); -unity-font-definition: initial; -unity-font-style: bold; width: 60%;" />
+            <ui:Label tabindex="-1" text="Day 1" parse-escape-sequences="true" display-tooltip-when-elided="true" name="DayCounter" style="height: 34%; white-space: nowrap; -unity-text-align: lower-left; border-top-left-radius: 100%; border-top-right-radius: 100%; border-bottom-right-radius: 100%; border-bottom-left-radius: 100%; width: 60%;" />
+            <ui:Label tabindex="-1" text="Minggu: 1" parse-escape-sequences="true" display-tooltip-when-elided="true" name="WeekCounter" style="height: 26%; white-space: nowrap; -unity-text-align: middle-left; width: 60%;" />
+            <ui:Label tabindex="-1" text="Senin" parse-escape-sequences="true" display-tooltip-when-elided="true" name="DayNameCounter" style="height: 26%; white-space: nowrap; -unity-text-align: upper-left; width: 60%;" />
         </ui:VisualElement>
         <ui:Button text="Day 6" parse-escape-sequences="true" display-tooltip-when-elided="true" name="DebugSetDayButton" class="debug-set-day-button" style="display: none;" />
         <ui:VisualElement name="PlayerContainer" class="player-container character" />
         <ui:VisualElement name="NPCContainer" class="npc-container character npc-character" style="display: flex;" />
         <ui:VisualElement name="TextContainer" style="flex-grow: 1; position: absolute; width: 100%; height: 30%; bottom: 0; background-image: none; background-color: rgba(255, 255, 255, 0); display: flex;">
             <ui:VisualElement name="TextBox" style="flex-grow: 1; background-color: rgba(255, 255, 255, 0); padding-top: 100px; padding-right: 100px; padding-bottom: 75px; padding-left: 100px; background-image: url(&quot;project://database/Assets/View/UI/Sprites/UIElement/Textbox.png?fileID=21300000&amp;guid=39a3da82e9dbad0409b1fc1f1a9a482c&amp;type=3#Textbox&quot;); -unity-background-scale-mode: stretch-to-fill; -unity-background-image-tint-color: rgb(255, 255, 255); flex-shrink: 0; -unity-slice-scale: 1px; -unity-slice-left: 0; -unity-slice-top: 0; -unity-slice-right: 0; -unity-slice-bottom: 0;">
-                <ui:Label tabindex="-1" text="Pedagang Pasar" parse-escape-sequences="true" display-tooltip-when-elided="true" name="NameTag" style="-unity-font: url(&quot;project://database/Assets/Resources/Sprite/300Mind/2D%20Game%20UI%20Kit/Fonts/Ariston%20Comic%20Font.ttf?fileID=12800000&amp;guid=e28e9ad7f0a79f14d8c01971d5416eba&amp;type=3#Ariston Comic Font&quot;); -unity-font-definition: initial; font-size: 60%; text-overflow: ellipsis; -unity-text-overflow-position: end; white-space: nowrap; position: absolute; top: 2%; left: 10%; width: 240px; overflow: hidden;" />
-                <ui:Label tabindex="-1" text="" parse-escape-sequences="true" display-tooltip-when-elided="true" name="Dialog" style="-unity-font: url(&quot;project://database/Assets/Resources/Sprite/300Mind/2D%20Game%20UI%20Kit/Fonts/Ariston%20Comic%20Font.ttf?fileID=12800000&amp;guid=e28e9ad7f0a79f14d8c01971d5416eba&amp;type=3#Ariston Comic Font&quot;); -unity-font-definition: initial; font-size: 60%; text-overflow: ellipsis; white-space: normal;" />
+                <ui:Label tabindex="-1" text="Pedagang Pasar" parse-escape-sequences="true" display-tooltip-when-elided="true" name="NameTag" style="text-overflow: ellipsis; -unity-text-overflow-position: end; white-space: nowrap; position: absolute; top: 2%; left: 10%; width: 240px; overflow: hidden;" />
+                <ui:Label tabindex="-1" parse-escape-sequences="true" display-tooltip-when-elided="true" name="Dialog" style="text-overflow: ellipsis; white-space: normal;" />
             </ui:VisualElement>
         </ui:VisualElement>
         <ui:VisualElement name="ChoiceContainer" style="flex-grow: 1; position: absolute; width: 100%; height: 100%; flex-direction: row; justify-content: center; align-items: center;">
@@ -31,7 +31,7 @@
                 <ui:Label tabindex="-1" text="Pilih Target Kebutuhan" parse-escape-sequences="true" display-tooltip-when-elided="true" name="TargetKebutuhanTitle" class="target-kebutuhan-title" />
                 <ui:VisualElement name="TargetKebutuhanGrid" class="target-kebutuhan-grid" />
                 <ui:VisualElement class="target-kebutuhan-footer">
-                    <ui:Button text="Reset" parse-escape-sequences="true" display-tooltip-when-elided="true" name="TargetKebutuhanResetButton" class="target-kebutuhan-action-button" />
+                    <ui:Button text="Reset" parse-escape-sequences="true" display-tooltip-when-elided="true" name="TargetKebutuhanResetButton" class="target-kebutuhan-action-button btn-sekunder" />
                     <ui:Button text="Next" parse-escape-sequences="true" display-tooltip-when-elided="true" name="TargetKebutuhanNextButton" class="target-kebutuhan-action-button" />
                 </ui:VisualElement>
             </ui:VisualElement>
@@ -46,22 +46,22 @@
             </ui:VisualElement>
             <ui:VisualElement name="ChoiceBM" class="item-choice-list">
                 <ui:Button parse-escape-sequences="true" display-tooltip-when-elided="true" name="PreviousBahanButton" class="item-page-button item-page-previous-button" />
-                <ui:Button text="Back" parse-escape-sequences="true" display-tooltip-when-elided="true" name="BackChoiceBMButton" class="item-back-button" />
+                <ui:Button text="Back" parse-escape-sequences="true" display-tooltip-when-elided="true" name="BackChoiceBMButton" class="item-back-button btn-sekunder" />
                 <ui:Button parse-escape-sequences="true" display-tooltip-when-elided="true" name="NextBahanButton" class="item-page-button item-page-next-button" />
             </ui:VisualElement>
             <ui:VisualElement name="ChoiceK" class="item-choice-list">
                 <ui:Button parse-escape-sequences="true" display-tooltip-when-elided="true" name="PreviousKebutuhanButton" class="item-page-button item-page-previous-button" />
-                <ui:Button text="Back" parse-escape-sequences="true" display-tooltip-when-elided="true" name="BackChoiceKButton" class="item-back-button" />
+                <ui:Button text="Back" parse-escape-sequences="true" display-tooltip-when-elided="true" name="BackChoiceKButton" class="item-back-button btn-sekunder" />
                 <ui:Button parse-escape-sequences="true" display-tooltip-when-elided="true" name="NextKebutuhanButton" class="item-page-button item-page-next-button" />
             </ui:VisualElement>
             <ui:VisualElement name="ChoiceJM" class="item-choice-list jual-masakan-choice-list">
                 <ui:Button parse-escape-sequences="true" display-tooltip-when-elided="true" name="PreviousJualMasakanButton" class="item-page-button item-page-previous-button" />
-                <ui:Button text="Back" parse-escape-sequences="true" display-tooltip-when-elided="true" name="BackChoiceJMButton" class="item-back-button" />
+                <ui:Button text="Back" parse-escape-sequences="true" display-tooltip-when-elided="true" name="BackChoiceJMButton" class="item-back-button btn-sekunder" />
                 <ui:Button parse-escape-sequences="true" display-tooltip-when-elided="true" name="NextJualMasakanButton" class="item-page-button item-page-next-button" />
             </ui:VisualElement>
             <ui:VisualElement name="ChoiceTF" class="item-choice-list">
                 <ui:Button parse-escape-sequences="true" display-tooltip-when-elided="true" name="PreviousTujuanFinansialButton" class="item-page-button item-page-previous-button" />
-                <ui:Button text="Back" parse-escape-sequences="true" display-tooltip-when-elided="true" name="BackChoiceTFButton" class="item-back-button" />
+                <ui:Button text="Back" parse-escape-sequences="true" display-tooltip-when-elided="true" name="BackChoiceTFButton" class="item-back-button btn-sekunder" />
                 <ui:Button parse-escape-sequences="true" display-tooltip-when-elided="true" name="NextTujuanFinansialButton" class="item-page-button item-page-next-button" />
             </ui:VisualElement>
             <ui:VisualElement name="ChoiceKL" class="choice-list">
@@ -75,7 +75,7 @@
             <ui:VisualElement name="ChoicePS" class="choice-list" style="justify-content: center; align-items: stretch;">
                 <ui:Button text="Ambil Pinjaman" parse-escape-sequences="true" display-tooltip-when-elided="true" name="AmbilPinjamanSyariah" class="choice-button" />
                 <ui:Button text="Kembalikan Pinjaman" parse-escape-sequences="true" display-tooltip-when-elided="true" name="KembalikanPinjamanSyariah" class="choice-button" />
-                <ui:Button text="Back" parse-escape-sequences="true" display-tooltip-when-elided="true" name="BackChoicePSButton" class="item-back-button" />
+                <ui:Button text="Back" parse-escape-sequences="true" display-tooltip-when-elided="true" name="BackChoicePSButton" class="item-back-button btn-sekunder" />
             </ui:VisualElement>
             <ui:VisualElement name="ChoiceHargaEmas" class="choice-list" style="justify-content: center; align-items: stretch;">
                 <ui:Label tabindex="-1" text="Harga Emas" parse-escape-sequences="true" display-tooltip-when-elided="true" class="text" style="width: 100%;" />
@@ -164,20 +164,20 @@
                 <ui:VisualElement name="MenabungContainer" style="flex-grow: 0; flex-direction: row; justify-content: center; height: 20%; display: flex;">
                     <ui:Button text="Min" parse-escape-sequences="true" display-tooltip-when-elided="true" name="MinButton" class="choice-button" style="width: 20%;" />
                     <ui:Button text="&lt;" parse-escape-sequences="true" display-tooltip-when-elided="true" name="DecreaseButton" class="choice-button" style="width: 15%;" />
-                    <ui:Label tabindex="-1" text="0" parse-escape-sequences="true" display-tooltip-when-elided="true" name="SavingText" style="width: 30%; -unity-font: resource(&apos;Sprite/300Mind/2D Game UI Kit/Fonts/Ariston Comic Font&apos;); -unity-font-definition: initial; -unity-font-style: bold; font-size: 55px; -unity-text-align: middle-center; background-image: none; background-color: rgb(255, 255, 255); border-top-left-radius: 40px; border-top-right-radius: 40px; border-bottom-right-radius: 40px; border-bottom-left-radius: 40px;" />
+                    <ui:Label tabindex="-1" text="0" parse-escape-sequences="true" display-tooltip-when-elided="true" name="SavingText" style="width: 30%; -unity-text-align: middle-center; background-image: none; background-color: rgb(255, 255, 255); border-top-left-radius: 40px; border-top-right-radius: 40px; border-bottom-right-radius: 40px; border-bottom-left-radius: 40px;" />
                     <ui:Button text="&gt;" parse-escape-sequences="true" display-tooltip-when-elided="true" name="IncreaseButton" class="choice-button" style="width: 15%;" />
                     <ui:Button text="Max" parse-escape-sequences="true" display-tooltip-when-elided="true" name="MaxButton" class="choice-button" style="width: 20%;" />
                 </ui:VisualElement>
                 <ui:VisualElement name="ConfirmContainer" style="flex-grow: 0; height: 20%; width: auto; flex-direction: row; justify-content: center;">
                     <ui:Button text="Confirm" parse-escape-sequences="true" display-tooltip-when-elided="true" name="ConfirmButton" class="choice-button" style="width: 30%;" />
                 </ui:VisualElement>
-                <ui:Button text="Back" parse-escape-sequences="true" display-tooltip-when-elided="true" name="BackChoiceMenabungButton" class="item-back-button" />
+                <ui:Button text="Back" parse-escape-sequences="true" display-tooltip-when-elided="true" name="BackChoiceMenabungButton" class="item-back-button btn-sekunder" />
             </ui:VisualElement>
             <ui:VisualElement name="ChoiceTFConfirm" class="choice-list tf-confirm-panel" style="justify-content: center; align-items: stretch;">
                 <ui:Label tabindex="-1" text="Apakah Player ingin membeli Tujuan Finansial?" parse-escape-sequences="true" display-tooltip-when-elided="true" name="TFConfirmText" class="tf-confirm-text" />
                 <ui:VisualElement class="tf-confirm-buttons">
                     <ui:Button text="Ya" parse-escape-sequences="true" display-tooltip-when-elided="true" name="TFConfirmYesButton" class="target-kebutuhan-action-button" />
-                    <ui:Button text="Tidak" parse-escape-sequences="true" display-tooltip-when-elided="true" name="TFConfirmNoButton" class="target-kebutuhan-action-button" />
+                    <ui:Button text="Tidak" parse-escape-sequences="true" display-tooltip-when-elided="true" name="TFConfirmNoButton" class="target-kebutuhan-action-button btn-sekunder" />
                 </ui:VisualElement>
             </ui:VisualElement>
             <ui:VisualElement name="JumatBerkah" class="choice-list" style="flex-grow: 1; justify-content: center; align-items: stretch;">
@@ -209,7 +209,7 @@
             </ui:VisualElement>
             <ui:VisualElement name="ChoiceFinalHappiness" class="choice-list" style="flex-grow: 1; justify-content: center; align-items: stretch;">
                 <ui:Label tabindex="-1" text="Poin Kebahagiaan Akhir" parse-escape-sequences="true" display-tooltip-when-elided="true" class="text" style="width: 100%;" />
-                <ui:Label tabindex="-1" text="Player: Player 1" parse-escape-sequences="true" display-tooltip-when-elided="true" name="FinalHappinessPlayerText" class="text" style="width: 100%; font-size: 54px;" />
+                <ui:Label tabindex="-1" text="Player: Player 1" parse-escape-sequences="true" display-tooltip-when-elided="true" name="FinalHappinessPlayerText" class="text" style="width: 100%;" />
                 <ui:VisualElement style="flex-grow: 0; flex-direction: row; justify-content: center; height: 20%; display: flex;">
                     <ui:Button text="Min" parse-escape-sequences="true" display-tooltip-when-elided="true" name="MinButtonFinalHappiness" class="choice-button" style="width: 20%;" />
                     <ui:Button text="&lt;" parse-escape-sequences="true" display-tooltip-when-elided="true" name="DecreaseButtonFinalHappiness" class="choice-button" style="width: 15%;" />
@@ -225,7 +225,7 @@
                 <ui:Label tabindex="-1" text="Lanjutkan aksi ini?" parse-escape-sequences="true" display-tooltip-when-elided="true" name="ChoiceConfirmText" class="menabung-title-text" />
                 <ui:VisualElement name="ChoiceConfirmButtonContainer" style="flex-grow: 0; flex-direction: row; justify-content: center;">
                     <ui:Button text="Ya" parse-escape-sequences="true" display-tooltip-when-elided="true" name="ChoiceConfirmYesButton" class="choice-button" style="width: 30%;" />
-                    <ui:Button text="Batal" parse-escape-sequences="true" display-tooltip-when-elided="true" name="ChoiceConfirmNoButton" class="choice-button" style="width: 30%;" />
+                    <ui:Button text="Batal" parse-escape-sequences="true" display-tooltip-when-elided="true" name="ChoiceConfirmNoButton" class="choice-button btn-sekunder" style="width: 30%;" />
                 </ui:VisualElement>
             </ui:VisualElement>
             <ui:VisualElement name="PermainanSelesai" class="choice-list" style="flex-grow: 1; justify-content: center; align-items: center;">
@@ -241,15 +241,15 @@
         <ui:VisualElement name="Objective" style="flex-grow: 1; position: absolute; width: 368px; height: 300px; border-top-left-radius: 25%; border-top-right-radius: 25%; border-bottom-right-radius: 25%; border-bottom-left-radius: 25%; top: auto; left: auto; flex-direction: column-reverse; right: -70px;">
             <ui:VisualElement name="Saving" style="flex-grow: 1; flex-direction: row; align-items: center;">
                 <ui:VisualElement style="flex-grow: 1; background-image: url(&quot;project://database/Assets/View/UI/Sprites/Icons/Money.png?fileID=21300000&amp;guid=cba790c33b765944fa6dbaa548db9db9&amp;type=3#Money&quot;); -unity-background-scale-mode: scale-to-fit; width: 50%; height: 50%; -unity-background-image-tint-color: rgb(255, 255, 255);" />
-                <ui:Label tabindex="-1" text="0" parse-escape-sequences="true" display-tooltip-when-elided="true" name="SavingCounter" style="width: 50%; height: 50%; -unity-text-align: middle-left; -unity-font-definition: initial; -unity-font: url(&quot;project://database/Assets/Resources/Sprite/300Mind/2D%20Game%20UI%20Kit/Fonts/Ariston%20Comic%20Font.ttf?fileID=12800000&amp;guid=e28e9ad7f0a79f14d8c01971d5416eba&amp;type=3#Ariston Comic Font&quot;); font-size: 100px;" />
+                <ui:Label tabindex="-1" text="0" parse-escape-sequences="true" display-tooltip-when-elided="true" name="SavingCounter" style="width: 50%; height: 50%; -unity-text-align: middle-left;" />
             </ui:VisualElement>
             <ui:VisualElement name="Happiness" style="flex-grow: 1; flex-direction: row; align-items: center;">
                 <ui:VisualElement style="flex-grow: 1; background-image: url(&quot;project://database/Assets/View/UI/Sprites/Icons/Heart.png?fileID=21300000&amp;guid=97de086bbc8a38d4799cac1c8d00064e&amp;type=3#Heart&quot;); -unity-background-scale-mode: scale-to-fit; width: 50%; height: 50%; -unity-slice-scale: 1px;" />
-                <ui:Label tabindex="-1" text="0" parse-escape-sequences="true" display-tooltip-when-elided="true" name="HappinessCounter" style="width: 50%; height: 50%; -unity-text-align: middle-left; -unity-font-definition: initial; -unity-font: url(&quot;project://database/Assets/Resources/Sprite/300Mind/2D%20Game%20UI%20Kit/Fonts/Ariston%20Comic%20Font.ttf?fileID=12800000&amp;guid=e28e9ad7f0a79f14d8c01971d5416eba&amp;type=3#Ariston Comic Font&quot;); font-size: 100px;" />
+                <ui:Label tabindex="-1" text="0" parse-escape-sequences="true" display-tooltip-when-elided="true" name="HappinessCounter" style="width: 50%; height: 50%; -unity-text-align: middle-left;" />
             </ui:VisualElement>
             <ui:VisualElement name="Coins" style="flex-grow: 1; flex-direction: row; align-items: center;">
                 <ui:VisualElement style="flex-grow: 1; background-image: url(&quot;project://database/Assets/View/UI/Sprites/Icons/Coin.png?fileID=21300000&amp;guid=9ab5bd145c5f7ac49b811a662b05ee3f&amp;type=3#Coin&quot;); -unity-background-scale-mode: scale-to-fit; width: 50%; height: 50%;" />
-                <ui:Label tabindex="-1" text="0" parse-escape-sequences="true" display-tooltip-when-elided="true" name="CoinCounter" style="width: 50%; height: 50%; -unity-text-align: middle-left; -unity-font-definition: initial; -unity-font: url(&quot;project://database/Assets/Resources/Sprite/300Mind/2D%20Game%20UI%20Kit/Fonts/Ariston%20Comic%20Font.ttf?fileID=12800000&amp;guid=e28e9ad7f0a79f14d8c01971d5416eba&amp;type=3#Ariston Comic Font&quot;); font-size: 100px;" />
+                <ui:Label tabindex="-1" text="0" parse-escape-sequences="true" display-tooltip-when-elided="true" name="CoinCounter" style="width: 50%; height: 50%; -unity-text-align: middle-left;" />
             </ui:VisualElement>
         </ui:VisualElement>
         <ui:Button parse-escape-sequences="true" display-tooltip-when-elided="true" name="PauseToggleButton" class="pause-toggle-button" />
@@ -257,7 +257,7 @@
         <ui:Button parse-escape-sequences="true" display-tooltip-when-elided="true" name="InventoryToggleButton" class="inventory-toggle-button" />
         <ui:VisualElement name="QuestPanel" class="quest-panel" style="display: none;">
             <ui:VisualElement name="QuestHeader" class="quest-panel-header">
-                <ui:Label tabindex="-1" text="Quest" parse-escape-sequences="true" display-tooltip-when-elided="true" class="quest-panel-title" />
+                <ui:Label tabindex="-1" text="Tantangan" parse-escape-sequences="true" display-tooltip-when-elided="true" class="quest-panel-title" />
                 <ui:Button parse-escape-sequences="true" display-tooltip-when-elided="true" name="CloseQuestButton" class="quest-close-button" />
             </ui:VisualElement>
             <ui:ScrollView name="QuestList" class="quest-list" />
@@ -279,7 +279,7 @@
             </ui:VisualElement>
         </ui:VisualElement>
         <ui:VisualElement name="TurnContainer" style="flex-grow: 1; position: absolute; width: 20%; height: 20%; background-color: rgba(255, 255, 255, 0); left: 50%; background-image: url(&quot;project://database/Assets/View/UI/Sprites/UIElement/TurnContainer.png?fileID=21300000&amp;guid=91ee399fab5a4b3469bad30d25302782&amp;type=3#TurnContainer&quot;); flex-direction: column-reverse; transform-origin: center; -unity-slice-scale: 2px; -unity-background-scale-mode: stretch-to-fill; flex-shrink: 1; translate: -50% -40%; padding-top: 80px; padding-right: 40px; padding-bottom: 40px; padding-left: 40px;">
-            <ui:Label tabindex="-1" text="Player 1" parse-escape-sequences="true" display-tooltip-when-elided="true" name="PlayerTurn" style="font-size: 70%; height: 100%; white-space: nowrap; -unity-text-align: middle-center; -unity-font: url(&quot;project://database/Assets/Resources/Sprite/300Mind/2D%20Game%20UI%20Kit/Fonts/Ariston%20Comic%20Font.ttf?fileID=12800000&amp;guid=e28e9ad7f0a79f14d8c01971d5416eba&amp;type=3#Ariston Comic Font&quot;); -unity-font-definition: initial; -unity-font-style: bold; border-top-left-radius: 100%; border-top-right-radius: 100%; border-bottom-right-radius: 100%; border-bottom-left-radius: 100%; width: 100%;" />
+            <ui:Label tabindex="-1" text="Player 1" parse-escape-sequences="true" display-tooltip-when-elided="true" name="PlayerTurn" style="height: 100%; white-space: nowrap; -unity-text-align: middle-center; border-top-left-radius: 100%; border-top-right-radius: 100%; border-bottom-right-radius: 100%; border-bottom-left-radius: 100%; width: 100%;" />
         </ui:VisualElement>
         <ui:VisualElement name="PauseInputBlocker" class="pause-input-blocker" style="display: none;" />
         <ui:VisualElement name="PausePanel" class="pause-panel" style="display: none;">
@@ -292,21 +292,8 @@
         <ui:VisualElement name="ExitConfirmPanel" class="pause-panel exit-confirm-panel" style="display: none;">
             <ui:Label tabindex="-1" text="Keluar dan akhiri sesi?" parse-escape-sequences="true" display-tooltip-when-elided="true" name="ExitConfirmText" class="pause-panel-title exit-confirm-title" />
             <ui:VisualElement name="ExitConfirmButtonContainer" class="pause-panel-button-container">
-                <ui:Button text="Ya" parse-escape-sequences="true" display-tooltip-when-elided="true" name="ExitConfirmYesButton" class="exit-confirm-button" />
-                <ui:Button text="Tidak" parse-escape-sequences="true" display-tooltip-when-elided="true" name="ExitConfirmNoButton" class="exit-confirm-button" />
-            </ui:VisualElement>
-        </ui:VisualElement>
-        <ui:VisualElement name="GuideOverlay" class="guide-overlay" style="display: none;">
-            <ui:VisualElement name="GuidePanel" class="guide-panel">
-                <ui:VisualElement name="GuideHeader" class="guide-header">
-                    <ui:Label tabindex="-1" text="Guide" parse-escape-sequences="true" display-tooltip-when-elided="true" name="GuideCounter" class="guide-counter" style="display: none;" />
-                    <ui:Label tabindex="-1" text="Panduan Awal" parse-escape-sequences="true" display-tooltip-when-elided="true" name="GuideTitle" class="guide-title" />
-                </ui:VisualElement>
-                <ui:VisualElement name="GuideImageFrame" class="guide-image-frame">
-                    <ui:Label tabindex="-1" text="Placeholder Image" parse-escape-sequences="true" display-tooltip-when-elided="true" name="GuideImageLabel" class="guide-image-label" />
-                </ui:VisualElement>
-                <ui:Label tabindex="-1" text="Placeholder text" parse-escape-sequences="true" display-tooltip-when-elided="true" name="GuideBodyText" class="guide-body-text" />
-                <ui:Button text="Next" parse-escape-sequences="true" display-tooltip-when-elided="true" name="GuideNextButton" class="choice-button guide-next-button" />
+                <ui:Button text="Ya" parse-escape-sequences="true" display-tooltip-when-elided="true" name="ExitConfirmYesButton" class="exit-confirm-button btn-bahaya" />
+                <ui:Button text="Tidak" parse-escape-sequences="true" display-tooltip-when-elided="true" name="ExitConfirmNoButton" class="exit-confirm-button btn-sekunder" />
             </ui:VisualElement>
         </ui:VisualElement>
     </ui:VisualElement>

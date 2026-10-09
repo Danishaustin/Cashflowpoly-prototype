@@ -5,6 +5,10 @@ using UnityEngine.UIElements;
 
 public partial class UIManagerPlay
 {
+    // Membedakan dua pemakaian panel konfirmasi yang sama: keluar di tengah permainan, yang
+    // membatalkan sesi, dan kembali ke Home sesudah permainan berakhir, yang tidak merusak apa pun.
+    private bool homeConfirmFromGameFinished;
+
     // Pause panel actions and scene navigation.
     private void TogglePause(ClickEvent evt)
     {
@@ -23,11 +27,12 @@ public partial class UIManagerPlay
         choiceController?.RetryEndSession();
     }
 
-    // Sesi sudah ditutup saat permainan berakhir, jadi tombol ini langsung pindah scene tanpa konfirmasi.
+    // Sesi sudah ditutup saat permainan berakhir, jadi kembali ke Home tidak merusak apa pun.
+    // Konfirmasinya tetap diminta supaya tidak ada yang keluar karena salah tekan.
     private void GoToHomeAfterGameFinished(ClickEvent evt)
     {
-        Time.timeScale = 1f;
-        SceneManager.LoadScene(0);
+        homeConfirmFromGameFinished = true;
+        ShowExitConfirmPanel(true);
     }
 
     // Di tengah permainan sesi TIDAK bisa diakhiri resmi: /end menolak 422 sampai hari finish. Yang
@@ -42,10 +47,21 @@ public partial class UIManagerPlay
     private void CancelExitToHome(ClickEvent evt)
     {
         ShowExitConfirmPanel(false);
+        homeConfirmFromGameFinished = false;
     }
 
     private void ConfirmExitToHome(ClickEvent evt)
     {
+        if (homeConfirmFromGameFinished)
+        {
+            // Sesi sudah ditutup saat permainan berakhir; memanggil penutupan lagi hanya akan
+            // menghasilkan galat dari server.
+            homeConfirmFromGameFinished = false;
+            Time.timeScale = 1f;
+            SceneManager.LoadScene(0);
+            return;
+        }
+
         _ = ExitToHomeAsync();
     }
 
@@ -59,7 +75,10 @@ public partial class UIManagerPlay
             return;
         }
 
-        if (pausePanel != null)
+        // Panel jeda hanya diutak-atik pada jalur keluar di tengah permainan. Di akhir permainan
+        // panel jeda tidak sedang terbuka, dan menampilkannya kembali saat konfirmasi ditutup akan
+        // memunculkan panel yang tidak diminta siapa pun.
+        if (pausePanel != null && !homeConfirmFromGameFinished)
         {
             pausePanel.RemoveFromClassList("show-pause-panel");
             pausePanel.style.display = show ? DisplayStyle.None : DisplayStyle.Flex;
@@ -71,8 +90,14 @@ public partial class UIManagerPlay
 
         if (exitConfirmText != null)
         {
-            exitConfirmText.text = "Keluar dan batalkan sesi?";
+            exitConfirmText.text = homeConfirmFromGameFinished
+                ? "Kembali ke Home?"
+                : "Keluar dan batalkan sesi?";
         }
+
+        // Di tengah permainan tombol Ya membatalkan sesi, jadi ia memakai warna merusak. Di akhir
+        // permainan sesi sudah ditutup, jadi Ya hanya berpindah layar dan memakai warna utama.
+        exitConfirmYesButton?.EnableInClassList("btn-bahaya", !homeConfirmFromGameFinished);
 
         exitConfirmYesButton?.SetEnabled(true);
         exitConfirmNoButton?.SetEnabled(true);

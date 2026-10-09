@@ -170,7 +170,7 @@ public static class QuestPackRepository
         string json = JsonUtility.ToJson(normalizedDatabase, true);
         if (requireCloudSave)
         {
-            await SaveCloudTextStrictAsync(GetPackCloudKey(pack), json, "file paket quest");
+            await SaveCloudTextStrictAsync(GetPackCloudKey(pack), json, "file paket tantangan");
         }
         else
         {
@@ -220,7 +220,7 @@ public static class QuestPackRepository
         catch (Exception ex)
         {
             result.Success = false;
-            result.ErrorMessage = "Gagal membuat paket quest baru: " + ex.Message;
+            result.ErrorMessage = "Gagal membuat paket tantangan baru: " + ex.Message;
             return result;
         }
     }
@@ -232,7 +232,7 @@ public static class QuestPackRepository
         if (!IsValidPackName(cleanName))
         {
             result.Success = false;
-            result.ErrorMessage = "Nama quest hanya boleh berisi huruf, angka, spasi, garis bawah, dan strip.";
+            result.ErrorMessage = "Nama tantangan hanya boleh berisi huruf, angka, spasi, garis bawah, dan strip.";
             return result;
         }
 
@@ -241,7 +241,7 @@ public static class QuestPackRepository
         if (pack == null)
         {
             result.Success = false;
-            result.ErrorMessage = "Paket quest aktif tidak ditemukan di manifest.";
+            result.ErrorMessage = "Paket tantangan aktif tidak ditemukan di manifest.";
             return result;
         }
 
@@ -253,7 +253,7 @@ public static class QuestPackRepository
         catch (Exception ex)
         {
             result.Success = false;
-            result.ErrorMessage = "Gagal menyimpan nama paket quest ke UGS: " + ex.Message;
+            result.ErrorMessage = "Gagal menyimpan nama paket tantangan ke UGS: " + ex.Message;
             return result;
         }
 
@@ -267,7 +267,7 @@ public static class QuestPackRepository
         if (string.IsNullOrWhiteSpace(packId))
         {
             result.Success = false;
-            result.ErrorMessage = "Paket quest belum dipilih.";
+            result.ErrorMessage = "Paket tantangan belum dipilih.";
             return result;
         }
 
@@ -276,7 +276,7 @@ public static class QuestPackRepository
         if (pack == null)
         {
             result.Success = false;
-            result.ErrorMessage = "Paket quest tidak ditemukan di manifest.";
+            result.ErrorMessage = "Paket tantangan tidak ditemukan di manifest.";
             return result;
         }
 
@@ -284,7 +284,7 @@ public static class QuestPackRepository
         if (IsBundledPack(pack.id))
         {
             result.Success = false;
-            result.ErrorMessage = "Paket quest bawaan aplikasi tidak dapat dihapus.";
+            result.ErrorMessage = "Paket tantangan bawaan aplikasi tidak dapat dihapus.";
             return result;
         }
 
@@ -301,7 +301,7 @@ public static class QuestPackRepository
         catch (Exception ex)
         {
             result.Success = false;
-            result.ErrorMessage = "Gagal menghapus paket quest: " + ex.Message;
+            result.ErrorMessage = "Gagal menghapus paket tantangan: " + ex.Message;
             return result;
         }
     }
@@ -354,7 +354,7 @@ public static class QuestPackRepository
 
         if (requireCloudSave)
         {
-            await SaveCloudTextStrictAsync(ManifestCloudKey, json, "manifest quest");
+            await SaveCloudTextStrictAsync(ManifestCloudKey, json, "manifest tantangan");
         }
         else
         {
@@ -383,7 +383,7 @@ public static class QuestPackRepository
                 return string.Empty;
             }
 
-            LastCloudWarningMessage = "Gagal memuat quest dari UGS. Data lokal akan digunakan. Detail: " + ex.Message;
+            LastCloudWarningMessage = "Gagal memuat tantangan dari UGS. Data lokal akan digunakan. Detail: " + ex.Message;
             Debug.LogWarning("Load quest dari UGS gagal. Key: " + key + ", error: " + ex.Message);
             return string.Empty;
         }
@@ -402,7 +402,7 @@ public static class QuestPackRepository
         }
         catch (Exception ex)
         {
-            LastCloudWarningMessage = "Quest tersimpan lokal, tetapi gagal disimpan ke UGS. Detail: " + ex.Message;
+            LastCloudWarningMessage = "Tantangan tersimpan lokal, tetapi gagal disimpan ke UGS. Detail: " + ex.Message;
             Debug.LogWarning("Save quest ke UGS gagal, data lokal tetap tersimpan. Key: " + key + ", error: " + ex.Message);
         }
     }
@@ -442,7 +442,7 @@ public static class QuestPackRepository
                 return;
             }
 
-            LastCloudWarningMessage = "Paket quest dihapus lokal, tetapi gagal menghapus file di UGS. Detail: " + ex.Message;
+            LastCloudWarningMessage = "Paket tantangan dihapus lokal, tetapi gagal menghapus file di UGS. Detail: " + ex.Message;
             Debug.LogWarning("Delete quest dari UGS gagal. Key: " + key + ", error: " + ex.Message);
         }
     }
@@ -592,7 +592,7 @@ public static class QuestSessionContext
                 {
                     Success = false,
                     ErrorCode = "QUEST_LOAD_FAILED",
-                    ErrorMessage = "Data quest yang dipilih tidak valid."
+                    ErrorMessage = "Data tantangan yang dipilih tidak valid."
                 };
             }
 
@@ -609,7 +609,7 @@ public static class QuestSessionContext
             {
                 Success = false,
                 ErrorCode = "QUEST_LOAD_FAILED",
-                ErrorMessage = "Gagal memuat quest yang dipilih."
+                ErrorMessage = "Gagal memuat tantangan yang dipilih."
             };
         }
     }

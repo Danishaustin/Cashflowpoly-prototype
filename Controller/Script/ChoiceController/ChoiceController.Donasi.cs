@@ -115,6 +115,11 @@ public partial class ChoiceController
 
         if (isHariBerganti)
         {
+            // Peringkat dihitung DULU. Sebelumnya CatatJuaraPeduliDonasiAsync membacanya di sini
+            // padahal baru dihitung belasan baris kemudian oleh AdvancePeduliDonasiTurn, sehingga
+            // yang terbaca selalu peringkat Jumat sebelumnya -- dan pada Jumat pertama kosong.
+            GameState.Instance.FinalisasiPeduliDonasiEvent();
+
             juaraText = await CatatJuaraPeduliDonasiAsync();
             if (this == null)
             {

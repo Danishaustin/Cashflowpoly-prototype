@@ -18,16 +18,7 @@ public partial class UIManager
         sessionSetupContainer?.RemoveFromClassList("hide-session-setup-left");
         playContainer?.RemoveFromClassList("show-play");
 
-        if (playValidationText != null)
-        {
-            playValidationText.text = string.Empty;
-        }
-
-        if (sessionSetupValidationText != null)
-        {
-            sessionSetupValidationText.text = string.Empty;
-        }
-
+        ResetPasswordToggles();
         HidePlayerSuggestions();
         SetHomeButtonsEnabled(true);
     }
@@ -35,11 +26,6 @@ public partial class UIManager
     private void OnAddPlayerClicked(ClickEvent evt)
     {
         Debug.Log("Add Player button clicked!");
-        if (addPlayerValidationText != null)
-        {
-            addPlayerValidationText.text = string.Empty;
-        }
-
         addPlayerContainer.style.display = DisplayStyle.Flex;
         addPlayerContainer.AddToClassList("show-add-player");
     }

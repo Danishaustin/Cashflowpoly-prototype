@@ -154,7 +154,8 @@ public partial class UIManager
             "Hapus Dialog",
             "Hapus dialog \"" + dialogId + "\"?\nAksi ini tidak bisa dikembalikan.",
             "Hapus",
-            () => DeleteEditNarasiDialogConfirmed());
+            () => DeleteEditNarasiDialogConfirmed(),
+            true);
     }
 
     private async void DeleteEditNarasiDialogConfirmed()
@@ -236,7 +237,8 @@ public partial class UIManager
             "Hapus Paket Narasi",
             "Hapus paket narasi \"" + packName + "\"?\nAksi ini tidak bisa dikembalikan.",
             "Hapus",
-            () => DeleteNarasiPackConfirmed());
+            () => DeleteNarasiPackConfirmed(),
+            true);
     }
 
     private async void DeleteNarasiPackConfirmed()
@@ -302,7 +304,19 @@ public partial class UIManager
         ShowSuccessPopup("Menu Edit Asset siap dikembangkan.");
     }
 
+    // Menutup aplikasi tidak bisa dibatalkan dan tombolnya bersebelahan dengan menu lain, jadi
+    // konfirmasinya memakai kartu popup Home yang sama dengan konfirmasi hapus.
     private void OnExitClicked(ClickEvent evt)
+    {
+        ShowConfirmPopup(
+            "Keluar Aplikasi",
+            "Keluar dari aplikasi?",
+            "Keluar",
+            ExitApplicationConfirmed,
+            true);
+    }
+
+    private void ExitApplicationConfirmed()
     {
         Debug.Log("Exit button clicked!");
         Application.Quit();

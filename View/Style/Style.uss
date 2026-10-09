@@ -1,3 +1,30 @@
+:root {
+    --bg-page: rgb(202, 238, 225);
+    --surface-card: rgba(255, 255, 255, 0.86);
+    --surface-raised: rgb(182, 220, 216);
+    --surface-input: rgb(182, 220, 216);
+    --surface-list: rgb(245, 245, 245);
+    --chip-fill: rgba(15, 23, 42, 0.06);
+    --badge-fill: rgba(15, 23, 42, 0.08);
+    --line: rgb(182, 220, 216);
+    --line-strong: rgb(154, 215, 207);
+    --text-body: rgb(15, 23, 42);
+    --text-on-fill: rgb(255, 255, 255);
+    --text-muted: rgb(79, 110, 131);
+    --text-on-light: rgb(15, 23, 42);
+    --text-title: rgb(27, 63, 91);
+    --text-on-button: rgb(255, 255, 255);
+    --text-faint: rgb(104, 126, 142);
+    --accent: rgb(15, 118, 110);
+    --accent-soft: rgba(15, 118, 110, 0.45);
+    --accent-bright: rgb(15, 118, 110);
+    --accent-bright-soft: rgba(15, 118, 110, 0.15);
+    --accent-warm: rgb(245, 158, 11);
+    --danger: rgb(157, 44, 44);
+    --danger-strong: rgb(127, 29, 29);
+    --danger-text: rgb(157, 44, 44);
+}
+
 .home-title {
     margin-top: 20px;
     margin-right: 20px;
@@ -6,17 +33,19 @@
     width: 600px;
     -unity-font: url("project://database/Assets/Resources/Sprite/300Mind/2D%20Game%20UI%20Kit/Fonts/Ariston%20Comic%20Font.ttf?fileID=12800000&guid=e28e9ad7f0a79f14d8c01971d5416eba&type=3#Ariston Comic Font");
     -unity-font-definition: initial;
-    -unity-font-style: bold;
+    -unity-font-style: normal;
     font-size: 100px;
     justify-content: flex-start;
     align-items: stretch;
     -unity-text-align: upper-center;
-    background-image: url("project://database/Assets/Resources/Sprite/300Mind/2D%20Game%20UI%20Kit/Sprites/UI-pack_Sprite_1.png?fileID=534250303759604497&guid=7f9865cf6ac20f7468e13d5a5daff8ef&type=3#UI-pack_Sprite_1_21");
+    background-image: url("project://database/Assets/Resources/Sprite/Tema/UI-pack_Sprite_1_tema.png?fileID=534250303759604497&guid=f7b034d8ea0460cbd01ae429e619e4bd&type=3#UI-pack_Sprite_1_21");
     height: 130px;
-    color: rgb(31, 41, 55);
+    color: var(--text-title);
     text-overflow: clip;
     max-width: 600px;
     min-width: 100px;
+    -unity-text-outline-width: 1.4px;
+    -unity-text-outline-color: var(--text-title);
 }
 
 .home-button {
@@ -24,9 +53,9 @@
     border-top-right-radius: 50px;
     border-bottom-right-radius: 50px;
     border-bottom-left-radius: 50px;
-    font-size: 55px;
+    font-size: 56px;
     -unity-font: url("project://database/Assets/Resources/Sprite/300Mind/2D%20Game%20UI%20Kit/Fonts/Ariston%20Comic%20Font.ttf?fileID=12800000&guid=e28e9ad7f0a79f14d8c01971d5416eba&type=3#Ariston Comic Font");
-    -unity-font-style: bold;
+    -unity-font-style: normal;
     text-overflow: ellipsis;
     -unity-font-definition: initial;
     margin-top: 20px;
@@ -36,12 +65,12 @@
     width: 300px;
     height: 100px;
     align-items: stretch;
-    background-image: url("project://database/Assets/Resources/Sprite/300Mind/2D%20Game%20UI%20Kit/Sprites/UI-pack_Sprite_2.png?fileID=-8760834427580073799&guid=39e0242329775814891ef673e48ae932&type=3#UI-pack_Sprite_2_16");
+    background-image: url("project://database/Assets/Resources/Sprite/Tema/UI-pack_Sprite_2_tema.png?fileID=-8760834427580073799&guid=85d22325c25a042ccf701995a3514346&type=3#UI-pack_Sprite_2_16");
     cursor: initial;
     -unity-background-image-tint-color: rgb(255, 255, 255);
     transition-timing-function: ease-out;
     transition-duration: 0.1s;
-    color: rgb(5, 46, 22);
+    color: var(--text-on-button);
     -unity-background-scale-mode: scale-to-fit;
     background-color: rgba(255, 255, 255, 0);
     border-left-color: rgba(255, 255, 255, 0);
@@ -117,8 +146,8 @@
 }
 
 .add-player-form {
-    width: 520px;
-    height: 560px;
+    width: 578px;
+    height: 670px;
     flex-direction: column;
     align-items: center;
     justify-content: center;
@@ -126,22 +155,24 @@
 
 .add-player-title {
     width: 520px;
-    height: 100px;
-    color: rgb(16, 164, 0);
+    height: 130px;
+    color: var(--accent);
     font-size: 100px;
     -unity-text-align: middle-center;
     -unity-font: url("project://database/Assets/Resources/Sprite/300Mind/2D%20Game%20UI%20Kit/Fonts/Ariston%20Comic%20Font.ttf?fileID=12800000&guid=e28e9ad7f0a79f14d8c01971d5416eba&type=3#Ariston Comic Font");
     -unity-font-definition: initial;
-    -unity-font-style: bold;
+    -unity-font-style: normal;
+    -unity-text-outline-width: 1.4px;
+    -unity-text-outline-color: var(--accent);
 }
 
 .add-player-input-container {
-    width: 500px;
-    height: 240px;
+    width: 100%;
+    height: 280px;
     flex-direction: column;
     justify-content: center;
     align-items: stretch;
-    background-color: rgb(22, 52, 42);
+    background-color: rgba(255, 255, 255, 0);
     margin-bottom: 20px;
 }
 
@@ -150,12 +181,23 @@
     position: absolute;
     width: 100%;
     height: 100%;
-    background-color: rgb(22, 52, 42);
+    background-color: var(--bg-page);
+    background-image: resource('Sprite/Tema/latar-tema-terang');
+    -unity-background-scale-mode: scale-and-crop;
     translate: 0 100%;
     transition-duration: 0.5s;
     transition-timing-function: ease-out-cubic;
     align-items: center;
+    justify-content: center;
     display: flex;
+}
+
+.login-form {
+    width: 578px;
+    height: 840px;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-around;
 }
 
 .auth-loading-overlay {
@@ -180,7 +222,7 @@
     padding-left: 24px;
     justify-content: center;
     align-items: center;
-    background-color: rgb(22, 52, 42);
+    background-color: var(--bg-page);
     border-top-left-radius: 28px;
     border-top-right-radius: 28px;
     border-bottom-right-radius: 28px;
@@ -189,10 +231,10 @@
     border-right-width: 2px;
     border-bottom-width: 2px;
     border-left-width: 2px;
-    border-top-color: rgba(255, 255, 255, 0.12);
-    border-right-color: rgba(255, 255, 255, 0.12);
-    border-bottom-color: rgba(255, 255, 255, 0.12);
-    border-left-color: rgba(255, 255, 255, 0.12);
+    border-top-color: var(--surface-raised);
+    border-right-color: var(--surface-raised);
+    border-bottom-color: var(--surface-raised);
+    border-left-color: var(--surface-raised);
 }
 
 .auth-loading-spinner {
@@ -203,10 +245,10 @@
     border-right-width: 6px;
     border-bottom-width: 6px;
     border-left-width: 6px;
-    border-top-color: rgb(24, 192, 0);
-    border-right-color: rgba(24, 192, 0, 0.15);
-    border-bottom-color: rgba(24, 192, 0, 0.15);
-    border-left-color: rgba(24, 192, 0, 0.15);
+    border-top-color: var(--accent-bright);
+    border-right-color: var(--accent-bright-soft);
+    border-bottom-color: var(--accent-bright-soft);
+    border-left-color: var(--accent-bright-soft);
     border-top-left-radius: 999px;
     border-top-right-radius: 999px;
     border-bottom-right-radius: 999px;
@@ -214,12 +256,12 @@
 }
 
 .auth-loading-text {
-    color: rgb(255, 255, 255);
-    font-size: 26px;
+    color: var(--text-body);
+    font-size: 32px;
     -unity-text-align: middle-center;
     -unity-font: url("project://database/Assets/Resources/Sprite/300Mind/2D%20Game%20UI%20Kit/Fonts/Ariston%20Comic%20Font.ttf?fileID=12800000&guid=e28e9ad7f0a79f14d8c01971d5416eba&type=3#Ariston Comic Font");
     -unity-font-definition: initial;
-    -unity-font-style: bold;
+    -unity-font-style: normal;
 }
 
 .play-loading-overlay {
@@ -244,7 +286,7 @@
     padding-left: 28px;
     justify-content: center;
     align-items: center;
-    background-color: rgb(22, 52, 42);
+    background-color: var(--bg-page);
     border-top-left-radius: 32px;
     border-top-right-radius: 32px;
     border-bottom-right-radius: 32px;
@@ -253,10 +295,10 @@
     border-right-width: 3px;
     border-bottom-width: 3px;
     border-left-width: 3px;
-    border-top-color: rgba(255, 255, 255, 0.14);
-    border-right-color: rgba(255, 255, 255, 0.14);
-    border-bottom-color: rgba(255, 255, 255, 0.14);
-    border-left-color: rgba(255, 255, 255, 0.14);
+    border-top-color: var(--surface-input);
+    border-right-color: var(--surface-input);
+    border-bottom-color: var(--surface-input);
+    border-left-color: var(--surface-input);
 }
 
 .play-loading-spinner {
@@ -267,10 +309,10 @@
     border-right-width: 8px;
     border-bottom-width: 8px;
     border-left-width: 8px;
-    border-top-color: rgb(24, 192, 0);
-    border-right-color: rgba(24, 192, 0, 0.15);
-    border-bottom-color: rgba(24, 192, 0, 0.15);
-    border-left-color: rgba(24, 192, 0, 0.15);
+    border-top-color: var(--accent-bright);
+    border-right-color: var(--accent-bright-soft);
+    border-bottom-color: var(--accent-bright-soft);
+    border-left-color: var(--accent-bright-soft);
     border-top-left-radius: 999px;
     border-top-right-radius: 999px;
     border-bottom-right-radius: 999px;
@@ -278,36 +320,38 @@
 }
 
 .play-loading-text {
-    color: rgb(255, 255, 255);
+    color: var(--text-body);
     font-size: 32px;
     -unity-text-align: middle-center;
     -unity-font: url("project://database/Assets/Resources/Sprite/300Mind/2D%20Game%20UI%20Kit/Fonts/Ariston%20Comic%20Font.ttf?fileID=12800000&guid=e28e9ad7f0a79f14d8c01971d5416eba&type=3#Ariston Comic Font");
     -unity-font-definition: initial;
-    -unity-font-style: bold;
+    -unity-font-style: normal;
 }
 
 .input-field {
     width: 100%;
     flex-direction: column;
-    height: 20%;
-    -unity-font: url("project://database/Assets/Resources/Sprite/300Mind/2D%20Game%20UI%20Kit/Fonts/Ariston%20Comic%20Font.ttf?fileID=12800000&guid=e28e9ad7f0a79f14d8c01971d5416eba&type=3#Ariston Comic Font");
+    height: 70px;
+    -unity-font: resource('Sprite/300Mind/2D Game UI Kit/Fonts/Ariston Comic Font');
     -unity-font-definition: initial;
-    -unity-font-style: bold;
-    font-size: 50%;
-    border-top-left-radius: 25px;
-    border-top-right-radius: 25px;
-    border-bottom-right-radius: 25px;
-    border-bottom-left-radius: 25px;
+    -unity-font-style: normal;
+    font-size: 44px;
+    border-top-left-radius: 14px;
+    border-top-right-radius: 14px;
+    border-bottom-right-radius: 14px;
+    border-bottom-left-radius: 14px;
 }
 
 .label-field {
     -unity-font: url("project://database/Assets/Resources/Sprite/300Mind/2D%20Game%20UI%20Kit/Fonts/Ariston%20Comic%20Font.ttf?fileID=12800000&guid=e28e9ad7f0a79f14d8c01971d5416eba&type=3#Ariston Comic Font");
     -unity-font-definition: initial;
-    -unity-font-style: bold;
-    color: rgb(16, 164, 0);
-    font-size: 50%;
+    -unity-font-style: normal;
+    color: var(--accent);
+    font-size: 44px;
     padding-left: 10px;
     width: 100%;
+    -unity-text-outline-width: 0.6px;
+    -unity-text-outline-color: var(--accent);
 }
 
 .show-login {
@@ -315,8 +359,9 @@
 }
 
 .session-setup-page {
-    background-image: none;
-    background-color: rgb(22, 52, 42);
+    background-color: var(--bg-page);
+    background-image: resource('Sprite/Tema/latar-tema-terang');
+    -unity-background-scale-mode: scale-and-crop;
     display: flex;
     position: absolute;
     width: 100%;
@@ -348,21 +393,24 @@
 }
 
 .session-setup-form {
-    width: 1160px;
-    height: 520px;
-    justify-content: center;
+    width: 1238px;
+    height: 680px;
+    justify-content: space-around;
     align-items: center;
+    margin-top: -40px;
 }
 
 .session-setup-title {
     width: 100%;
-    height: 120px;
-    color: rgb(16, 164, 0);
-    font-size: 90px;
+    height: 130px;
+    color: var(--accent);
+    font-size: 100px;
     -unity-text-align: middle-center;
     -unity-font: url("project://database/Assets/Resources/Sprite/300Mind/2D%20Game%20UI%20Kit/Fonts/Ariston%20Comic%20Font.ttf?fileID=12800000&guid=e28e9ad7f0a79f14d8c01971d5416eba&type=3#Ariston Comic Font");
     -unity-font-definition: initial;
-    -unity-font-style: bold;
+    -unity-font-style: normal;
+    -unity-text-outline-width: 1.4px;
+    -unity-text-outline-color: var(--accent);
 }
 
 .session-setup-input-container {
@@ -371,7 +419,7 @@
     flex-direction: row;
     justify-content: center;
     align-items: flex-start;
-    background-color: rgb(22, 52, 42);
+    background-color: rgba(255, 255, 255, 0);
 }
 
 .session-setup-column {
@@ -395,6 +443,30 @@
     margin-bottom: 22px;
 }
 
+/* Pembungkus kolom isian yang punya teks bayangan. Posisinya relatif secara bawaan, jadi cukup
+   dipakai sebagai acuan bagi bayangannya yang absolut. */
+.input-placeholder-row {
+    width: 100%;
+    flex-direction: column;
+}
+
+/* Bayangan ini hanya gambar: picking-mode Ignore di UXML membuatnya tidak pernah menangkap klik,
+   sehingga menekan teksnya tetap menaruh kursor di kolom isiannya. Sisi kirinya disetel 27px agar
+   sebaris dengan teks asli, yang digeser 25px oleh padding .unity-base-text-field__input ditambah
+   padding bawaan elemen teksnya. */
+.input-placeholder {
+    position: absolute;
+    left: 27px;
+    top: 0;
+    height: 70px;
+    font-size: 44px;
+    color: var(--text-faint);
+    -unity-text-align: middle-left;
+    -unity-font: resource('Sprite/300Mind/2D Game UI Kit/Fonts/Ariston Comic Font');
+    -unity-font-definition: initial;
+    -unity-font-style: normal;
+}
+
 .ruleset-selector-row {
     width: 100%;
     flex-direction: column;
@@ -405,7 +477,7 @@
 }
 
 .ruleset-mode-dropdown {
-    color: rgb(0, 0, 0);
+    color: var(--text-on-light);
     background-color: rgba(255, 255, 255, 0);
     border-left-color: rgba(255, 255, 255, 0);
     border-right-color: rgba(255, 255, 255, 0);
@@ -414,7 +486,7 @@
 }
 
 .ruleset-dropdown {
-    color: rgb(0, 0, 0);
+    color: var(--text-on-light);
     background-color: rgba(255, 255, 255, 0);
     border-left-color: rgba(255, 255, 255, 0);
     border-right-color: rgba(255, 255, 255, 0);
@@ -437,8 +509,8 @@
 }
 
 .ruleset-dropdown-locked {
-    background-color: rgb(46, 58, 52);
-    color: rgb(0, 0, 0);
+    background-color: var(--chip-fill);
+    color: var(--text-on-light);
     opacity: 0.72;
 }
 
@@ -487,7 +559,7 @@
     margin-right: 0;
     margin-bottom: 4px;
     margin-left: 0;
-    font-size: 34px;
+    font-size: 32px;
     color: rgb(36, 36, 36);
     background-color: rgba(255, 255, 255, 0);
     border-top-width: 0;
@@ -496,28 +568,18 @@
     border-left-width: 0;
     border-bottom-color: rgba(0, 0, 0, 0.08);
     -unity-text-align: middle-left;
-    -unity-font-style: bold;
+    -unity-font-style: normal;
     -unity-font: resource('Sprite/300Mind/2D Game UI Kit/Fonts/Ariston Comic Font');
     -unity-font-definition: initial;
 }
 
 .player-suggestion-button:hover {
     background-color: rgb(0, 125, 255);
-    color: rgb(255, 255, 255);
+    color: var(--text-on-fill);
 }
 
 .player-suggestion-button:active {
     background-color: rgba(0, 0, 0, 0.12);
-}
-
-.session-setup-validation {
-    height: 46px;
-    width: 100%;
-    -unity-text-align: middle-center;
-    color: rgb(190, 40, 40);
-    font-size: 28px;
-    white-space: normal;
-    margin-top: 8px;
 }
 
 .session-setup-next-button {
@@ -527,8 +589,9 @@
 }
 
 .play-page {
-    background-image: none;
-    background-color: rgb(22, 52, 42);
+    background-color: var(--bg-page);
+    background-image: resource('Sprite/Tema/latar-tema-terang');
+    -unity-background-scale-mode: scale-and-crop;
     display: flex;
     position: absolute;
     width: 100%;
@@ -573,7 +636,7 @@
     padding-left: 38px;
     justify-content: center;
     align-items: center;
-    background-color: rgb(22, 52, 42);
+    background-color: var(--bg-page);
     border-top-left-radius: 34px;
     border-top-right-radius: 34px;
     border-bottom-right-radius: 34px;
@@ -582,10 +645,10 @@
     border-right-width: 3px;
     border-bottom-width: 3px;
     border-left-width: 3px;
-    border-top-color: rgba(255, 255, 255, 0.18);
-    border-right-color: rgba(255, 255, 255, 0.18);
-    border-bottom-color: rgba(255, 255, 255, 0.18);
-    border-left-color: rgba(255, 255, 255, 0.18);
+    border-top-color: var(--line-strong);
+    border-right-color: var(--line-strong);
+    border-bottom-color: var(--line-strong);
+    border-left-color: var(--line-strong);
     scale: 0 0;
     opacity: 0;
     transition-duration: 0.2s;
@@ -600,21 +663,28 @@
 .error-popup-title {
     width: 100%;
     min-height: 72px;
-    color: rgb(255, 235, 140);
+    color: var(--danger-text);
     opacity: 1;
-    font-size: 48px;
+    font-size: 44px;
     -unity-text-align: middle-center;
     -unity-font: resource('Sprite/300Mind/2D Game UI Kit/Fonts/Ariston Comic Font');
     -unity-font-definition: initial;
-    -unity-font-style: bold;
+    -unity-font-style: normal;
+    -unity-text-outline-width: 0.6px;
+    -unity-text-outline-color: var(--danger-text);
+}
+
+.error-popup-title-success {
+    color: rgb(22, 101, 52);
+    -unity-text-outline-color: rgb(22, 101, 52);
 }
 
 .error-popup-message {
     width: 100%;
     min-height: 110px;
-    color: rgb(255, 255, 255);
+    color: var(--text-body);
     opacity: 1;
-    font-size: 32px;
+    font-size: 36px;
     -unity-text-align: middle-center;
     white-space: normal;
     margin-top: 12px;
@@ -634,9 +704,25 @@
     margin-left: 0;
 }
 
-.edit-page {
+/* Sprite tombol Home diganti isian rata merah, bukan diberi tint: sprite itu punya warna sendiri,
+   dan menimpanya dengan merah tua menghasilkan warna keruh yang tidak bisa diduga. Pola yang sama
+   sudah dipakai .edit-delete-button. Skala tekan tidak ditulis ulang karena .home-button:active
+   sudah mengurusnya. */
+.error-popup-button-bahaya {
     background-image: none;
-    background-color: rgb(22, 52, 42);
+    background-color: var(--danger);
+    color: var(--text-on-fill);
+}
+
+.error-popup-button-bahaya:active {
+    background-color: var(--danger-strong);
+    color: var(--text-on-fill);
+}
+
+.edit-page {
+    background-color: var(--bg-page);
+    background-image: resource('Sprite/Tema/latar-tema-terang');
+    -unity-background-scale-mode: scale-and-crop;
     display: flex;
     position: absolute;
     width: 100%;
@@ -663,18 +749,20 @@
 .edit-menu-title {
     width: 100%;
     height: 110px;
-    color: rgb(16, 164, 0);
-    font-size: 86px;
+    color: var(--accent);
+    font-size: 72px;
     -unity-text-align: middle-center;
     -unity-font: url("project://database/Assets/Resources/Sprite/300Mind/2D%20Game%20UI%20Kit/Fonts/Ariston%20Comic%20Font.ttf?fileID=12800000&guid=e28e9ad7f0a79f14d8c01971d5416eba&type=3#Ariston Comic Font");
     -unity-font-definition: initial;
-    -unity-font-style: bold;
+    -unity-font-style: normal;
+    -unity-text-outline-width: 1px;
+    -unity-text-outline-color: var(--accent);
 }
 
 .edit-menu-button {
     width: 420px;
     height: 104px;
-    font-size: 48px;
+    font-size: 44px;
 }
 
 .hide-edit-left {
@@ -682,8 +770,9 @@
 }
 
 .edit-narasi-select-page {
-    background-image: none;
-    background-color: rgb(22, 52, 42);
+    background-color: var(--bg-page);
+    background-image: resource('Sprite/Tema/latar-tema-terang');
+    -unity-background-scale-mode: scale-and-crop;
     display: flex;
     position: absolute;
     width: 100%;
@@ -716,7 +805,7 @@
     max-height: 94%;
     justify-content: flex-start;
     align-items: stretch;
-    background-color: rgba(255, 255, 255, 0.08);
+    background-color: var(--surface-card);
     border-top-left-radius: 36px;
     border-top-right-radius: 36px;
     border-bottom-right-radius: 36px;
@@ -725,14 +814,15 @@
     border-right-width: 3px;
     border-bottom-width: 3px;
     border-left-width: 3px;
-    border-top-color: rgba(255, 255, 255, 0.16);
-    border-right-color: rgba(255, 255, 255, 0.16);
-    border-bottom-color: rgba(255, 255, 255, 0.16);
-    border-left-color: rgba(255, 255, 255, 0.16);
+    border-top-color: var(--line);
+    border-right-color: var(--line);
+    border-bottom-color: var(--line);
+    border-left-color: var(--line);
     padding-top: 24px;
     padding-right: 32px;
     padding-bottom: 24px;
     padding-left: 32px;
+    height: 600px;
 }
 
 .edit-narasi-pack-dropdown {
@@ -740,16 +830,16 @@
     height: 64px;
     flex-shrink: 0;
     margin-top: 10px;
-    font-size: 30px;
-    color: rgb(0, 0, 0);
+    font-size: 44px;
+    color: var(--text-on-light);
     background-color: rgba(245, 245, 245, 0);
-    border-top-left-radius: 22px;
-    border-top-right-radius: 22px;
-    border-bottom-right-radius: 22px;
-    border-bottom-left-radius: 22px;
-    -unity-font: url("project://database/Assets/Resources/Sprite/300Mind/2D%20Game%20UI%20Kit/Fonts/Ariston%20Comic%20Font.ttf?fileID=12800000&guid=e28e9ad7f0a79f14d8c01971d5416eba&type=3#Ariston Comic Font");
+    border-top-left-radius: 14px;
+    border-top-right-radius: 14px;
+    border-bottom-right-radius: 14px;
+    border-bottom-left-radius: 14px;
+    -unity-font: resource('Sprite/300Mind/2D Game UI Kit/Fonts/Ariston Comic Font');
     -unity-font-definition: initial;
-    -unity-font-style: bold;
+    -unity-font-style: normal;
 }
 
 .edit-narasi-pack-new-button {
@@ -759,7 +849,7 @@
     flex-shrink: 0;
     margin-top: 10px;
     margin-bottom: 6px;
-    font-size: 38px;
+    font-size: 36px;
 }
 
 .edit-action-row {
@@ -777,14 +867,14 @@
 .edit-delete-button {
     margin-left: 14px;
     background-image: none;
-    background-color: rgb(179, 30, 24);
-    color: rgb(255, 255, 255);
+    background-color: var(--danger);
+    color: var(--text-on-fill);
 }
 
 .edit-delete-button:active {
     scale: 0.62 0.62;
-    background-color: rgb(125, 15, 15);
-    color: rgb(255, 255, 255);
+    background-color: var(--danger-strong);
+    color: var(--text-on-fill);
 }
 
 .edit-narasi-select-next-button {
@@ -798,7 +888,7 @@
     min-height: 420px;
     justify-content: center;
     align-items: center;
-    background-color: rgba(255, 255, 255, 0.08);
+    background-color: var(--surface-card);
     border-top-left-radius: 36px;
     border-top-right-radius: 36px;
     border-bottom-right-radius: 36px;
@@ -807,10 +897,10 @@
     border-right-width: 3px;
     border-bottom-width: 3px;
     border-left-width: 3px;
-    border-top-color: rgba(255, 255, 255, 0.16);
-    border-right-color: rgba(255, 255, 255, 0.16);
-    border-bottom-color: rgba(255, 255, 255, 0.16);
-    border-left-color: rgba(255, 255, 255, 0.16);
+    border-top-color: var(--line);
+    border-right-color: var(--line);
+    border-bottom-color: var(--line);
+    border-left-color: var(--line);
     padding-top: 36px;
     padding-right: 36px;
     padding-bottom: 36px;
@@ -818,8 +908,9 @@
 }
 
 .edit-narasi-page {
-    background-image: none;
-    background-color: rgb(22, 52, 42);
+    background-color: var(--bg-page);
+    background-image: resource('Sprite/Tema/latar-tema-terang');
+    -unity-background-scale-mode: scale-and-crop;
     display: flex;
     position: absolute;
     width: 100%;
@@ -851,12 +942,14 @@
 .edit-narasi-title {
     width: 100%;
     height: 96px;
-    color: rgb(16, 164, 0);
-    font-size: 78px;
+    color: var(--accent);
+    font-size: 72px;
     -unity-text-align: middle-center;
     -unity-font: url("project://database/Assets/Resources/Sprite/300Mind/2D%20Game%20UI%20Kit/Fonts/Ariston%20Comic%20Font.ttf?fileID=12800000&guid=e28e9ad7f0a79f14d8c01971d5416eba&type=3#Ariston Comic Font");
     -unity-font-definition: initial;
-    -unity-font-style: bold;
+    -unity-font-style: normal;
+    -unity-text-outline-width: 1px;
+    -unity-text-outline-color: var(--accent);
 }
 
 .edit-narasi-workspace {
@@ -887,9 +980,11 @@
 .edit-narasi-active-pack-input {
     width: 100%;
     height: 58px;
-    font-size: 26px;
+    font-size: 44px;
     margin-top: 8px;
     margin-bottom: 0;
+    -unity-font: resource('Sprite/300Mind/2D Game UI Kit/Fonts/Ariston Comic Font');
+    -unity-font-definition: initial;
 }
 
 .edit-narasi-list-panel {
@@ -900,7 +995,7 @@
     padding-right: 22px;
     padding-bottom: 24px;
     padding-left: 22px;
-    background-color: rgba(255, 255, 255, 0.02);
+    background-color: var(--surface-card);
     border-top-left-radius: 28px;
     border-top-right-radius: 28px;
     border-bottom-right-radius: 28px;
@@ -909,10 +1004,10 @@
     border-right-width: 2px;
     border-bottom-width: 2px;
     border-left-width: 2px;
-    border-top-color: rgba(255, 255, 255, 0.16);
-    border-right-color: rgba(255, 255, 255, 0.16);
-    border-bottom-color: rgba(255, 255, 255, 0.16);
-    border-left-color: rgba(255, 255, 255, 0.16);
+    border-top-color: var(--line);
+    border-right-color: var(--line);
+    border-bottom-color: var(--line);
+    border-left-color: var(--line);
 }
 
 .edit-narasi-detail-panel {
@@ -922,7 +1017,7 @@
     padding-right: 24px;
     padding-bottom: 20px;
     padding-left: 24px;
-    background-color: rgba(255, 255, 255, 0.02);
+    background-color: var(--surface-card);
     border-top-left-radius: 28px;
     border-top-right-radius: 28px;
     border-bottom-right-radius: 28px;
@@ -931,40 +1026,46 @@
     border-right-width: 2px;
     border-bottom-width: 2px;
     border-left-width: 2px;
-    border-top-color: rgba(255, 255, 255, 0.16);
-    border-right-color: rgba(255, 255, 255, 0.16);
-    border-bottom-color: rgba(255, 255, 255, 0.16);
-    border-left-color: rgba(255, 255, 255, 0.16);
+    border-top-color: var(--line);
+    border-right-color: var(--line);
+    border-bottom-color: var(--line);
+    border-left-color: var(--line);
 }
 
 .edit-section-title {
     width: 100%;
     height: 48px;
-    color: rgb(16, 164, 0);
-    font-size: 34px;
+    color: var(--accent);
+    font-size: 32px;
     -unity-text-align: middle-left;
     -unity-font: url("project://database/Assets/Resources/Sprite/300Mind/2D%20Game%20UI%20Kit/Fonts/Ariston%20Comic%20Font.ttf?fileID=12800000&guid=e28e9ad7f0a79f14d8c01971d5416eba&type=3#Ariston Comic Font");
     -unity-font-definition: initial;
-    -unity-font-style: bold;
+    -unity-font-style: normal;
     margin-left: 6px;
+    -unity-text-outline-width: 0.5px;
+    -unity-text-outline-color: var(--accent);
 }
 
 .edit-field-label {
     width: 100%;
-    height: 34px;
+    height: 46px;
     margin-top: 10px;
-    color: rgb(16, 164, 0);
-    font-size: 35px;
+    color: var(--accent);
+    font-size: 36px;
     -unity-font: url("project://database/Assets/Resources/Sprite/300Mind/2D%20Game%20UI%20Kit/Fonts/Ariston%20Comic%20Font.ttf?fileID=12800000&guid=e28e9ad7f0a79f14d8c01971d5416eba&type=3#Ariston Comic Font");
     -unity-font-definition: initial;
     -unity-font-style: normal;
+    -unity-text-outline-width: 0.5px;
+    -unity-text-outline-color: var(--accent);
 }
 
 .edit-narasi-search-input {
     height: 54px;
     margin-top: 8px;
     margin-bottom: 18px;
-    font-size: 26px;
+    font-size: 44px;
+    -unity-font: resource('Sprite/300Mind/2D Game UI Kit/Fonts/Ariston Comic Font');
+    -unity-font-definition: initial;
 }
 
 .edit-narasi-dialog-list {
@@ -980,14 +1081,16 @@
     margin-right: 0;
     margin-bottom: 8px;
     margin-left: 0;
-    font-size: 24px;
-    color: rgb(5, 46, 22);
-    background-color: rgb(245, 245, 245);
+    font-size: 44px;
+    color: var(--text-body);
+    background-color: var(--surface-list);
     border-top-left-radius: 14px;
     border-top-right-radius: 14px;
     border-bottom-right-radius: 14px;
     border-bottom-left-radius: 14px;
-    -unity-font-style: bold;
+    -unity-font-style: normal;
+    -unity-font: resource('Sprite/300Mind/2D Game UI Kit/Fonts/Ariston Comic Font');
+    -unity-font-definition: initial;
 }
 
 .edit-section-card {
@@ -1012,38 +1115,40 @@
 
 .edit-text-input {
     height: 54px;
-    font-size: 26px;
+    font-size: 44px;
     margin-bottom: 8px;
+    -unity-font: resource('Sprite/300Mind/2D Game UI Kit/Fonts/Ariston Comic Font');
+    -unity-font-definition: initial;
 }
 
 .edit-basic-dropdown {
     width: 100%;
     height: 54px;
-    font-size: 26px;
+    font-size: 44px;
     margin-bottom: 8px;
-    color: rgb(0, 0, 0);
+    color: var(--text-on-light);
     background-color: rgba(245, 245, 245, 0);
-    border-top-left-radius: 20px;
-    border-top-right-radius: 20px;
-    border-bottom-right-radius: 20px;
-    border-bottom-left-radius: 20px;
-    -unity-font: url("project://database/Assets/Resources/Sprite/300Mind/2D%20Game%20UI%20Kit/Fonts/Ariston%20Comic%20Font.ttf?fileID=12800000&guid=e28e9ad7f0a79f14d8c01971d5416eba&type=3#Ariston Comic Font");
+    border-top-left-radius: 14px;
+    border-top-right-radius: 14px;
+    border-bottom-right-radius: 14px;
+    border-bottom-left-radius: 14px;
+    -unity-font: resource('Sprite/300Mind/2D Game UI Kit/Fonts/Ariston Comic Font');
     -unity-font-definition: initial;
-    -unity-font-style: bold;
+    -unity-font-style: normal;
 }
 
 .edit-number-input {
     width: 100%;
     height: 54px;
-    font-size: 26px;
+    font-size: 44px;
     margin-bottom: 8px;
-    border-top-left-radius: 20px;
-    border-top-right-radius: 20px;
-    border-bottom-right-radius: 20px;
-    border-bottom-left-radius: 20px;
-    -unity-font: url("project://database/Assets/Resources/Sprite/300Mind/2D%20Game%20UI%20Kit/Fonts/Ariston%20Comic%20Font.ttf?fileID=12800000&guid=e28e9ad7f0a79f14d8c01971d5416eba&type=3#Ariston Comic Font");
+    border-top-left-radius: 14px;
+    border-top-right-radius: 14px;
+    border-bottom-right-radius: 14px;
+    border-bottom-left-radius: 14px;
+    -unity-font: resource('Sprite/300Mind/2D Game UI Kit/Fonts/Ariston Comic Font');
     -unity-font-definition: initial;
-    -unity-font-style: bold;
+    -unity-font-style: normal;
 }
 
 .edit-prerequisite-grid {
@@ -1077,8 +1182,8 @@
     padding-left: 18px;
     padding-right: 18px;
     font-size: 28px;
-    color: rgb(255, 255, 255);
-    background-color: rgba(255, 255, 255, 0.14);
+    color: var(--text-body);
+    background-color: var(--chip-fill);
     border-top-left-radius: 18px;
     border-top-right-radius: 18px;
     border-bottom-right-radius: 18px;
@@ -1087,10 +1192,10 @@
     border-right-width: 2px;
     border-top-width: 2px;
     border-bottom-width: 2px;
-    border-left-color: rgba(16, 164, 0, 0.65);
-    border-right-color: rgba(16, 164, 0, 0.65);
-    border-top-color: rgba(16, 164, 0, 0.65);
-    border-bottom-color: rgba(16, 164, 0, 0.65);
+    border-left-color: var(--accent-soft);
+    border-right-color: var(--accent-soft);
+    border-top-color: var(--accent-soft);
+    border-bottom-color: var(--accent-soft);
     -unity-text-align: middle-left;
     -unity-font: url("project://database/Assets/Resources/Sprite/300Mind/2D%20Game%20UI%20Kit/Fonts/Ariston%20Comic%20Font.ttf?fileID=12800000&guid=e28e9ad7f0a79f14d8c01971d5416eba&type=3#Ariston Comic Font");
     -unity-font-definition: initial;
@@ -1103,21 +1208,23 @@
 
 .edit-prerequisite-hint {
     width: 100%;
-    color: rgba(255, 255, 255, 0.72);
-    font-size: 20px;
+    color: var(--text-muted);
+    font-size: 36px;
     margin-bottom: 8px;
     white-space: normal;
+    -unity-font: resource('Sprite/300Mind/2D Game UI Kit/Fonts/Ariston Comic Font');
+    -unity-font-definition: initial;
 }
 
 .edit-toggle {
     height: 88px;
     margin-top: 10px;
     margin-bottom: 8px;
-    font-size: 30px;
-    color: rgb(255, 255, 255);
+    font-size: 28px;
+    color: var(--text-body);
     -unity-font: url("project://database/Assets/Resources/Sprite/300Mind/2D%20Game%20UI%20Kit/Fonts/Ariston%20Comic%20Font.ttf?fileID=12800000&guid=e28e9ad7f0a79f14d8c01971d5416eba&type=3#Ariston Comic Font");
     -unity-font-definition: initial;
-    -unity-font-style: bold;
+    -unity-font-style: normal;
 }
 
 .edit-npc-sprite-preview {
@@ -1126,7 +1233,7 @@
     margin-top: 6px;
     margin-bottom: 12px;
     align-self: center;
-    background-color: rgba(255, 255, 255, 0.08);
+    background-color: var(--surface-card);
     -unity-background-scale-mode: scale-to-fit;
     border-top-left-radius: 28px;
     border-top-right-radius: 28px;
@@ -1136,10 +1243,10 @@
     border-right-width: 2px;
     border-top-width: 2px;
     border-bottom-width: 2px;
-    border-left-color: rgba(255, 255, 255, 0.18);
-    border-right-color: rgba(255, 255, 255, 0.18);
-    border-top-color: rgba(255, 255, 255, 0.18);
-    border-bottom-color: rgba(255, 255, 255, 0.18);
+    border-left-color: var(--line-strong);
+    border-right-color: var(--line-strong);
+    border-top-color: var(--line-strong);
+    border-bottom-color: var(--line-strong);
 }
 
 .edit-npc-sprite-preview-empty {
@@ -1171,8 +1278,8 @@
     border-top-width: 0;
     border-bottom-width: 0;
     color: rgb(60, 60, 60);
-    -unity-font-style: bold;
-    font-size: 50px;
+    -unity-font-style: normal;
+    font-size: 44px;
     padding-left: 0;
     padding-right: 0;
     padding-top: 0;
@@ -1184,39 +1291,39 @@
 .edit-line-remove-button:active {
     scale: 0.86 0.86;
     background-color: rgb(170, 0, 0);
-    color: rgb(255, 255, 255);
+    color: var(--text-on-fill);
 }
 
 .edit-speaker-dropdown {
     width: 15%;
     height: auto;
     margin-right: 12px;
-    font-size: 30px;
-    color: rgb(0, 0, 0);
+    font-size: 44px;
+    color: var(--text-on-light);
     -unity-font: resource('Sprite/300Mind/2D Game UI Kit/Fonts/Ariston Comic Font');
     -unity-font-definition: initial;
-    border-top-left-radius: 18px;
-    border-top-right-radius: 18px;
-    border-bottom-right-radius: 18px;
-    border-bottom-left-radius: 18px;
+    border-top-left-radius: 14px;
+    border-top-right-radius: 14px;
+    border-bottom-right-radius: 14px;
+    border-bottom-left-radius: 14px;
 }
 
 .edit-line-text {
     flex-grow: 1;
     min-height: 90px;
-    font-size: 24px;
+    font-size: 36px;
     white-space: normal;
     border-top-left-radius: 18px;
     border-top-right-radius: 18px;
     border-bottom-right-radius: 18px;
     border-bottom-left-radius: 18px;
-    -unity-font: url("project://database/Assets/Resources/Sprite/300Mind/2D%20Game%20UI%20Kit/Fonts/Ariston%20Comic%20Font.ttf?fileID=12800000&guid=e28e9ad7f0a79f14d8c01971d5416eba&type=3#Ariston Comic Font");
+    -unity-font: resource('Sprite/300Mind/2D Game UI Kit/Fonts/Ariston Comic Font');
     -unity-font-definition: initial;
     width: 70%;
 }
 
 .edit-small-button {
-    font-size: 50px;
+    font-size: 44px;
     scale: 0.7 0.7;
     transform-origin: left top;
     margin-bottom: 0;
@@ -1246,27 +1353,27 @@
     height: 54px;
     margin-top: 14px;
     margin-bottom: 16px;
-    font-size: 28px;
-    color: rgb(0, 0, 0);
+    font-size: 44px;
+    color: var(--text-on-light);
     background-color: rgba(245, 245, 245, 0);
-    border-top-left-radius: 22px;
-    border-top-right-radius: 22px;
-    border-bottom-right-radius: 22px;
-    border-bottom-left-radius: 22px;
-    -unity-font: url("project://database/Assets/Resources/Sprite/300Mind/2D%20Game%20UI%20Kit/Fonts/Ariston%20Comic%20Font.ttf?fileID=12800000&guid=e28e9ad7f0a79f14d8c01971d5416eba&type=3#Ariston Comic Font");
+    border-top-left-radius: 14px;
+    border-top-right-radius: 14px;
+    border-bottom-right-radius: 14px;
+    border-bottom-left-radius: 14px;
+    -unity-font: resource('Sprite/300Mind/2D Game UI Kit/Fonts/Ariston Comic Font');
     -unity-font-definition: initial;
-    -unity-font-style: bold;
+    -unity-font-style: normal;
 }
 
 .edit-dialog-hint {
     width: 100%;
     min-height: 110px;
-    color: rgba(255, 255, 255, 0.82);
-    font-size: 24px;
+    color: var(--text-muted);
+    font-size: 36px;
     white-space: normal;
     -unity-text-align: upper-left;
     margin-bottom: 12px;
-    -unity-font: url("project://database/Assets/Resources/Sprite/300Mind/2D%20Game%20UI%20Kit/Fonts/Ariston%20Comic%20Font.ttf?fileID=12800000&guid=e28e9ad7f0a79f14d8c01971d5416eba&type=3#Ariston Comic Font");
+    -unity-font: resource('Sprite/300Mind/2D Game UI Kit/Fonts/Ariston Comic Font');
     -unity-font-definition: initial;
 }
 
@@ -1275,15 +1382,13 @@
     width: 80%;
 }
 
-/* ---- UI dummy narasi global, dipakai untuk menjelaskan alur ke tim backend ---- */
-/* Dua kolom dipakai karena acuan UI 1920x1080 menyediakan ruang mendatar berlimpah, sementara
-   menumpuk ke bawah membuat isi kartu melebihi tinggi layar. Setiap anak diberi flex-shrink 0:
-   tanpa itu flex memampatkan elemen bertinggi tetap sampai saling menimpa. */
+/* Tinggal satu kolom sejak katalog global dilepas, jadi ditengahkan; space-between akan
+   membuatnya menggantung di kiri dengan separuh kartu kosong. */
 .narasi-select-columns {
     width: 100%;
     flex-shrink: 0;
     flex-direction: row;
-    justify-content: space-between;
+    justify-content: center;
     align-items: flex-start;
     margin-top: 10px;
 }
@@ -1294,67 +1399,35 @@
     align-items: stretch;
 }
 
-.narasi-select-divider {
-    width: 3px;
-    flex-shrink: 0;
-    align-self: stretch;
-    min-height: 380px;
-    background-color: rgba(255, 255, 255, 0.2);
-}
 
 .narasi-column-title {
     height: 48px;
     flex-shrink: 0;
-    color: rgb(255, 214, 64);
-    font-size: 38px;
+    color: var(--accent);
+    font-size: 36px;
     -unity-text-align: middle-left;
     -unity-font: url("project://database/Assets/Resources/Sprite/300Mind/2D%20Game%20UI%20Kit/Fonts/Ariston%20Comic%20Font.ttf?fileID=12800000&guid=e28e9ad7f0a79f14d8c01971d5416eba&type=3#Ariston Comic Font");
     -unity-font-definition: initial;
-    -unity-font-style: bold;
+    -unity-font-style: normal;
+    -unity-text-outline-width: 0.5px;
+    -unity-text-outline-color: var(--accent);
 }
 
-.narasi-global-header-row {
-    width: 100%;
-    height: 48px;
-    flex-shrink: 0;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-}
 
-.narasi-global-badge {
-    height: 44px;
-    min-width: 150px;
-    flex-shrink: 0;
-    padding-right: 18px;
-    padding-left: 18px;
-    color: rgb(255, 255, 255);
-    font-size: 26px;
-    background-color: rgba(255, 255, 255, 0.16);
-    border-top-left-radius: 14px;
-    border-top-right-radius: 14px;
-    border-bottom-right-radius: 14px;
-    border-bottom-left-radius: 14px;
-    -unity-text-align: middle-center;
-    -unity-font: url("project://database/Assets/Resources/Sprite/300Mind/2D%20Game%20UI%20Kit/Fonts/Ariston%20Comic%20Font.ttf?fileID=12800000&guid=e28e9ad7f0a79f14d8c01971d5416eba&type=3#Ariston Comic Font");
-    -unity-font-definition: initial;
-}
 
-.narasi-global-badge-shared {
-    color: rgb(24, 24, 24);
-    background-color: rgb(255, 214, 64);
-}
 
 .narasi-global-field-label {
     width: 100%;
     height: 36px;
     flex-shrink: 0;
     margin-top: 14px;
-    color: rgb(16, 164, 0);
-    font-size: 30px;
+    color: var(--accent);
+    font-size: 28px;
     -unity-text-align: middle-left;
     -unity-font: url("project://database/Assets/Resources/Sprite/300Mind/2D%20Game%20UI%20Kit/Fonts/Ariston%20Comic%20Font.ttf?fileID=12800000&guid=e28e9ad7f0a79f14d8c01971d5416eba&type=3#Ariston Comic Font");
     -unity-font-definition: initial;
+    -unity-text-outline-width: 0.4px;
+    -unity-text-outline-color: var(--accent);
 }
 
 .narasi-global-dropdown {
@@ -1362,38 +1435,342 @@
     height: 66px;
     flex-shrink: 0;
     margin-top: 6px;
-    font-size: 28px;
-    color: rgb(0, 0, 0);
+    font-size: 44px;
+    color: var(--text-on-light);
     background-color: rgba(245, 245, 245, 0);
-    border-top-left-radius: 20px;
-    border-top-right-radius: 20px;
-    border-bottom-right-radius: 20px;
-    border-bottom-left-radius: 20px;
-    -unity-font: url("project://database/Assets/Resources/Sprite/300Mind/2D%20Game%20UI%20Kit/Fonts/Ariston%20Comic%20Font.ttf?fileID=12800000&guid=e28e9ad7f0a79f14d8c01971d5416eba&type=3#Ariston Comic Font");
+    border-top-left-radius: 14px;
+    border-top-right-radius: 14px;
+    border-bottom-right-radius: 14px;
+    border-bottom-left-radius: 14px;
+    -unity-font: resource('Sprite/300Mind/2D Game UI Kit/Fonts/Ariston Comic Font');
     -unity-font-definition: initial;
-    -unity-font-style: bold;
+    -unity-font-style: normal;
 }
 
-/* Sprite tombol memakai scale-to-fit, jadi ukurannya mengikuti rasio sprite sekitar 3,16:1.
-   Melebarkan elemen hanya menambah ruang kosong, bukan melebarkan tombolnya. */
-.narasi-global-wide-button {
-    align-self: center;
-    width: 300px;
-    height: 95px;
-    flex-shrink: 0;
-    margin-top: 4px;
-    margin-bottom: 0;
-    font-size: 30px;
-}
-
+/* Dibangun ulang mengikuti .edit-dialog-hint sesudah aturan aslinya tidak sengaja terhapus;
+   nilai aslinya tidak tersimpan di mana pun, jadi ini pendekatan, bukan pemulihan persis. */
 .narasi-global-hint {
     width: 100%;
     flex-shrink: 0;
     margin-top: 10px;
-    color: rgba(255, 255, 255, 0.78);
-    font-size: 21px;
+    color: var(--text-muted);
+    font-size: 28px;
     white-space: normal;
-    -unity-text-align: upper-center;
-    -unity-font: url("project://database/Assets/Resources/Sprite/300Mind/2D%20Game%20UI%20Kit/Fonts/Ariston%20Comic%20Font.ttf?fileID=12800000&guid=e28e9ad7f0a79f14d8c01971d5416eba&type=3#Ariston Comic Font");
+    -unity-text-align: upper-left;
+    -unity-font: resource('Sprite/300Mind/2D Game UI Kit/Fonts/Ariston Comic Font');
     -unity-font-definition: initial;
+}
+
+
+
+#HomeContainer {
+    background-color: var(--bg-page);
+    background-image: resource('Sprite/Tema/latar-tema-terang');
+    -unity-background-scale-mode: scale-and-crop;
+}
+
+#InputContainer {
+    background-color: rgba(255, 255, 255, 0);
+    width: 100%;
+    height: 280px;
+    flex-direction: column-reverse;
+}
+
+#DialogKarakterStatusText {
+    color: var(--text-faint);
+    font-size: 28px;
+}
+
+#AddPlayerPage {
+    background-color: var(--bg-page);
+    background-image: resource('Sprite/Tema/latar-tema-terang');
+    -unity-background-scale-mode: scale-and-crop;
+}
+
+#AddPlayerUsernameLabel {
+    font-size: 44px;
+}
+
+#AddPlayerPasswordLabel {
+    font-size: 44px;
+}
+
+#PasswordLabel {
+    font-size: 44px;
+}
+
+#UsernameLabel {
+    font-size: 44px;
+}
+
+#SessionNameLabel {
+    font-size: 44px;
+}
+
+#RulesetLabel {
+    font-size: 44px;
+}
+
+#NarasiPackLabel {
+    font-size: 44px;
+}
+
+#QuestPackLabel {
+    font-size: 44px;
+}
+
+#PlayerCountLabel {
+    font-size: 36px;
+}
+
+#PlayerNameLabel1 {
+    font-size: 36px;
+}
+
+#PlayerNameLabel2 {
+    font-size: 36px;
+}
+
+#PlayerNameLabel3 {
+    font-size: 36px;
+}
+
+#PlayerNameLabel4 {
+    font-size: 36px;
+}
+
+.form-card {
+    background-color: var(--surface-card);
+    border-top-left-radius: 36px;
+    border-top-right-radius: 36px;
+    border-bottom-right-radius: 36px;
+    border-bottom-left-radius: 36px;
+    border-top-width: 3px;
+    border-right-width: 3px;
+    border-bottom-width: 3px;
+    border-left-width: 3px;
+    border-top-color: var(--line);
+    border-right-color: var(--line);
+    border-bottom-color: var(--line);
+    border-left-color: var(--line);
+    padding-top: 36px;
+    padding-right: 36px;
+    padding-bottom: 64px;
+    padding-left: 36px;
+}
+
+.input-field .unity-base-field__input {
+    border-top-left-radius: 14px;
+    border-top-right-radius: 14px;
+    border-bottom-right-radius: 14px;
+    border-bottom-left-radius: 14px;
+    padding-left: 16px;
+}
+
+.input-field .unity-base-text-field__input {
+    border-top-left-radius: 25px;
+    border-top-right-radius: 25px;
+    border-bottom-right-radius: 25px;
+    border-bottom-left-radius: 25px;
+    padding-left: 25px;
+}
+
+.input-field .unity-base-popup-field__input {
+    border-top-left-radius: 25px;
+    border-top-right-radius: 25px;
+    border-bottom-right-radius: 25px;
+    border-bottom-left-radius: 25px;
+    padding-left: 25px;
+}
+
+.edit-narasi-pack-dropdown .unity-base-field__input {
+    border-top-left-radius: 14px;
+    border-top-right-radius: 14px;
+    border-bottom-right-radius: 14px;
+    border-bottom-left-radius: 14px;
+    padding-left: 16px;
+}
+
+.edit-narasi-pack-dropdown .unity-base-text-field__input {
+    border-top-left-radius: 22px;
+    border-top-right-radius: 22px;
+    border-bottom-right-radius: 22px;
+    border-bottom-left-radius: 22px;
+    padding-left: 22px;
+}
+
+.edit-narasi-pack-dropdown .unity-base-popup-field__input {
+    border-top-left-radius: 22px;
+    border-top-right-radius: 22px;
+    border-bottom-right-radius: 22px;
+    border-bottom-left-radius: 22px;
+    padding-left: 22px;
+}
+
+.edit-basic-dropdown .unity-base-field__input {
+    border-top-left-radius: 14px;
+    border-top-right-radius: 14px;
+    border-bottom-right-radius: 14px;
+    border-bottom-left-radius: 14px;
+    padding-left: 16px;
+}
+
+.edit-basic-dropdown .unity-base-text-field__input {
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+    border-bottom-right-radius: 20px;
+    border-bottom-left-radius: 20px;
+    padding-left: 20px;
+}
+
+.edit-basic-dropdown .unity-base-popup-field__input {
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+    border-bottom-right-radius: 20px;
+    border-bottom-left-radius: 20px;
+    padding-left: 20px;
+}
+
+.edit-number-input .unity-base-field__input {
+    border-top-left-radius: 14px;
+    border-top-right-radius: 14px;
+    border-bottom-right-radius: 14px;
+    border-bottom-left-radius: 14px;
+    padding-left: 16px;
+}
+
+.edit-number-input .unity-base-text-field__input {
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+    border-bottom-right-radius: 20px;
+    border-bottom-left-radius: 20px;
+    padding-left: 20px;
+}
+
+.edit-number-input .unity-base-popup-field__input {
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+    border-bottom-right-radius: 20px;
+    border-bottom-left-radius: 20px;
+    padding-left: 20px;
+}
+
+.edit-speaker-dropdown .unity-base-field__input {
+    border-top-left-radius: 14px;
+    border-top-right-radius: 14px;
+    border-bottom-right-radius: 14px;
+    border-bottom-left-radius: 14px;
+    padding-left: 16px;
+}
+
+.edit-speaker-dropdown .unity-base-text-field__input {
+    border-top-left-radius: 18px;
+    border-top-right-radius: 18px;
+    border-bottom-right-radius: 18px;
+    border-bottom-left-radius: 18px;
+    padding-left: 18px;
+}
+
+.edit-speaker-dropdown .unity-base-popup-field__input {
+    border-top-left-radius: 18px;
+    border-top-right-radius: 18px;
+    border-bottom-right-radius: 18px;
+    border-bottom-left-radius: 18px;
+    padding-left: 18px;
+}
+
+.edit-dialog-dropdown .unity-base-field__input {
+    border-top-left-radius: 14px;
+    border-top-right-radius: 14px;
+    border-bottom-right-radius: 14px;
+    border-bottom-left-radius: 14px;
+    padding-left: 16px;
+}
+
+.edit-dialog-dropdown .unity-base-text-field__input {
+    border-top-left-radius: 22px;
+    border-top-right-radius: 22px;
+    border-bottom-right-radius: 22px;
+    border-bottom-left-radius: 22px;
+    padding-left: 22px;
+}
+
+.edit-dialog-dropdown .unity-base-popup-field__input {
+    border-top-left-radius: 22px;
+    border-top-right-radius: 22px;
+    border-bottom-right-radius: 22px;
+    border-bottom-left-radius: 22px;
+    padding-left: 22px;
+}
+
+.narasi-global-dropdown .unity-base-field__input {
+    border-top-left-radius: 14px;
+    border-top-right-radius: 14px;
+    border-bottom-right-radius: 14px;
+    border-bottom-left-radius: 14px;
+    padding-left: 16px;
+}
+
+.narasi-global-dropdown .unity-base-text-field__input {
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+    border-bottom-right-radius: 20px;
+    border-bottom-left-radius: 20px;
+    padding-left: 20px;
+}
+
+.narasi-global-dropdown .unity-base-popup-field__input {
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+    border-bottom-right-radius: 20px;
+    border-bottom-left-radius: 20px;
+    padding-left: 20px;
+}
+
+.password-toggle {
+    position: absolute;
+    right: 0;
+    top: 9px;
+    bottom: 0;
+    width: 56px;
+    background-color: rgba(255, 255, 255, 0);
+    border-left-width: 0;
+    border-right-width: 0;
+    border-top-width: 0;
+    border-bottom-width: 0;
+    background-image: resource('Sprite/Tema/ikon-mata-buka');
+    -unity-background-scale-mode: scale-to-fit;
+    height: 56px;
+}
+
+.password-toggle:hover {
+    opacity: 0.65;
+}
+
+.password-toggle.password-terlihat {
+    background-image: resource('Sprite/Tema/ikon-mata-tutup');
+}
+
+.password-field .unity-base-field__input {
+    padding-right: 92px;
+}
+
+.password-field .unity-base-text-field__input {
+    padding-right: 92px;
+}
+
+.password-field .unity-base-popup-field__input {
+    padding-right: 92px;
+}
+
+.unity-base-text-field {
+}
+
+.unity-text-field {
+}
+
+.password-row {
+    width: 100%;
+    height: 70px;
+    flex-shrink: 0;
 }

@@ -132,7 +132,12 @@ public partial class ChoiceController
                 hargaEmasOptionIndex = Mathf.Max(0, hargaEmasOptionIndex - 1);
                 break;
             case "ConfirmButtonHargaEmas":
-                _ = BukaHargaEmasAsync(hargaEmasOptions[hargaEmasOptionIndex]);
+                // Harga ini berlaku untuk seluruh pemain hari itu dan tidak bisa dibuka ulang.
+                int hargaDipilih = hargaEmasOptions[hargaEmasOptionIndex];
+                AskConfirmation(
+                    "Buka harga emas hari ini sebesar " + hargaDipilih + " koin?",
+                    () => _ = BukaHargaEmasAsync(hargaDipilih),
+                    ShowHargaEmasPanel);
                 return;
             default:
                 Debug.Log("Pilihan harga emas tidak valid");
@@ -222,21 +227,31 @@ public partial class ChoiceController
             case "LewatiEmasInvestasi":
                 // Putaran emas dari kartu risiko WAJIB dicatat: server menuntut tepat satu keputusan per
                 // pemain per putaran, dan selama belum lengkap seluruh aktivitas sesudahnya ditolak 422.
-                // Jalur investasiEmasDariRisiko adalah cadangan tanpa katalog yang tidak pernah membuka
-                // harga emas, jadi di sana tidak ada putaran server yang perlu ditutup.
-                if (investasiEmasDariRisiko)
-                {
-                    AdvanceInvestasiEmas();
-                    return;
-                }
-
-                _ = LewatiTransaksiEmasAsync();
-                break;
+                // Jadi keputusan ini tidak bisa ditarik kembali: sesudah terkirim pemain tersebut
+                // tidak bisa lagi beli atau jual pada putaran yang sama.
+                AskConfirmation(
+                    "Lewati transaksi emas untuk " + GetPlayerName(GameState.Instance.turn) + "?",
+                    LewatiTransaksiEmas,
+                    ShowInvestasiEmasActionChoice);
+                return;
             default:
                 Debug.Log("Pilihan aksi emas tidak valid");
                 ShowInvestasiEmasActionChoice();
                 break;
         }
+    }
+
+    // Jalur investasiEmasDariRisiko adalah cadangan tanpa katalog yang tidak pernah membuka harga
+    // emas, jadi di sana tidak ada putaran server yang perlu ditutup.
+    private void LewatiTransaksiEmas()
+    {
+        if (investasiEmasDariRisiko)
+        {
+            AdvanceInvestasiEmas();
+            return;
+        }
+
+        _ = LewatiTransaksiEmasAsync();
     }
 
     private void ShowJumlahEmasInput()

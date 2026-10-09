@@ -21,7 +21,8 @@ public partial class UIManager
 
     // Konfirmasi memakai kartu popup yang sama; isinya dibangun ulang tiap kali, jadi tidak perlu elemen
     // baru di Home.uxml. Aksinya disimpan dulu dan baru dijalankan sesudah popup ditutup.
-    private void ShowConfirmPopup(string title, string message, string confirmText, System.Action onConfirm)
+    private void ShowConfirmPopup(string title, string message, string confirmText, System.Action onConfirm,
+        bool isTombolYaBahaya = false)
     {
         if (errorPopupOverlay == null || errorPopupCard == null)
         {
@@ -42,7 +43,7 @@ public partial class UIManager
         string safeMessage = string.IsNullOrWhiteSpace(message) ? "Lanjutkan tindakan ini?" : message;
         string safeConfirmText = string.IsNullOrWhiteSpace(confirmText) ? "Lanjutkan" : confirmText;
 
-        RebuildConfirmPopupContent(safeTitle, safeMessage, safeConfirmText);
+        RebuildConfirmPopupContent(safeTitle, safeMessage, safeConfirmText, isTombolYaBahaya);
 
         errorPopupOverlay.style.display = DisplayStyle.Flex;
         errorPopupOverlay.style.opacity = 1f;
@@ -54,13 +55,14 @@ public partial class UIManager
 
         errorPopupOverlay.schedule.Execute(() =>
         {
-            RebuildConfirmPopupContent(safeTitle, safeMessage, safeConfirmText);
+            RebuildConfirmPopupContent(safeTitle, safeMessage, safeConfirmText, isTombolYaBahaya);
             errorPopupOverlay.AddToClassList("show-error-popup-overlay");
             errorPopupCard.AddToClassList("show-error-popup");
         }).ExecuteLater(10);
     }
 
-    private void RebuildConfirmPopupContent(string title, string message, string confirmText)
+    private void RebuildConfirmPopupContent(string title, string message, string confirmText,
+        bool isTombolYaBahaya)
     {
         if (errorPopupCard == null)
         {
@@ -74,14 +76,14 @@ public partial class UIManager
             name = "ErrorPopupTitle"
         };
         errorPopupTitle.AddToClassList("error-popup-title");
-        ApplyStatusPopupLabelStyle(errorPopupTitle, new Color(255f / 255f, 210f / 255f, 90f / 255f), 48, 72);
+        ApplyStatusPopupLabelStyle(errorPopupTitle, 72);
 
         errorPopupMessage = new Label(message)
         {
             name = "ErrorPopupMessage"
         };
         errorPopupMessage.AddToClassList("error-popup-message");
-        ApplyStatusPopupLabelStyle(errorPopupMessage, Color.white, 32, 110);
+        ApplyStatusPopupLabelStyle(errorPopupMessage, 110);
         errorPopupMessage.style.whiteSpace = WhiteSpace.Normal;
 
         VisualElement buttonRow = new VisualElement
@@ -94,7 +96,14 @@ public partial class UIManager
         buttonRow.style.alignItems = Align.Center;
         buttonRow.style.width = Length.Percent(100);
 
-        buttonRow.Add(BuildConfirmPopupButton("ErrorPopupConfirmButton", confirmText, ConfirmPendingPopupAction));
+        // Hanya tombol Ya yang bisa merah; Batal selalu netral karena ia justru jalan amannya.
+        Button tombolYa = BuildConfirmPopupButton("ErrorPopupConfirmButton", confirmText, ConfirmPendingPopupAction);
+        if (isTombolYaBahaya)
+        {
+            tombolYa.AddToClassList("error-popup-button-bahaya");
+        }
+
+        buttonRow.Add(tombolYa);
         buttonRow.Add(BuildConfirmPopupButton("ErrorPopupCancelButton", "Batal", HideErrorPopup));
 
         errorPopupCard.Add(errorPopupTitle);
@@ -179,14 +188,19 @@ public partial class UIManager
             name = "ErrorPopupTitle"
         };
         errorPopupTitle.AddToClassList("error-popup-title");
-        ApplyStatusPopupLabelStyle(errorPopupTitle, isSuccess ? new Color(160f / 255f, 255f / 255f, 170f / 255f) : new Color(255f / 255f, 210f / 255f, 90f / 255f), 48, 72);
+        if (isSuccess)
+        {
+            errorPopupTitle.AddToClassList("error-popup-title-success");
+        }
+
+        ApplyStatusPopupLabelStyle(errorPopupTitle, 72);
 
         errorPopupMessage = new Label(message)
         {
             name = "ErrorPopupMessage"
         };
         errorPopupMessage.AddToClassList("error-popup-message");
-        ApplyStatusPopupLabelStyle(errorPopupMessage, Color.white, 32, 110);
+        ApplyStatusPopupLabelStyle(errorPopupMessage, 110);
         errorPopupMessage.style.whiteSpace = WhiteSpace.Normal;
 
         if (okButton == null)
@@ -213,7 +227,10 @@ public partial class UIManager
         errorPopupCard.Add(okButton);
     }
 
-    private void ApplyStatusPopupLabelStyle(Label label, Color color, int fontSize, int minHeight)
+    // Warna dan ukuran huruf sengaja tidak disetel di sini. Gaya dari kode mengalahkan stylesheet,
+    // sehingga apa pun yang ditulis di sini tidak dapat diubah dari USS maupun ikut berganti tema.
+    // Keduanya diatur oleh .error-popup-title, .error-popup-title-success, dan .error-popup-message.
+    private void ApplyStatusPopupLabelStyle(Label label, int minHeight)
     {
         if (label == null)
         {
@@ -222,10 +239,8 @@ public partial class UIManager
 
         label.style.display = DisplayStyle.Flex;
         label.style.opacity = 1f;
-        label.style.color = color;
         label.style.width = Length.Percent(100);
         label.style.minHeight = minHeight;
-        label.style.fontSize = fontSize;
         label.style.unityTextAlign = TextAnchor.MiddleCenter;
     }
 

@@ -190,11 +190,9 @@ public partial class UIManager
 
         if (!ValidateAddPlayerInput(out string errorMessage))
         {
-            ShowAddPlayerMessage(errorMessage, false);
+            ShowErrorPopup(errorMessage);
             return;
         }
-
-        addPlayerValidationText.text = string.Empty;
 
         bool success = false;
         BeginAddPlayerLoading("Mendaftarkan player...");
@@ -214,7 +212,6 @@ public partial class UIManager
         if (!success)
         {
             string failureMessage = GetRegisterFailureMessage();
-            ShowAddPlayerMessage(failureMessage, false);
             ShowErrorPopup(failureMessage);
             Debug.Log("Register player failed. Please check your input.");
             return;
@@ -222,11 +219,22 @@ public partial class UIManager
 
         addPlayerUsernameInput.value = string.Empty;
         addPlayerPasswordInput.value = string.Empty;
-        ShowAddPlayerMessage("Player berhasil didaftarkan.", true);
         ShowSuccessPopup("Player berhasil didaftarkan.");
     }
 
+    // Sign out membuang sesi login yang sedang berjalan dan memaksa masuk ulang, jadi diminta
+    // konfirmasi lebih dulu lewat kartu popup Home yang sama dengan konfirmasi lain.
     private void OnSignOutClicked(ClickEvent evt)
+    {
+        ShowConfirmPopup(
+            "Sign Out",
+            "Keluar dari akun ini?",
+            "Sign Out",
+            SignOutConfirmed,
+            true);
+    }
+
+    private void SignOutConfirmed()
     {
         Debug.Log("Sign Out button clicked!");
         LoginManager.Instance.SignOut();
@@ -335,19 +343,6 @@ public partial class UIManager
 
             yield return null;
         }
-    }
-
-    private void ShowAddPlayerMessage(string message, bool isSuccess)
-    {
-        if (addPlayerValidationText == null)
-        {
-            return;
-        }
-
-        addPlayerValidationText.text = message;
-        addPlayerValidationText.style.color = isSuccess
-            ? new Color(100f / 255f, 200f / 255f, 100f / 255f)
-            : new Color(190f / 255f, 40f / 255f, 40f / 255f);
     }
 
     private string GetLoginFailureMessage()

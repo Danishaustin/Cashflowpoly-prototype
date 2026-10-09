@@ -9,6 +9,11 @@ public partial class ChoiceController
     private bool isPendingTujuanFinansialConfirmation;
     private bool isSubmittingMenabung;
 
+    // Hari yang seharusnya ditutup oleh aksi menabung, tapi penutupannya ditahan sampai pemain
+    // selesai dengan tawaran kartu tujuan. Tanpa penundaan ini server sudah berpindah hari saat
+    // pembelian dikirim dan menolaknya dengan day_index MISMATCH.
+    private bool isDayEndPendingAfterTujuanFinansial;
+
     private static bool UseTujuanFinansialCatalog => NarafinActiveSession.GetFinancialGoals(NarafinActiveSession.Catalog).Count > 0;
 
     // Tabungan mengikuti backend: satu saldo per pemain. Aksi ini hanya menabung; kartu tujuan dibeli
@@ -297,19 +302,16 @@ public partial class ChoiceController
         }
     }
 
+    // Tidak lagi async: satu-satunya penantian di sini dulu adalah penutupan hari, dan itu kini
+    // ditunda sampai CompleteTujuanFinansialFlowAsync.
     private void ContinueAfterMenabung()
     {
-        _ = ContinueAfterMenabungAsync();
-    }
-
-    private async Task ContinueAfterMenabungAsync()
-    {
         int previousTurn = GameState.Instance.turn;
-        await PostAkhirGiliranIfDayWillAdvanceAsync(previousTurn);
-        if (this == null)
-        {
-            return;
-        }
+
+        // Dihitung SEBELUM jatah aksi dikurangi, lalu ditahan. Penutupan harinya sendiri menunggu
+        // CompleteTujuanFinansialFlow, supaya pembelian kartu tujuan masih jatuh pada hari yang
+        // sama menurut server.
+        isDayEndPendingAfterTujuanFinansial = WillDayAdvanceAfterAction(previousTurn);
 
         GameState.Instance.ConsumeMoveWithoutTurnProgress();
         view.UpdateDay(GameState.Instance.day);
@@ -346,9 +348,37 @@ public partial class ChoiceController
         return false;
     }
 
+    // Satu-satunya jalan keluar alur tujuan finansial: dipakai sesudah membeli, sesudah menolak
+    // tawaran, dan saat tidak ada kartu yang terjangkau. Karena itu penutupan hari yang ditunda
+    // diselesaikan di sini.
     private void CompleteTujuanFinansialFlow()
     {
+        _ = CompleteTujuanFinansialFlowAsync();
+    }
+
+    private async Task CompleteTujuanFinansialFlowAsync()
+    {
         isPendingTujuanFinansialConfirmation = false;
+
+        if (isDayEndPendingAfterTujuanFinansial)
+        {
+            isDayEndPendingAfterTujuanFinansial = false;
+
+            await PostAkhirGiliranForDayEndAsync();
+            if (this == null)
+            {
+                return;
+            }
+
+            // Urutannya disamakan dengan UpdateMoveAsync: narasi akhir hari sesudah hari ditutup
+            // dan sebelum hari klien berganti. Jalur menabung sebelumnya melewatkan narasi ini.
+            await PlayEndingHariRollingAsync();
+            if (this == null)
+            {
+                return;
+            }
+        }
+
         GameState.Instance.AdvanceTurnIfMovesDepleted();
 
         view.UpdateDay(GameState.Instance.day);

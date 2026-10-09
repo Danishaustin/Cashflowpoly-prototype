@@ -48,6 +48,9 @@ public partial class UIManager
             sessionNameInput.SetValueWithoutNotify(string.Empty);
         }
 
+        // Tanggalnya disegarkan tiap panel dibuka, lalu dibekukan sampai panel ditinggalkan.
+        ResetSessionNamePlaceholder();
+
         if (rulesetSearchInput != null)
         {
             rulesetSearchInput.SetValueWithoutNotify(string.Empty);
@@ -89,8 +92,6 @@ public partial class UIManager
             }
         }
 
-        playValidationText.text = string.Empty;
-        sessionSetupValidationText.text = string.Empty;
         activePlayerNameInputIndex = -1;
 
         HidePlayerSuggestions();
@@ -139,36 +140,36 @@ public partial class UIManager
         sessionSetupContainer.RemoveFromClassList("hide-session-setup-left");
         sessionSetupContainer.RemoveFromClassList("show-session-setup");
         playContainer.RemoveFromClassList("show-play");
-        sessionSetupValidationText.text = string.Empty;
     }
 
     private void OnNextSessionSetupClicked(ClickEvent evt)
     {
         Debug.Log("Next Session Setup button clicked!");
 
-        string sessionName = sessionNameInput.value.Trim();
+        string sessionName = GetEffectiveSessionName();
         string rulesetName = rulesetDropdown != null ? rulesetDropdown.value.Trim() : string.Empty;
 
-        if (sessionName == string.Empty)
+        // Kolom kosong bukan lagi kesalahan; bayangannya yang dipakai. Penjagaan ini tinggal jaring
+        // pengaman kalau bayangannya pun gagal dibentuk.
+        if (string.IsNullOrWhiteSpace(sessionName))
         {
-            sessionSetupValidationText.text = "Nama session tidak boleh kosong.";
+            ShowErrorPopup("Nama session tidak boleh kosong.");
             return;
         }
 
         if (string.IsNullOrWhiteSpace(rulesetName))
         {
-            sessionSetupValidationText.text = "Ruleset harus dipilih.";
+            ShowErrorPopup("Ruleset harus dipilih.");
             return;
         }
 
         NarafinRulesetSummary selectedRuleset = GetSelectedRulesetSummary(rulesetName);
         if (selectedRuleset == null)
         {
-            sessionSetupValidationText.text = "Pilih ruleset dari daftar.";
+            ShowErrorPopup("Pilih ruleset dari daftar.");
             return;
         }
 
-        sessionSetupValidationText.text = string.Empty;
         PlayerPrefs.SetString(RulesetPlayerPrefsKey, rulesetName);
         PlayerPrefs.SetString(RulesetModePlayerPrefsKey, rulesetModeDropdown != null ? rulesetModeDropdown.value : "Mahir");
 
@@ -197,7 +198,6 @@ public partial class UIManager
         playContainer.RemoveFromClassList("show-play");
         sessionSetupContainer.RemoveFromClassList("hide-session-setup-left");
         sessionSetupContainer.AddToClassList("show-session-setup");
-        playValidationText.text = string.Empty;
     }
 
     private async void OnPlay2Clicked(ClickEvent evt)
@@ -209,7 +209,6 @@ public partial class UIManager
         }
 
         HidePlayerSuggestions();
-        playValidationText.text = string.Empty;
 
         if (LoginManager.Instance == null)
         {
@@ -217,7 +216,7 @@ public partial class UIManager
             return;
         }
 
-        string sessionName = sessionNameInput != null ? sessionNameInput.value.Trim() : string.Empty;
+        string sessionName = GetEffectiveSessionName();
         if (string.IsNullOrWhiteSpace(sessionName))
         {
             ShowErrorPopup("Nama session tidak boleh kosong.");
@@ -482,7 +481,7 @@ public partial class UIManager
             {
                 Success = false,
                 ErrorCode = "QUEST_PACK_NOT_FOUND",
-                ErrorMessage = "Paket quest \"" + packName + "\" tidak ditemukan."
+                ErrorMessage = "Paket tantangan \"" + packName + "\" tidak ditemukan."
             };
         }
 
@@ -644,14 +643,6 @@ public partial class UIManager
     private void OnRulesetModeChanged(ChangeEvent<string> evt)
     {
         RefreshRulesetDropdownOptions(evt.newValue);
-    }
-
-    private void OnRulesetDropdownChanged(ChangeEvent<string> evt)
-    {
-        if (string.IsNullOrWhiteSpace(evt.newValue))
-        {
-            sessionSetupValidationText.text = string.Empty;
-        }
     }
 
     private void RegisterPlayerNameCallbacks()
@@ -1023,7 +1014,6 @@ public partial class UIManager
 
     private void ShowSessionSetup()
     {
-        sessionSetupValidationText.text = string.Empty;
         playContainer.RemoveFromClassList("show-play");
         sessionSetupContainer.RemoveFromClassList("hide-session-setup-left");
         sessionSetupContainer.AddToClassList("show-session-setup");
